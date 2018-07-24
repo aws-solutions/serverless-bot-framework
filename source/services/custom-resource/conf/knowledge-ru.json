@@ -1,0 +1,104 @@
+{
+    "brainName": "sample-brain-ru",
+    "version": "1.0.0",
+    "lastUpdated": "23-01-2018 16:51",
+    "stopWords": [],
+    "analysers": {
+        "sentiment": {
+            "ROMANCE": ["подруга"]
+        },
+        "negativeWords": ["не"],
+        "positiveWords": ["хороший", "приятный", "красивый", "славный"],
+        "qualitativeWords": [],
+        "quantitativeWords": [],
+        "temporalWords": []
+    },
+    "i18n": {
+        "errorMessage": {
+            "text": "Ops. Я не понимал, что вы просили!",
+            "speech": "Ops. Я не понимал, что вы просили!"
+        },
+        "nifMessage": {
+            "text": "Ops. Я не понимал, что вы просили!",
+            "speech": "Ops. Я не понимал, что вы просили!"
+        },
+        "welcomeMessage": {
+            "text": "Привет ${first_name}, как я могу вам помочь?",
+            "speech": "Привет ${first_name}, как я могу вам помочь?"
+        }
+    },
+    "knowledge": [{
+            "_id": "1",
+            "_source": {
+                "body": "как вас зовут",
+                "response": [{
+                    "speech": "Меня зовут %%BOT_NAME%%, как я могу вам помочь?",
+                    "text": "Меня зовут %%BOT_NAME%%, как я могу вам помочь?"
+                }]
+            },
+            "_intents": [
+                "как вас зовут",
+                "кто ты"
+            ]
+        },
+        {
+            "_id": "2",
+            "_source": {
+                "body": "Помогите",
+                "response": [{
+                    "speech": "Вот что я могу ответить.",
+                    "text": "как вас зовут<br/>прогноз погоды<br/>pазблокировка пароля"
+                }]
+            },
+            "_intents": [
+                "Помогите",
+                "Помоги мне",
+                "что ты знаешь",
+                "Ответь мне что-нибудь"
+            ]
+        },
+        {
+            "_id": "1000",
+            "_source": {
+                "body": "Password reset sample",
+                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+            },
+            "_intents": [
+                "pазблокировка пароля",
+                "Я хочу разблокировать свой пароль",
+                "Проверить мой пароль"
+            ]
+        },
+        {
+            "_id": "1001",
+            "_source": {
+                "body": "Weather forecast sample",
+                "arn": "%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%",
+                "payload": "{\"city\": \"$0\"}",
+                "parameters": [
+                    {
+                        "payloadPosition": 0,
+                        "name": "city",
+                        "regexList": [
+                            "/ в (.*)/g",
+                            "/ для (.*)/g"
+                        ],
+                        "noMatchAsk": [{
+                            "speech": "Какой город?",
+                            "text": "Какой город?"
+                        }],
+                        "validationSuccessMessage": [{
+                            "speech": "Минуточку!",
+                            "text": "Минуточку!"
+                        }]
+                    }
+                ]
+            },
+            "_intents": [
+                "kакой прогноз погоды на сегодня",
+                "прогноз погоды",
+                "как погода"
+            ]
+        }
+    ]
+}

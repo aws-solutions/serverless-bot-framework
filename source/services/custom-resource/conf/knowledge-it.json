@@ -1,0 +1,107 @@
+{
+    "brainName": "sample-brain-it",
+    "version": "1.0.0",
+    "lastUpdated": "23-01-2018 16:51",
+    "stopWords": [],
+    "analysers": {
+        "sentiment": {
+            "ROMANCE": ["fidanzata"]
+        },
+        "negativeWords": ["no"],
+        "positiveWords": ["simpatico"],
+        "qualitativeWords": [],
+        "quantitativeWords": [],
+        "temporalWords": []
+    },
+    "i18n": {
+        "errorMessage": {
+            "text": "Ops. Non ho capito quello che hai chiesto!",
+            "speech": "Ops. Non ho capito quello che hai chiesto!"
+        },
+        "nifMessage": {
+            "text": "Ops. Non ho capito quello che hai chiesto!",
+            "speech": "Ops. Non ho capito quello che hai chiesto!"
+        },
+        "welcomeMessage": {
+            "text": "Ciao ${first_name}, come posso aiutarti?",
+            "speech": "Ciao ${first_name}, come posso aiutarti?"
+        }
+    },
+    "knowledge": [{
+            "_id": "1",
+            "_source": {
+                "body": "come ti chiami",
+                "response": [{
+                    "speech": "Mi chiamo %%BOT_NAME%%, come posso aiutarti?",
+                    "text": "Mi chiamo %%BOT_NAME%%, come posso aiutarti?"
+                }]
+            },
+            "_intents": [
+                "come ti chiami",
+                "qual è il tuo nome",
+                "tu chi sei"
+            ]
+        },
+        {
+            "_id": "2",
+            "_source": {
+                "body": "Aiuto",
+                "response": [{
+                    "speech": "È quello che posso rispondere.",
+                    "text": "Qual è il tuo nome<br/>Previsione del moto<br/>Password sblocca."
+                }]
+            },
+            "_intents": [
+                "aiuto",
+                "aiutami",
+                "cosa sai",
+                "rispondami qualcosa"
+            ]
+        },
+        {
+            "_id": "1000",
+            "_source": {
+                "body": "Password reset sample",
+                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+            },
+            "_intents": [
+                "sbloccare la password",
+                "voglio sbloccare la mia password",
+                "controlla la mia password",
+                "password sblocca"
+            ]
+        },
+        {
+            "_id": "1001",
+            "_source": {
+                "body": "Weather forecast sample",
+                "arn": "%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%",
+                "payload": "{\"city\": \"$0\"}",
+                "parameters": [
+                    {
+                        "payloadPosition": 0,
+                        "name": "city",
+                        "regexList": [
+                            "/ a (.*)/g",
+                            "/ per (.*)/g"
+                        ],
+                        "noMatchAsk": [{
+                            "speech": "Quale città?",
+                            "text": "Quale città?"
+                        }],
+                        "validationSuccessMessage": [{
+                            "speech": "Solo un minuto!",
+                            "text": "Solo un minuto!"
+                        }]
+                    }
+                ]
+            },
+            "_intents": [
+                "com'è il meteo",
+                "previsione del moto",
+                "previsioni del tempo",
+                "com'è il tempo"
+            ]
+        }
+    ]
+}

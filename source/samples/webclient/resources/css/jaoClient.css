@@ -1,0 +1,129 @@
+html, body {margin: 0px; padding: 0px; height: 100%; width: 100%;}
+.container, .container-fluid {padding: 0px;}
+.fill { min-height: 100%; height: 100%; width: auto;}
+
+.navbar {
+  background: #444444;
+  height: 100px;
+}
+.navbar-fixed-bottom {
+  background: #444444;
+  height: 35px !important;
+}
+.step {
+  width: 100%;
+  display: block;
+  clear: both;
+  font-size: 18;
+}
+.label {
+  display: inline-block;
+  max-width: 60%;
+  white-space: normal !important;
+}
+.from {
+}
+.from span {
+  background: #9fc827;
+  padding: 10px;
+  float: left;
+}
+.to {
+}
+.to span {
+  background: #20bbf9;
+  margin-top: 3px;
+  padding: 10px;
+  float: right;
+}
+.voice {
+}
+.voice span {
+  display: block;
+  clear: both;
+  font-size: 14;
+  margin-top: -10px;
+  margin-right: 10px;
+  padding: 10px;
+  float: right;
+}
+
+#eyes {
+  height: 23px;
+  overflow-x: hidden;
+  width:300px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.eye {
+  width: 23px;
+  height: 23px;
+  background: url("../images/eye.png");
+}
+
+#manualInput {
+  padding-right: 70px;
+}
+#userInput {
+  margin-top: 5px;
+  margin-left: 5px;
+  width: 100%;
+}
+#submitUserInput {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+}
+#conversation {
+  width: 100%;
+  /*height: auto;
+  min-height: 100%;*/
+  background: #f8f3ee;
+  padding: 10px;
+  top: 100px;
+  bottom: 40px;
+  float: left;
+  position: absolute;
+  overflow: auto;
+}
+#logo {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+#containerMic {
+  position: absolute;
+  top: 40px;
+  width: 100%;
+  background: url("../images/containerMic.png") no-repeat center;
+  height: 105px;
+  text-align: center;
+}
+#containerMic img {
+  position: relative;
+  top: 25px;
+}
+#microfone {
+  cursor: pointer;
+  height: 53px;
+}
+
+.richObj_ssl_container {
+  display: inline;
+}
+.richObj_ssl_div {
+  width: 100px;
+  height: 50px;
+  line-height: 48px;
+  text-align: center;
+  margin-right: 5px;
+  background: #444444;
+  float:left;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.richObj_ssl_div:hover {
+  background: #9dca00;
+}

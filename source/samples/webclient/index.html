@@ -1,0 +1,187 @@
+<html>
+<head>
+  <title>Jao</title>
+  <meta charset="utf-8" http-equiv="Content-Security-Policy" content="default-src 'self' * 'unsafe-inline' 'unsafe-eval'; style-src * 'self' 'unsafe-inline'; media-src 'self' * 'unsafe-inline' blob:; object-src 'self' * 'unsafe-inline' blob:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/ico" href="resources/images/favicon.ico" />
+  <script type="text/javascript" src="resources/js/lib/axios/dist/axios.standalone.js"></script>
+  <script type="text/javascript" src="resources/js/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+  <script type="text/javascript" src="resources/js/lib/CryptoJS/rollups/sha256.js"></script>
+  <script type="text/javascript" src="resources/js/lib/CryptoJS/components/hmac.js"></script>
+  <script type="text/javascript" src="resources/js/lib/CryptoJS/components/enc-base64.js"></script>
+  <script type="text/javascript" src="resources/js/lib/url-template/url-template.js"></script>
+  <script type="text/javascript" src="resources/js/lib/apiGatewayCore/sigV4Client.js"></script>
+  <script type="text/javascript" src="resources/js/lib/apiGatewayCore/apiGatewayClient.js"></script>
+  <script type="text/javascript" src="resources/js/lib/apiGatewayCore/simpleHttpClient.js"></script>
+  <script type="text/javascript" src="resources/js/lib/apiGatewayCore/utils.js"></script>
+  <script type="text/javascript" src="resources/js/config.js"></script>
+  <script type="text/javascript" src="resources/js/apigClient.js"></script>
+  <script type="text/javascript" src="resources/js/aws-sdk-2.32.0.min.js"></script>
+  <script type="text/javascript" src="resources/js/jquery.min.js"></script>
+  <script type="text/javascript" src="resources/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="resources/js/jaoCoreClient.js"></script>
+  <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="resources/css/jaoClient.css">
+
+</head>
+<body>
+  <div class="navbar navbar-fixed-top">
+    <img id="logo" src="resources/images/logo.png"></img>
+    <div id="eyes">
+      <div class="eye" style="float: left;"></div>
+      <div class="eye" style="float: right;"></div>
+    </div>
+    <div id="containerMic">
+      <img id="microfone" src="resources/images/mic_c.png"></img>
+    </div>
+    <div class="voice">
+      <span class="label label-default">%%LANGUAGE_TAG%% | %%GENDER%%</span>
+    </div>
+  </div>
+  <div class="container-fluid fill" style="background: #f8f3ee">
+    <div id="conversation">
+    </div> <!-- This one wants to be 100% height -->
+    <video id="video" width="640" height="480" autoplay style="display: none;"></video>
+  </div>
+  <nav role="navigation" class="navbar-fixed-bottom">
+    <div id="manualInput">
+      <input type="text" id="userInput" value=""/>
+      <input type="button" id="submitUserInput" value="%%SEND_LABEL%%"/>
+    </div>
+  </nav>
+  <script>
+  var jao = undefined;
+
+  jQuery( document ).ready(function($) {
+    if (!window.AudioContext) {
+      if (!window.webkitAudioContext) {
+          alert("Your browser does not support any AudioContext and cannot play back this audio.");
+          return;
+      }
+          window.AudioContext = window.webkitAudioContext;
+    }
+    context = new AudioContext();
+
+    jaoClient.init(null, function(client){
+      jao = client.getInstance();
+
+      // Callbacks de UI
+      jao.registerCallback("stt.stop", function () {  $("#microfone").attr("src", "resources/images/mic_c.png"); });
+      jao.registerCallback("stt.start", function () { $("#microfone").attr("src", "resources/images/mic_v.png"); });
+      jao.registerCallback("stt.startDictation", function () {  $("#microfone").attr("src", "resources/images/mic_v.png"); });
+      jao.registerCallback("stt.startPlaying", function () {  $("#microfone").attr("src", "resources/images/stop-icon-10.png");  });
+      jao.registerCallback("stt.stopPlaying", function () { $("#microfone").attr("src", "resources/images/mic_c.png"); });
+      jao.registerCallback("stt.error", function (e) {  $("#microfone").attr("src", "resources/images/mic_c.png"); console.log(e); });
+      jao.registerCallback("richObj_ssl_disable", function(){
+        jQuery(".richObj_ssl_div").removeAttr("onclick");
+      });
+
+      // Command to use camera
+      jao.registerCommand("jaoFotografo", function(dataInput){
+        var idCanvas = "canvas_" + Math.random();
+        jao.ui.fromCustomer('<canvas id="' + idCanvas + '" width="320" height="240"></canvas>', function(){
+
+          var video = document.getElementById('video');
+          // Get access to the camera!
+          if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+
+                setTimeout(function(){
+                  var canvas  = document.getElementById(idCanvas);
+                  var context = canvas.getContext('2d');
+
+                  context.drawImage(video, 0, 0, 320, 240);
+                  video.pause();
+                  video.src = "";
+                  stream.getVideoTracks()[0].stop();
+
+                  var img = canvas.toDataURL('image/jpeg');
+
+                  if (dataInput.conversation != undefined) {
+                    var payload = {};
+
+                    jao.conversation.flowPayloadAsync(img);
+                  } else {
+                    var data = {};
+                    data[0] = {
+                      "response": img
+                    }
+
+                    var idReturn = dataInput.commandID;
+                    jao.jaoDirectCoreRequest(idReturn, data, function(){});
+                  }
+
+                }, 3000);
+            });
+          }
+        });
+      });
+
+      // Simple squared object definition
+      jao.registerRichObjects("simpleSquaredList", function (richObject) {
+        var options = richObject.options;
+        jQuery(".richObj_ssl_div").removeAttr("onclick");
+
+        var total = options.length;
+        var idContainer = "richObj_" + Math.random();
+
+        var container = jQuery('<div/>', {
+            id: idContainer,
+            class: "richObj_ssl_container"
+        });
+
+        for (var i = 0; i < total; i++ ) {
+          var text  = options[i].text;
+          var value = options[i].value;
+          var image = options[i].image;
+
+          var item = jQuery("<div id='" + idContainer + "_" + i + "' class='richObj_ssl_div' onclick=\"javascript: jao.runCallback('richObj_ssl_disable'); jao.trataInput('" + value + "', null);\">" + text + "</div>");
+          $(container).append(item);
+        }
+
+        jao.ui.appendRichObject(container, null);
+      });
+
+      var pad = function(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+      }
+
+      jao.registerRichObjects("audio", function (richObject) {
+        var options = richObject.options;
+
+        var obj = jaoClient.utils.base64ToUint(options.binary);
+        jaoClient.audioSupport.addToQueue(obj);
+      });
+
+    });
+
+    $("#microfone").click(function(){
+      context.resume().then(() => {
+        jao.stt.startDictation();
+      });
+    });
+
+    $("#submitUserInput").click(function(){
+      context.resume().then(() => {
+        var userInput = $("#userInput").val();
+        jao.trataInput(userInput, null);
+        $("#userInput").val("");
+      });
+      
+    });
+
+    $("#userInput").keypress(function(e) {
+      context.resume().then(() => {
+        if(e.which == 13) {
+          $("#submitUserInput").click();
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>

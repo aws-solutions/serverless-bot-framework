@@ -1,0 +1,106 @@
+{
+    "brainName": "sample-brain-en",
+    "version": "1.0.0",
+    "lastUpdated": "23-01-2018 16:51",
+    "stopWords": [],
+    "analysers": {
+        "sentiment": {
+            "ROMANCE": ["girlfriend"]
+        },
+        "negativeWords": ["no"],
+        "positiveWords": ["nice"],
+        "qualitativeWords": [],
+        "quantitativeWords": [],
+        "temporalWords": []
+    },
+    "i18n": {
+        "errorMessage": {
+            "text": "Ops. I did not understand what you asked!",
+            "speech": "Ops. I did not understand what you asked!"
+        },
+        "nifMessage": {
+            "text": "Ops. I did not understand what you asked!",
+            "speech": "Ops. I did not understand what you asked!"
+        },
+        "welcomeMessage": {
+            "text": "Hi ${first_name}, how can I help you?",
+            "speech": "Hi ${first_name}, how can I help you?"
+        }
+    },
+    "knowledge": [{
+            "_id": "1",
+            "_source": {
+                "body": "what is your name",
+                "response": [{
+                    "speech": "My name is %%BOT_NAME%%, how can I help you?",
+                    "text": "My name is %%BOT_NAME%%, how can I help you?"
+                }]
+            },
+            "_intents": [
+                "what is your name",
+                "who are you"
+            ]
+        },
+        {
+            "_id": "2",
+            "_source": {
+                "body": "help",
+                "response": [{
+                    "speech": "That's what I can answer.",
+                    "text": "What is your name<br/>Weather Forecast<br/>Password unlock."
+                }]
+            },
+            "_intents": [
+                "help",
+                "help me",
+                "what do you know",
+                "answer me something"
+            ]
+        },
+        {
+            "_id": "1000",
+            "_source": {
+                "body": "Password reset sample",
+                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+            },
+            "_intents": [
+                "password unlock",
+                "i want to unlock my password",
+                "check my password"
+            ]
+        },
+        {
+            "_id": "1001",
+            "_source": {
+                "body": "Weather forecast sample",
+                "arn": "%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%",
+                "payload": "{\"city\": \"$0\"}",
+                "parameters": [
+                    {
+                        "payloadPosition": 0,
+                        "name": "city",
+                        "regexList": [
+                            "/ in (.*)/g",
+                            "/ on (.*)/g",
+                            "/ at (.*)/g",
+                            "/ for (.*)/g"
+                        ],
+                        "noMatchAsk": [{
+                            "speech": "Which city?",
+                            "text": "Which city?"
+                        }],
+                        "validationSuccessMessage": [{
+                            "speech": "Just a minute!",
+                            "text": "Just a minute!"
+                        }]
+                    }
+                ]
+            },
+            "_intents": [
+                "what is the weather forecast",
+                "weather forecast",
+                "how is the weather"
+            ]
+        }
+    ]
+}

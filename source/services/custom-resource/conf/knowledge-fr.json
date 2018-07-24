@@ -1,0 +1,106 @@
+{
+    "brainName": "sample-brain-fr",
+    "version": "1.0.0",
+    "lastUpdated": "23-01-2018 16:51",
+    "stopWords": [],
+    "analysers": {
+        "sentiment": {
+            "ROMANCE": ["petite amie"]
+        },
+        "negativeWords": ["non"],
+        "positiveWords": ["agréable", "agreable"],
+        "qualitativeWords": [],
+        "quantitativeWords": [],
+        "temporalWords": []
+    },
+    "i18n": {
+        "errorMessage": {
+            "text": "Oops .. Je l'ai fait ce que vous me demandiez!",
+            "speech": "Oops .. Je l'ai fait ce que vous me demandiez!"
+        },
+        "nifMessage": {
+            "text": "Oops .. Je l'ai fait ce que vous me demandiez!",
+            "speech": "Oops .. Je l'ai fait ce que vous me demandiez!"
+        },
+        "welcomeMessage": {
+            "text": "Bonjour ${first_name}, comment puis-je vous aider!",
+            "speech": "Bonjour ${first_name}, comment puis-je vous aider!"
+        }
+    },
+    "knowledge": [{
+            "_id": "1",
+            "_source": {
+                "body": "quel est votre nom",
+                "response": [{
+                    "speech": "Mon nom est %%BOT_NAME%%, comment puis-je vous aider?",
+                    "text": "Mon nom est %%BOT_NAME%%, comment puis-je vous aider?"
+                }]
+            },
+            "_intents": [
+                "quel est votre nom",
+                "qui êtes-vous",
+                "exemple de réponse simple"
+            ]
+        },
+        {
+            "_id": "2",
+            "_source": {
+                "body": "aider",
+                "response": [{
+                    "speech": "Vous voyez ce que je sais répondre.",
+                    "text": "Quel est votre nom<br/>Prévisions météo<br/>Déverrouiller le mot de passe."
+                }]
+            },
+            "_intents": [
+                "aider",
+                "aidez-moi",
+                "ce que vous savez",
+                "répondez-moi quelque chose"
+            ]
+        },
+        {
+            "_id": "1000",
+            "_source": {
+                "body": "Password reset sample",
+                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+            },
+            "_intents": [
+                "déverrouiller le mot de passe",
+                "vérifier mon compte",
+                "déverrouiller mon compte"
+            ]
+        },
+        {
+            "_id": "1001",
+            "_source": {
+                "body": "Weather forecast sample",
+                "arn": "%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%",
+                "payload": "{\"city\": \"$0\"}",
+                "parameters": [
+                    {
+                        "payloadPosition": 0,
+                        "name": "city",
+                        "regexList": [
+                            "/ à (.*)/g",
+                            "/ sur (.*)/g",
+                            "/ pour (.*)/g"
+                        ],
+                        "noMatchAsk": [{
+                            "speech": "De quelle ville?",
+                            "text": "De quelle ville?"
+                        }],
+                        "validationSuccessMessage": [{
+                            "speech": "Juste une minute!",
+                            "text": "Juste une minute!"
+                        }]
+                    }
+                ]
+            },
+            "_intents": [
+                "quelles sont les prévisions météo",
+                "prévisions météo",
+                "comment est la météo"
+            ]
+        }
+    ]
+}

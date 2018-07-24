@@ -1,0 +1,18 @@
+{
+  "name": "polly-service",
+  "version": "1.0.0",
+  "dependencies": {
+    "b2.core": "file:../../modules/b2.core",
+    "js-combinatorics": "^0.5.3"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "license": {
+    "type": "Amazon Software License",
+    "url": "http://aws.amazon.com/asl/"
+  }
+}

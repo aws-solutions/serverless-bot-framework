@@ -1,0 +1,38 @@
+Serverless Bot Framework
+
+Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Licensed under the Amazon Software License (the "License"). You may not use this file except
+in compliance with the License. A copy of the License is located at http://aws.amazon.com/asl/
+or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+**********************
+THIRD PARTY COMPONENTS
+**********************
+This software includes third party software subject to the following copyrights:
+
+AWS SDK under the Apache License Version 2.0
+adm-zip under the Massachusetts Institute of Technology (MIT) license
+bluebird under the Massachusetts Institute of Technology (MIT) license
+bluebird-as under the Massachusetts Institute of Technology (MIT) license
+dateformat under the Massachusetts Institute of Technology (MIT) license
+dispatcherjs under the Massachusetts Institute of Technology (MIT) license
+events under the Massachusetts Institute of Technology (MIT) license
+fuzzysearch-js under the Massachusetts Institute of Technology (MIT) license
+js-combinatorics under the Massachusetts Institute of Technology (MIT) license
+mocha under the Massachusetts Institute of Technology (MIT) license
+moment under the Massachusetts Institute of Technology (MIT) license
+multilabelsvm under the  Internet Systems Consortium (ISC) license
+natural under the Massachusetts Institute of Technology (MIT) license
+path under the Massachusetts Institute of Technology (MIT) license
+remove-punctuation under the Massachusetts Institute of Technology (MIT) license
+stats-percentile under the Massachusetts Institute of Technology (MIT) license
+svm under the Massachusetts Institute of Technology (MIT) license
+underscore under the Massachusetts Institute of Technology (MIT) license
+underscore.string under the Massachusetts Institute of Technology (MIT) license
+util under the Massachusetts Institute of Technology (MIT) license
+uuid under the Massachusetts Institute of Technology (MIT) license
+winston under the Massachusetts Institute of Technology (MIT) license
+
+The licenses for these third party components are included in LICENSE.txt

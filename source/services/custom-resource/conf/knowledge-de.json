@@ -1,0 +1,105 @@
+{
+    "brainName": "sample-brain-de",
+    "version": "1.0.0",
+    "lastUpdated": "23-01-2018 16:51",
+    "stopWords": [],
+    "analysers": {
+        "sentiment": {
+            "ROMANCE": ["freundin"]
+        },
+        "negativeWords": ["nicht"],
+        "positiveWords": ["nett"],
+        "qualitativeWords": [],
+        "quantitativeWords": [],
+        "temporalWords": []
+    },
+    "i18n": {
+        "errorMessage": {
+            "text": "Ops. Ich habe nicht verstanden, was du gefragt hast!",
+            "speech": "Ops. Ich habe nicht verstanden, was du gefragt hast!"
+        },
+        "nifMessage": {
+            "text": "Ops. Ich habe nicht verstanden, was du gefragt hast!",
+            "speech": "Ops. Ich habe nicht verstanden, was du gefragt hast!"
+        },
+        "welcomeMessage": {
+            "text": "Hi ${first_name}, wie kann ich Ihnen helfen?",
+            "speech": "Hi ${first_name}, wie kann ich Ihnen helfen?"
+        }
+    },
+    "knowledge": [{
+            "_id": "1",
+            "_source": {
+                "body": "wie heißen Sie",
+                "response": [{
+                    "speech": "Mein Name ist %%BOT_NAME%%, wie kann ich Ihnen helfen?",
+                    "text": "Mein Name ist %%BOT_NAME%%, wie kann ich Ihnen helfen?"
+                }]
+            },
+            "_intents": [
+                "wie heißen Sie",
+                "wer bist du"
+            ]
+        },
+        {
+            "_id": "2",
+            "_source": {
+                "body": "hilfe",
+                "response": [{
+                    "speech": "So kann ich antworten.",
+                    "text": "Wie heißen Sie<br/>Wettervorhersage<br/>Passwort freischalten."
+                }]
+            },
+            "_intents": [
+                "hilfe",
+                "hilf mir",
+                "was weißt du",
+                "antworte mir etwas"
+            ]
+        },
+        {
+            "_id": "1000",
+            "_source": {
+                "body": "Password reset sample",
+                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+            },
+            "_intents": [
+                "passwort freischalten",
+                "ich möchte mein passwort freischalten",
+                "mein passwort überprüfen"
+            ]
+        },
+        {
+            "_id": "1001",
+            "_source": {
+                "body": "Weather forecast sample",
+                "arn": "%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%",
+                "payload": "{\"city\": \"$0\"}",
+                "parameters": [
+                    {
+                        "payloadPosition": 0,
+                        "name": "city",
+                        "regexList": [
+                            "/ in (.*)/g",
+                            "/ auf (.*)/g",
+                            "/ für (.*)/g"
+                        ],
+                        "noMatchAsk": [{
+                            "speech": "Welche Stadt?",
+                            "text": "Welche Stadt?"
+                        }],
+                        "validationSuccessMessage": [{
+                            "speech": "Nur eine Minute!",
+                            "text": "Nur eine Minute!"
+                        }]
+                    }
+                ]
+            },
+            "_intents": [
+                "wie ist die wettervorhersage",
+                "wettervorhersage",
+                "wie ist das wetter"
+            ]
+        }
+    ]
+}
