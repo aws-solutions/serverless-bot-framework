@@ -1,0 +1,964 @@
+# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  (SO0027) AWS Serverless Bot Framework %%VERSION%% - This AWS CloudFormation template
+  helps you provision the AWS Serverless Bot Framework stack without worrying about
+  creating and configuring the underlying AWS infrastructure.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Bot Settings
+        Parameters:
+          - BotName
+          - BotLanguage
+          - BotGender
+      - Label:
+          default: Sample Web App
+    ParameterLabels:
+      BotName:
+        default: Name
+      BotLanguage:
+        default: Language
+      BotGender:
+        default: Gender
+
+Parameters:
+  BotName:
+    Type: String
+    Default: Jao
+    MinLength: 1
+    MaxLength: 20
+    Description: Define the bot name. Allows a minimum 1 character and maximum of 20. This value is used when it will answer about it's name, for example Jao.
+
+  BotLanguage:
+    Type: String
+    Default: Portuguese
+    Description: Choose the language that this bot will understand and comunicate.
+    AllowedValues:
+      - Portuguese
+      - Spanish
+      - English
+      - French
+      - Italian
+      - German
+      - Russian
+
+  BotGender:
+    Type: String
+    Default: Male
+    AllowedValues:
+      - Male
+      - Female
+    Description: Choose the bot voice gender
+
+  AdminName:
+    Type: String
+    Description: The admin username to access the Serverless Bot Framework
+    MinLength: 4 
+    MaxLength: 20
+    AllowedPattern: '[a-zA-Z0-9-]+'
+    ConstraintDescription: "The username must be a minimum of 4 characters, maximum of 20 and cannot include spaces"
+
+  AdminEmail:
+    Type: String
+    Description: Admin user email address to access the Serverless Bot Framework
+    MinLength: 5
+    MaxLength: 50
+    AllowedPattern: '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$' 
+    ConstraintDescription: "Admin email must be a valid email address"
+
+Mappings:
+  Solution:
+    Data:
+      ID: SO0027
+      Version: '%%VERSION%%'
+      SendAnonymousUsageData: 'Yes'
+  SourceCode:
+    General:
+      S3Bucket: "%%BUCKET_NAME%%"
+      KeyPrefix: "%%SOLUTION_NAME%%/%%VERSION%%"
+
+Resources:
+  SampleStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - 'https://'
+          - !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], "reference"]]
+          - '.s3.amazonaws.com/'
+          - !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "serverless-bot-framework-sample.template"]]
+
+  LogsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      AccessControl: LogDeliveryWrite
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: "Loggin not enabled, this is the logs bucket other S3 buckets"
+          - id: W51
+            reason: "No bucket policy for the logs bucket"
+
+  Brain:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+            reason: "Bucket is private."
+    Properties:
+      AccessControl: Private
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LogsBucket
+        LogFilePrefix: brain-bucket-logs/
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration: 
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  TrainModelRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: BrainBucket
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - !Ref 'Brain'
+                    - /*
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Join
+                  - ':'
+                  - - arn:aws:logs
+                    - !Ref 'AWS::Region'
+                    - !Ref 'AWS::AccountId'
+                    - log-group:/aws/lambda/*
+
+  TrainModel:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "train-model.zip"]]
+      Description: Function to Train the Brain
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt 'TrainModelRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 60
+      Environment:
+        Variables:
+          SEND_ANONYMOUS_USAGE_DATA: !FindInMap
+            - Solution
+            - Data
+            - SendAnonymousUsageData
+          SOLUTION_ID: !FindInMap
+            - Solution
+            - Data
+            - ID
+          VERSION: !FindInMap
+            - Solution
+            - Data
+            - Version
+          UUID: !GetAtt 'CreateUniqueID.UUID'
+          REGION: !Ref 'AWS::Region'
+
+  LambdaInvokePermissionTrainModel:
+    Type: AWS::Lambda::Permission
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W24
+            reason: "Want to grant S3 permission to invoke lambda"
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt 'TrainModel.Arn'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !GetAtt Brain.Arn
+
+  DynamoEntityResolver:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: uid
+          AttributeType: S
+        - AttributeName: entity-value
+          AttributeType: S
+      KeySchema:
+        - AttributeName: uid
+          KeyType: HASH
+      BillingMode: "PAY_PER_REQUEST"
+      GlobalSecondaryIndexes:
+        - IndexName: entity-value-index
+          KeySchema:
+            - AttributeName: entity-value
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  DynamoContext:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: uid
+          AttributeType: S
+        - AttributeName: sessionID
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: uid
+          KeyType: HASH
+      BillingMode: "PAY_PER_REQUEST"
+      GlobalSecondaryIndexes:
+        - IndexName: sessionID-timestamp-index
+          KeySchema:
+            - AttributeName: sessionID
+              KeyType: HASH
+            - AttributeName: timestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  DynamoConversationLogs:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: uid
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: uid
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      BillingMode: "PAY_PER_REQUEST"
+
+  PollyFunctionRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+            reason: "Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy"
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: Polly
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - polly:SynthesizeSpeech
+                Resource: '*'
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Join
+                  - ':'
+                  - - arn:aws:logs
+                    - !Ref 'AWS::Region'
+                    - !Ref 'AWS::AccountId'
+                    - log-group:/aws/lambda/*
+
+  Polly:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - PollyFunctionRole
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "polly-service.zip"]]
+      Description: Bot Polly Function to APIGateway
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt 'CoreFunctionRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 180
+
+  LambdaInvokePermissionPolly:
+    Type: AWS::Lambda::Permission
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W24
+            reason: "Want to grant API Gateway permission to invoke lambda"
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt 'Polly.Arn'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'BotApi'
+          - /
+          - !Ref 'BotApiStage'
+          - /*
+
+  CoreFunctionRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+            reason: "Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy"
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: Polly
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - polly:SynthesizeSpeech
+                Resource: '*'
+        - PolicyName: BrainBucket
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - !Ref 'Brain'
+                    - /*
+        - PolicyName: DynamoDB
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchGetItem
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:PutItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:GetItem
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                  - dynamodb:UpdateItem
+                Resource:
+                  - !GetAtt 'DynamoContext.Arn'
+                  - !Join
+                    - ''
+                    - - !GetAtt 'DynamoContext.Arn'
+                      - /*
+                  - !GetAtt 'DynamoConversationLogs.Arn'
+                  - !Join
+                    - ''
+                    - - !GetAtt 'DynamoConversationLogs.Arn'
+                      - /*
+                  - !GetAtt 'DynamoEntityResolver.Arn'
+                  - !Join
+                    - ''
+                    - - !GetAtt 'DynamoEntityResolver.Arn'
+                      - /*
+        - PolicyName: CallKnowledgeServices
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt 'SampleStack.Outputs.KnowledgeWeatherForecastArn'
+                  - !GetAtt 'SampleStack.Outputs.KnowledgeLeaveFeedbackArn'
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Join
+                  - ':'
+                  - - arn:aws:logs
+                    - !Ref 'AWS::Region'
+                    - !Ref 'AWS::AccountId'
+                    - log-group:/aws/lambda/*
+
+  Core:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "core.zip"]]
+      Description: Bot Core Function
+      Handler: index.handler
+      MemorySize: 1024
+      Environment:
+        Variables:
+          bucketName: !Ref 'Brain'
+          botLanguage: !Ref 'BotLanguage'
+          botGender: !Ref 'BotGender'
+          botName: !Ref 'BotName'
+          forceCacheUpdate: 'false'
+      Role: !GetAtt 'CoreFunctionRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 180
+
+  LambdaInvokePermissionCore:
+    Type: AWS::Lambda::Permission
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W24
+            reason: "Want to grant API Gateway permission to invoke lambda"
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt 'Core.Arn'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'BotApi'
+          - /
+          - !Ref 'BotApiStage'
+          - /*
+
+  BotApi:
+    Type: AWS::ApiGateway::RestApi
+    DependsOn:
+      - CreateUniqueID
+    Properties:
+      Name: !Join
+        - '-'
+        - - bot-api
+          - !Ref 'AWS::StackName'
+      Description: Bot API
+      FailOnWarnings: true
+
+  BotResourceCore:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref 'BotApi'
+      ParentId: !GetAtt 'BotApi.RootResourceId'
+      PathPart: core
+
+  BotApiAuthorizer:
+    Type: "AWS::ApiGateway::Authorizer"
+    Properties:
+      IdentitySource: 'method.request.header.Authorization'
+      Name: BotApiAuthorizer
+      ProviderARNs:
+        - !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${SecurityStack.Outputs.CognitoUserPoolId}
+      RestApiId: !Ref 'BotApi'
+      Type: "COGNITO_USER_POOLS"
+
+  BotCorePostRequest:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref 'BotApiAuthorizer'
+      HttpMethod: POST
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Join
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'Core.Arn'
+            - /invocations
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+      ResourceId: !Ref 'BotResourceCore'
+      RestApiId: !Ref 'BotApi'
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels:
+            application/json: Empty
+          StatusCode: '200'
+
+  BotCoreOptionsRequest:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        Type: MOCK
+        IntegrationHttpMethod: OPTIONS
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+              method.response.header.Access-Control-Allow-Methods: '''POST,OPTIONS'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{''statusCode'': 200}'
+      ResourceId: !Ref 'BotResourceCore'
+      RestApiId: !Ref 'BotApi'
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels:
+            application/json: Empty
+          StatusCode: '200'
+
+  BotResourceServices:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref 'BotApi'
+      ParentId: !GetAtt 'BotApi.RootResourceId'
+      PathPart: services
+  BotResourceServicesPolly:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref 'BotApi'
+      ParentId: !Ref 'BotResourceServices'
+      PathPart: polly
+
+  BotPollyPostRequest:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref 'BotApiAuthorizer'
+      HttpMethod: POST
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Join
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'Polly.Arn'
+            - /invocations
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+      ResourceId: !Ref 'BotResourceServicesPolly'
+      RestApiId: !Ref 'BotApi'
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels:
+            application/json: Empty
+          StatusCode: '200'
+
+  BotPollyOptionsRequest:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      Integration:
+        Type: MOCK
+        IntegrationHttpMethod: OPTIONS
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+              method.response.header.Access-Control-Allow-Methods: '''POST,OPTIONS'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{''statusCode'': 200}'
+      ResourceId: !Ref 'BotResourceServicesPolly'
+      RestApiId: !Ref 'BotApi'
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels:
+            application/json: Empty
+          StatusCode: '200'
+
+  BotApiDeployment:
+    Type: AWS::ApiGateway::Deployment          
+    DependsOn:
+      - BotCorePostRequest
+      - BotCoreOptionsRequest
+      - BotPollyPostRequest
+      - BotPollyOptionsRequest
+    Properties:
+      RestApiId: !Ref 'BotApi'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W45
+            reason: "access logging not enabled"
+          - id: W68
+            reason: "Usage plan is not required for the API Gateway as there is no specific quota or throttle for API Gateway is needed for this solution."
+
+  BotApiStage:
+    Type: AWS::ApiGateway::Stage
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W64
+            reason: "Usage plan is not required for the API Gateway as there is no specific quota or throttle for API Gateway is needed for this solution."
+          - id: W69
+            reason: "Access log settings are not needed for this stage in the solution."
+
+    Properties:
+      DeploymentId: !Ref 'BotApiDeployment'
+      RestApiId: !Ref 'BotApi'
+      StageName: prod
+
+  SecurityStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join 
+        - ''
+        - - 'https://'
+          - !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], "reference"]]
+          - '.s3.amazonaws.com/'
+          - !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "serverless-bot-framework-security.template"]]
+      Parameters:
+        BotApi: !Ref 'BotApi'
+        WebClientDomainName: !GetAtt 'SampleStack.Outputs.WebClientDomainName'
+        AdminName: !Ref 'AdminName'
+        AdminEmail: !Ref 'AdminEmail'
+
+  CustomConfigurationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudFormationAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: cloudformation:DescribeStacks
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:cloudformation:'
+                    - !Ref 'AWS::Region'
+                    - ':'
+                    - !Ref 'AWS::AccountId'
+                    - :stack/
+                    - !Ref 'AWS::StackName'
+                    - /*
+        - PolicyName: BrainBucket
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketNotification
+                  - s3:PutBucketNotification
+                Resource: !GetAtt 'Brain.Arn'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - !Ref 'Brain'
+                    - /*
+        - PolicyName: WebClientBucket
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                Resource: !GetAtt 'SampleStack.Outputs.WebClientArn'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - !GetAtt 'SampleStack.Outputs.WebClient'
+                    - /*
+        - PolicyName: ApiGateway
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - apigateway:POST
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:apigateway:'
+                    - !Ref 'AWS::Region'
+                    - ::/restapis/
+                    - !Ref 'BotApi'
+                    - /deployments
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Join
+                  - ':'
+                  - - arn:aws:logs
+                    - !Ref 'AWS::Region'
+                    - !Ref 'AWS::AccountId'
+                    - log-group:/aws/lambda/*
+
+  CustomResource:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "custom-resource.zip"]]
+      Description: Function to configure Jao Files
+      Handler: index.lambda_handler
+      MemorySize: 128
+      Role: !GetAtt 'CustomConfigurationRole.Arn'
+      Runtime: python3.8
+      Timeout: 60
+      Environment:
+        Variables:
+          SEND_ANONYMOUS_USAGE_DATA: !FindInMap
+            - Solution
+            - Data
+            - SendAnonymousUsageData
+          SOLUTION_ID: !FindInMap
+            - Solution
+            - Data
+            - ID
+          VERSION: !FindInMap
+            - Solution
+            - Data
+            - Version
+          UUID: !GetAtt 'CreateUniqueID.UUID'
+          REGION: !Ref 'AWS::Region'
+
+  CustomResourceLambdaCustomConfig:
+    Type: Custom::CreateBotConfig
+    Properties:
+      ServiceToken: !GetAtt 'CustomResource.Arn'
+      AwsId: !Ref 'AWS::AccountId'
+      AwsRegion: !Ref 'AWS::Region'
+      ApiUri: !Join
+        - ''
+        - - https://
+          - !Ref 'BotApi'
+          - .execute-api.
+          - !Ref 'AWS::Region'
+          - .amazonaws.com/
+          - !Ref 'BotApiStage'
+          - /
+      ApiStageName: !Ref 'BotApiStage'
+      ApiId: !Ref 'BotApi'
+      BotName: !Ref 'BotName'
+      BotLanguage: !Ref 'BotLanguage'
+      BotGender: !Ref 'BotGender'
+      BrainBucket: !Ref 'Brain'
+      ConversationLogsTable: !Ref 'DynamoConversationLogs'
+      EntitiesTable: !Ref 'DynamoEntityResolver'
+      ContextTable: !Ref 'DynamoContext'
+      SampleWebClientBucket: !GetAtt 'SampleStack.Outputs.WebClient'
+      SampleWebclientPackage: !Join
+        - ''
+        - - https://s3-
+          - !Ref 'AWS::Region'
+          - .amazonaws.com/
+          - !FindInMap ["SourceCode", "General", "S3Bucket"]
+          - '-'
+          - !Ref 'AWS::Region'
+          - /
+          - !FindInMap ["SourceCode", "General", "KeyPrefix"]
+          - /sample-webclient.zip
+      SampleLeaveFeedbackBotArn: !GetAtt 'SampleStack.Outputs.KnowledgeLeaveFeedback'
+      CognitoIdentityPool: !GetAtt 'SecurityStack.Outputs.CognitoIdentityPool'
+      CognitoUserPoolId: !GetAtt 'SecurityStack.Outputs.CognitoUserPoolId'
+      CognitoUserPoolClientId: !GetAtt 'SecurityStack.Outputs.CognitoUserPoolClientId'
+      SampleWeatherForecastBotArn: !GetAtt 'SampleStack.Outputs.KnowledgeWeatherForecast'
+      TrainModelArn: !GetAtt 'TrainModel.Arn'
+      StackName: !Ref 'AWS::StackName'
+
+  SolutionHelperRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Join
+                  - ':'
+                  - - arn:aws:logs
+                    - !Ref 'AWS::Region'
+                    - !Ref 'AWS::AccountId'
+                    - log-group:/aws/lambda/*
+
+  SolutionHelper:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: solution_helper.lambda_handler
+      Role: !GetAtt 'SolutionHelperRole.Arn'
+      Description: This function is a CloudFormation custom lambda resource that generates
+        UUID for each deployment.
+      Code:
+        S3Bucket: !Join
+          - '-'
+          - - !FindInMap ["SourceCode", "General", "S3Bucket"]
+            - !Ref 'AWS::Region'
+        S3Key: solution-helper/v3.1.0/solution_helper.zip
+      Runtime: python3.7
+      MemorySize: 128
+      Timeout: 300
+
+  CreateUniqueID:
+    Type: Custom::CreateUUID
+    Properties:
+      ServiceToken: !GetAtt 'SolutionHelper.Arn'
+      Region: !Ref 'AWS::Region'
+      CreateUniqueID: 'true'
+
+Outputs:
+  SampleWebClient:
+    Description: Sample WebClient URL.
+    Value: !Join
+      - ''
+      - - https://
+        - !GetAtt 'SampleStack.Outputs.WebClientDomainName'
+        - /index.html
+  BrainBucket:
+    Description: 'S3 Bucket where all brain related files are stores (ex: knowledge.json).'
+    Value: !Ref 'Brain'
+  ApiEndpoint:
+    Description: API URL for customers build their own clients consumers.
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref 'BotApi'
+        - .execute-api.
+        - !Ref 'AWS::Region'
+        - .amazonaws.com/
+        - !Ref 'BotApiStage'
+        - /

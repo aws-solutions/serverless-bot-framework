@@ -15,12 +15,12 @@
     },
     "i18n": {
         "errorMessage": {
-            "text": "Ops. I did not understand what you asked!",
-            "speech": "Ops. I did not understand what you asked!"
+            "text": "Oops. I did not understand what you asked!",
+            "speech": "Oops. I did not understand what you asked!"
         },
         "nifMessage": {
-            "text": "Ops. I did not understand what you asked!",
-            "speech": "Ops. I did not understand what you asked!"
+            "text": "Oops. I did not understand what you asked!",
+            "speech": "Oops. I did not understand what you asked!"
         },
         "welcomeMessage": {
             "text": "Hi ${first_name}, how can I help you?",
@@ -47,7 +47,7 @@
                 "body": "help",
                 "response": [{
                     "speech": "That's what I can answer.",
-                    "text": "What is your name<br/>Weather Forecast<br/>Password unlock."
+                    "text": "What is your name | Weather Forecast | Leave Feedback."
                 }]
             },
             "_intents": [
@@ -60,13 +60,14 @@
         {
             "_id": "1000",
             "_source": {
-                "body": "Password reset sample",
-                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+                "body": "Leave feedback sample",
+                "arn": "%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%"
             },
             "_intents": [
-                "password unlock",
-                "i want to unlock my password",
-                "check my password"
+                "leave feedback",
+                "i want to leave a feedback",
+                "leave a feedback",
+                "feedback"
             ]
         },
         {

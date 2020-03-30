@@ -15,12 +15,12 @@
     },
     "i18n": {
         "errorMessage": {
-            "text": "Ops. Non ho capito quello che hai chiesto!",
-            "speech": "Ops. Non ho capito quello che hai chiesto!"
+            "text": "Oops. Non ho capito quello che hai chiesto!",
+            "speech": "Oops. Non ho capito quello che hai chiesto!"
         },
         "nifMessage": {
-            "text": "Ops. Non ho capito quello che hai chiesto!",
-            "speech": "Ops. Non ho capito quello che hai chiesto!"
+            "text": "Oops. Non ho capito quello che hai chiesto!",
+            "speech": "Oops. Non ho capito quello che hai chiesto!"
         },
         "welcomeMessage": {
             "text": "Ciao ${first_name}, come posso aiutarti?",
@@ -48,7 +48,7 @@
                 "body": "Aiuto",
                 "response": [{
                     "speech": "È quello che posso rispondere.",
-                    "text": "Qual è il tuo nome<br/>Previsione del moto<br/>Password sblocca."
+                    "text": "Qual è il tuo nome | Previsione del moto | lasciare un feedback."
                 }]
             },
             "_intents": [
@@ -61,14 +61,13 @@
         {
             "_id": "1000",
             "_source": {
-                "body": "Password reset sample",
-                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+                "body": "Leave feedback sample",
+                "arn": "%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%"
             },
             "_intents": [
-                "sbloccare la password",
-                "voglio sbloccare la mia password",
-                "controlla la mia password",
-                "password sblocca"
+                "lasciare un feedback",
+                "Voglio lasciare un feedback",
+                "risposta"
             ]
         },
         {

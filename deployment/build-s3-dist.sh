@@ -9,24 +9,32 @@
 # The template will append '-[region_name]' to this bucket name.
 # For example: ./build-s3-dist.sh solutions
 # The template will then expect the source code to be located in the solutions-[region_name] bucket
-
+set -e
 # Check to see if input has been provided:
-if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Please provide the base source bucket name and version where the lambda code will eventually reside."
-    echo "For example: ./build-s3-dist.sh solutions v1.0.0"
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+    echo "Please provide the base source bucket name, trademarked solution name, and version where the lambda code will eventually reside."
+    echo "For example: ./build-s3-dist.sh solutions trademarked-solution-name v1.0.0"
     exit 1
 fi
 
 # Get reference for all important folders
 template_dir="$PWD"
-dist_dir="$template_dir/dist"
+template_dist_dir="$template_dir/global-s3-assets"
+build_dist_dir="$template_dir/regional-s3-assets"
 source_dir="$template_dir/../source"
+
+# Grabbing input parameters
+bucket_name="$1"
+solution_name="$2"
+version="$3"
 
 echo "------------------------------------------------------------------------------"
 echo "[Init] Clean old dist and node_modules folders"
 echo "------------------------------------------------------------------------------"
-echo "rm -rf $dist_dir"
-rm -rf "$dist_dir"
+echo "rm -rf $template_dist_dir"
+rm -rf "$template_dist_dir"
+echo "rm -rf $build_dist_dir"
+rm -rf "$build_dist_dir"
 echo "find $source_dir/node_modules -iname "node_modules" -type d -exec rm -r "{}" \; 2> /dev/null"
 echo "find $source_dir/services -iname "node_modules" -type d -exec rm -r "{}" \; 2> /dev/null"
 echo "find $source_dir/samples -iname "node_modules" -type d -exec rm -r "{}" \; 2> /dev/null"
@@ -34,50 +42,35 @@ echo "find ../ -type f -name 'package-lock.json' -delete"
 find $source_dir -type f -name 'package-lock.json' -delete
 echo "find ../ -type f -name '.DS_Store' -delete"
 find $source_dir -type f -name '.DS_Store' -delete
-echo "mkdir -p $dist_dir"
-mkdir -p "$dist_dir"
+echo "mkdir -p $template_dist_dir"
+mkdir -p "$template_dist_dir"
+echo "mkdir -p $build_dist_dir"
+mkdir -p "$build_dist_dir"
 
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Templates"
 echo "------------------------------------------------------------------------------"
-echo "cp -f $template_dir/serverless-bot-framework.template dist"
-cp -f "$template_dir/serverless-bot-framework.template" $dist_dir
-echo "Updating code source bucket in template with $1"
-replace="s/%%BUCKET_NAME%%/$1/g"
-echo "sed -i '' -e $replace $dist_dir/serverless-bot-framework.template"
-sed -i '' -e $replace "$dist_dir/serverless-bot-framework.template"
-echo "Updating code source version in template with $2"
-replace="s/%%VERSION%%/$2/g"
-echo "sed -i '' -e $replace $dist_dir/serverless-bot-framework.template"
-sed -i '' -e $replace "$dist_dir/serverless-bot-framework.template"
+echo "cp -f $template_dir/${solution_name}.yaml $template_dist_dir/${solution_name}.template"
+cp -f $template_dir/${solution_name}.yaml $template_dist_dir/${solution_name}.template
 
-echo "------------------------------------------------------------------------------"
-echo "[Packing] Templates - Security Resources"
-echo "------------------------------------------------------------------------------"
-echo "cp -f $template_dir/serverless-bot-framework-security.template dist"
-cp -f "$template_dir/serverless-bot-framework-security.template" $dist_dir
-echo "Updating code source bucket in template with $1"
-replace="s/%%BUCKET_NAME%%/$1/g"
-echo "sed -i '' -e $replace $dist_dir/serverless-bot-framework-security.template"
-sed -i '' -e $replace "$dist_dir/serverless-bot-framework-security.template"
-echo "Updating code source version in template with $2"
-replace="s/%%VERSION%%/$2/g"
-echo "sed -i '' -e $replace $dist_dir/serverless-bot-framework-security.template"
-sed -i '' -e $replace "$dist_dir/serverless-bot-framework-security.template"
+echo "cp -f $template_dir/${solution_name}-security.yaml $template_dist_dir/${solution_name}-security.template"
+cp -f $template_dir/${solution_name}-security.yaml $template_dist_dir/${solution_name}-security.template
 
-echo "------------------------------------------------------------------------------"
-echo "[Packing] Templates - Sample Resources"
-echo "------------------------------------------------------------------------------"
-echo "cp -f $template_dir/serverless-bot-framework-sample.template dist"
-cp -f "$template_dir/serverless-bot-framework-sample.template" $dist_dir
-echo "Updating code source bucket in template with $1"
-replace="s/%%BUCKET_NAME%%/$1/g"
-echo "sed -i '' -e $replace $dist_dir/serverless-bot-framework-sample.template"
-sed -i '' -e $replace "$dist_dir/serverless-bot-framework-sample.template"
-echo "Updating code source version in template with $2"
-replace="s/%%VERSION%%/$2/g"
-echo "sed -i '' -e $replace $dist_dir/serverless-bot-framework-sample.template"
-sed -i '' -e $replace "$dist_dir/serverless-bot-framework-sample.template"
+echo "cp -f $template_dir/${solution_name}-sample.yaml $template_dist_dir/${solution_name}-sample.template"
+cp -f $template_dir/${solution_name}-sample.yaml $template_dist_dir/${solution_name}-sample.template
+
+# Replacing bucket name, solution name, and version in template
+for replace in "s/%%BUCKET_NAME%%/${bucket_name}/g" \
+        "s/%%SOLUTION_NAME%%/${solution_name}/g" \
+        "s/%%VERSION%%/${version}/g"; do
+
+    printf "sed -i -e $replace ${template_dist_dir}/${solution_name}.template\n"
+    sed -i -e "${replace}" ${template_dist_dir}/${solution_name}.template
+    printf "sed -i -e $replace ${template_dist_dir}/${solution_name}-sample.template\n"
+    sed -i -e "${replace}" ${template_dist_dir}/${solution_name}-sample.template
+    printf "sed -i -e $replace ${template_dist_dir}/${solution_name}-security.template\n"
+    sed -i -e "${replace}" ${template_dist_dir}/${solution_name}-security.template
+done
 
 echo "------------------------------------------------------------------------------"
 echo "[Rebuild] Core Resource"
@@ -90,45 +83,49 @@ echo "[Packing] Core Service"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/core
 npm install
-zip -q -r9 $dist_dir/core.zip *
+zip -q -r9 $build_dist_dir/core.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Custom Resource"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/custom-resource
-zip -q -r9 $dist_dir/custom-resource.zip *
+python3 setup.py install
+zip -q -r9 $build_dist_dir/custom-resource.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Polly Service"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/polly-service
 npm install
-zip -q -r9 $dist_dir/polly-service.zip *
+zip -q -r9 $build_dist_dir/polly-service.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Train Model"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/train-model
 npm install
-zip -q -r9 $dist_dir/train-model.zip *
+zip -q -r9 $build_dist_dir/train-model.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Sample Bot Weather Forecast"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/samples/bot-weather-forecast
-zip -q -r9 $dist_dir/sample-bot-weather-forecast.zip *
+python3 setup.py install
+zip -q -r9 $build_dist_dir/sample-bot-weather-forecast.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
-echo "[Packing] Sample Bot Password Reset"
+echo "[Packing] Sample Bot Leave Feedback"
 echo "------------------------------------------------------------------------------"
-cd $source_dir/samples/bot-password-reset
-zip -q -r9 $dist_dir/sample-bot-password-reset.zip *
+cd $source_dir/samples/leave-feedback
+zip -q -r9 $build_dist_dir/sample-leave-feedback.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Sample WebClient"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/samples/webclient
-zip -q -r9 $dist_dir/sample-webclient.zip *
+npm install && npm run build
+cd build
+zip -q -r9 $build_dist_dir/sample-webclient.zip *
 
 echo "------------------------------------------------------------------------------"
 echo "[Clean] node_modules folders"

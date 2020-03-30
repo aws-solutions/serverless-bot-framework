@@ -48,7 +48,7 @@
                 "body": "aider",
                 "response": [{
                     "speech": "Vous voyez ce que je sais répondre.",
-                    "text": "Quel est votre nom<br/>Prévisions météo<br/>Déverrouiller le mot de passe."
+                    "text": "Quel est votre nom | Prévisions météo | Laisser les commentaires."
                 }]
             },
             "_intents": [
@@ -61,13 +61,14 @@
         {
             "_id": "1000",
             "_source": {
-                "body": "Password reset sample",
-                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+                "body": "Leave feedback sample",
+                "arn": "%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%"
             },
             "_intents": [
-                "déverrouiller le mot de passe",
-                "vérifier mon compte",
-                "déverrouiller mon compte"
+                "laisser les commentaires",
+                "laisser un commentaires",
+                "Je veux laisser un commentaire",
+                "retour d'information"
             ]
         },
         {

@@ -1,3 +1,20 @@
+/*********************************************************************************************************************
+ *  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           
+ *                                                                                                                    
+ *  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance     
+ *  with the License. A copy of the License is located at                                                             
+ *                                                                                                                    
+ *      http://www.apache.org/licenses/                                                                               
+ *                                                                                                                    
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES 
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    
+ *  and limitations under the License.                                                                                
+ *********************************************************************************************************************/
+
+/**
+ * @author Solution Builders
+ */
+
 var B2      = require('../index.js');
 var path    = require('path');
 var http    = require('http');
@@ -1066,13 +1083,15 @@ B2.CORE.prototype.persistContext = function (key, sessionID, callback) {
 
     var payload = _self.metrics.payload;
     
-    if (payload)
+    if (payload) {
         payload = B2.CORE.cleanBinary(payload);
+    }
 
     var response = _self.metrics.response;
 
-    if (response)
-    response = B2.CORE.cleanBinary(response);
+    if (response) {
+        response = B2.CORE.cleanBinary(response);
+    }
 
     B2.getModule("CTX", instance).createContext(key, _self.metrics.sessionID, _self.metrics.entities, payload, _self.metrics.bestMatch, response, _self.metrics.intentBeforeParsers, _self.metrics.environmentVars);
 };

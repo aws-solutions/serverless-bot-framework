@@ -1,5 +1,18 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+####################################################################################################################
+#  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           
+#                                                                                                                    
+#  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance     
+#  with the License. A copy of the License is located at                                                             
+#                                                                                                                    
+#      http://www.apache.org/licenses/                                                                               
+#                                                                                                                    
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES 
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    
+#  and limitations under the License.                                                                                
+####################################################################################################################/
+
+# @author Solution Builders
 
 import boto3
 from random import randint
@@ -49,25 +62,28 @@ def lambda_handler(event, context):
 
     except Exception as e:
         print(e)
-        if event['lang'] == "pt-BR":
-            result = "Não econtrei o dado desejado."
+        if isinstance(event, dict) and "lang" in event:
+            if event['lang'] == "pt-BR":
+                result = "Não econtrei o dado desejado."
 
-        elif event['lang'] == "es-US":
-            result = "No encontré el dado deseado."
+            elif event['lang'] == "es-US":
+                result = "No encontré el dado deseado."
 
-        elif event['lang'] == "en-US":
-            result = "I could not find the desired data."
+            elif event['lang'] == "en-US":
+                result = "I could not find the desired data."
 
-        elif event['lang'] == "fr-FR":
-            result = "Je ne trouve pas les données souhaitées."
+            elif event['lang'] == "fr-FR":
+                result = "Je ne trouve pas les données souhaitées."
 
-        elif event['lang'] == "it-IT":
-            result = "Non ho trovato i dati desiderati."
+            elif event['lang'] == "it-IT":
+                result = "Non ho trovato i dati desiderati."
 
-        elif event['lang'] == "de-DE":
-            result = "ch habe nicht die gewünschten Daten finden."
+            elif event['lang'] == "de-DE":
+                result = "ch habe nicht die gewünschten Daten finden."
 
-        elif event['lang'] == "ru-RU":
-            result = "Я не нашел нужные данные"
+            elif event['lang'] == "ru-RU":
+                result = "Я не нашел нужные данные"
+        else:
+            result = "Oops! Error!"
 
     return {"text": result, "speech": result, "persistEntities": True}

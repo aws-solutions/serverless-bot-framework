@@ -1,17 +1,32 @@
 # -*- coding: utf-8 -*-
-from StringIO import StringIO
+####################################################################################################################
+#  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           
+#                                                                                                                    
+#  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance     
+#  with the License. A copy of the License is located at                                                             
+#                                                                                                                    
+#      http://www.apache.org/licenses/                                                                               
+#                                                                                                                    
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES 
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    
+#  and limitations under the License.                                                                                
+####################################################################################################################/
+
+# @author Solution Builders
+
+from io import BytesIO
 from zipfile import ZipFile
-from urlparse import urlparse
+from urllib.parse import urlparse, urlencode
 import json
 import boto3
 import os
-import httplib
+import http.client
 import mimetypes
 import datetime
 from os import environ
 
-from urllib2 import Request
-from urllib2 import urlopen
+from urllib.request import Request
+from urllib.request import urlopen
 
 #======================================================================================================================
 # Constants
@@ -73,7 +88,7 @@ def replace_config_anchors(content, resource_properties):
     content = content.replace('%%CONVERSATION_LOGS_TABLE%%', resource_properties['ConversationLogsTable'])
     content = content.replace('%%ENTITIES_TABLE%%', resource_properties['EntitiesTable'])
     content = content.replace('%%CONTEXT_TABLE%%', resource_properties['ContextTable'])
-    content = content.replace('%%SAMPLE_PASSWORD_RESET_BOT_ARN%%', resource_properties['SamplePasswordResetBotArn'])
+    content = content.replace('%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%', resource_properties['SampleLeaveFeedbackBotArn'])
     content = content.replace('%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%', resource_properties['SampleWeatherForecastBotArn'])
     content = content.replace('%%SEND_LABEL%%', BOT_SPEECH_PARAMS[resource_properties['BotLanguage']]["SendLabel"])
     content = content.replace('%%GENDER%%', resource_properties['BotGender'])
@@ -81,11 +96,15 @@ def replace_config_anchors(content, resource_properties):
         content = content.replace('%%COGNITO_IDENTITY_POOL%%', resource_properties['CognitoIdentityPool'])
     else:
         content = content.replace('%%COGNITO_IDENTITY_POOL%%', '')
-
-    apigateway_client = boto3.client('apigateway')
-    api_key = apigateway_client.get_api_key(apiKey=resource_properties['ApiKey'], includeValue=True)
-    content = content.replace('%%API_KEY%%', api_key['value'])
-
+    if 'CognitoUserPoolId' in resource_properties:
+        content = content.replace('%%COGNITO_USER_POOL_ID%%', resource_properties['CognitoUserPoolId'])
+    else:
+        content = content.replace('%%COGNITO_USER_POOL_ID%%', '')
+    if 'CognitoUserPoolClientId' in resource_properties:
+        content = content.replace('%%COGNITO_USER_POOL_CLIENT_ID%%', resource_properties['CognitoUserPoolClientId'])
+    else:
+        content = content.replace('%%COGNITO_USER_POOL_CLIENT_ID%%', '')
+    
     voice = BOT_SPEECH_PARAMS[resource_properties['BotLanguage']]["Voice"][resource_properties['BotGender']]
     content = content.replace('%%BOT_VOICE%%', voice)
 
@@ -96,7 +115,9 @@ def replace_config_anchors(content, resource_properties):
 
 def create_stack(resource_properties):
     print("[create_stack] Start")
-
+    print("[create_stack] Resource Properties:")
+    print(resource_properties)
+    print("[create_stack] End Resource Properties")
     s3_client = boto3.client('s3')
 
     #----------------------------------------------------------------------
@@ -114,7 +135,7 @@ def create_stack(resource_properties):
                         lambda_already_configured = True
 
     if lambda_already_configured:
-        print("[INFO] Skiping bucket event configuration. It is already configured to trigger Traim Model function.")
+        print("[INFO] Skiping bucket event configuration. It is already configured to trigger Train Model function.")
     else:
         new_conf = {}
         new_conf['LambdaFunctionConfigurations'] = []
@@ -172,7 +193,7 @@ def create_stack(resource_properties):
     except Exception as e:
         resource_properties['SampleWebclientPackage'] = resource_properties['SampleWebclientPackage'].replace("https://s3-us-east-1.amazonaws.com", "https://s3.amazonaws.com")
         webclient_pack = urlopen(resource_properties['SampleWebclientPackage'])
-    zipfile = ZipFile(StringIO(webclient_pack.read()))
+    zipfile = ZipFile(BytesIO(webclient_pack.read()))
 
     for file_name in zipfile.namelist():
         content = zipfile.open(file_name).read()
@@ -208,7 +229,7 @@ def delete_stack(resource_properties):
 
     s3_client = boto3.client('s3')
     #----------------------------------------------------------------------
-    print("[delete_stack] Cleaning %s bucket"%resource_properties['BrainBucket'])
+    print(("[delete_stack] Cleaning %s bucket"%resource_properties['BrainBucket']))
     #----------------------------------------------------------------------
     list_objects = s3_client.list_objects(Bucket=resource_properties['BrainBucket'])
     if "Contents" in list_objects and len(list_objects["Contents"]) > 0:
@@ -216,10 +237,10 @@ def delete_stack(resource_properties):
             try:
                 s3_client.delete_object(Bucket=resource_properties['BrainBucket'], Key=file['Key'])
             except Exception as e:
-                print e
+                print(e)
 
     #----------------------------------------------------------------------
-    print("[delete_stack] Cleaning %s bucket"%resource_properties['SampleWebClientBucket'])
+    print(("[delete_stack] Cleaning %s bucket"%resource_properties['SampleWebClientBucket']))
     #----------------------------------------------------------------------
     list_objects = s3_client.list_objects(Bucket=resource_properties['SampleWebClientBucket'])
     if "Contents" in list_objects and len(list_objects["Contents"]) > 0:
@@ -227,7 +248,7 @@ def delete_stack(resource_properties):
             try:
                 s3_client.delete_object(Bucket=resource_properties['SampleWebClientBucket'], Key=file['Key'])
             except Exception as e:
-                print e
+                print(e)
 
     print("[delete_stack] End")
 
@@ -241,7 +262,7 @@ def send_response(event, context, responseStatus, responseData):
                     'Data': responseData}
 
     o = urlparse(event['ResponseURL'])
-    conn = httplib.HTTPConnection(o.netloc)
+    conn = http.client.HTTPConnection(o.netloc)
     conn.request('PUT', event['ResponseURL'], json.dumps(responseBody))
     resp = conn.getresponse()
     content = resp.read()
@@ -272,19 +293,21 @@ def send_anonymous_usage_data(action_type, resource_properties):
         }
 
         url = 'https://metrics.awssolutionsbuilder.com/generic'
-        data = json.dumps(usage_data)
+        data = usage_data
         headers = {'content-type': 'application/json'}
-        print("[send_anonymous_usage_data] %s"%data)
-        req = Request(url, data, headers)
+        print(("[send_anonymous_usage_data] %s"%data))
+        f = urlencode(data)
+        f = f.encode('utf-8')
+        req = Request(url, f, headers)
         rsp = urlopen(req)
         content = rsp.read()
         rspcode = rsp.getcode()
-        print('[send_anonymous_usage_data] Response Code: {}'.format(rspcode))
-        print('[send_anonymous_usage_data] Response Content: {}'.format(content))
+        print(('[send_anonymous_usage_data] Response Code: {}'.format(rspcode)))
+        print(('[send_anonymous_usage_data] Response Content: {}'.format(content)))
 
         print("[send_anonymous_usage_data] End")
-    except Exception, e:
-        print("[send_anonymous_usage_data] Failed to Send Data")
+    except Exception as e:
+        print("[send_anonymous_usage_data] Failed to Send Data. Reason: {}".format(e))
 
 #======================================================================================================================
 # Lambda Entry Point
@@ -306,11 +329,9 @@ def lambda_handler(event, context):
         cf_desc = cf.describe_stacks(StackName=stack_name)
         stack_status = cf_desc['Stacks'][0]['StackStatus'].upper()
 
-        if 'DELETE' in request_type and "UPDATE" in stack_status:
-            request_type = "UPDATE"
         #----------------------------------------------------------
 
-        print("EventRequestType: %s - StackStatus: %s - RequestType: %s"%(event_request_type, stack_status, request_type))
+        print(("EventRequestType: %s - StackStatus: %s - RequestType: %s"%(event_request_type, stack_status, request_type)))
 
         if 'CREATE' in request_type:
             create_stack(event['ResourceProperties'])
@@ -318,10 +339,6 @@ def lambda_handler(event, context):
 
         elif 'UPDATE' in request_type:
             update_stack(event['ResourceProperties'])
-            send_anonymous_usage_data(request_type, event['ResourceProperties'])
-
-        elif 'DELETE' in request_type:
-            delete_stack(event['ResourceProperties'])
             send_anonymous_usage_data(request_type, event['ResourceProperties'])
 
     except Exception as e:

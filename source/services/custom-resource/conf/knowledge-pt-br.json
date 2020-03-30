@@ -15,12 +15,12 @@
     },
     "i18n": {
         "errorMessage": {
-            "text": "Ops. Aconteceu algo de errado!",
-            "speech": "Ops. Aconteceu algo de errado!"
+            "text": "Oops. Aconteceu algo de errado!",
+            "speech": "Oops. Aconteceu algo de errado!"
         },
         "nifMessage": {
-            "text": "Ops. Não entendi o que você me pediu!",
-            "speech": "Ops. Não entendi o que você me pediu!"
+            "text": "Oops. Não entendi o que você me pediu!",
+            "speech": "Oops. Não entendi o que você me pediu!"
         },
         "welcomeMessage": {
             "text": "Olá ${first_name}, como posso te ajudar!",
@@ -47,7 +47,7 @@
                 "body": "ajuda",
                 "response": [{
                     "speech": "Veja o que sei responder.",
-                    "text": "Qual seu nome<br/>Previsão do tempo<br/>Desbloquear senha."
+                    "text": "Qual seu nome | Previsão do tempo | Deixe um feedback."
                 }]
             },
             "_intents": [
@@ -61,12 +61,13 @@
         {
             "_id": "1000",
             "_source": {
-                "body": "Password reset sample",
-                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+                "body": "Leave feedback sample",
+                "arn": "%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%"
             },
             "_intents": [
-                "desbloquear senha",
-                "destravar senha"
+                "deixe um feedback",
+                "eu quero deixar um feedback",
+                "deixe um feedback"
             ]
         },
         {

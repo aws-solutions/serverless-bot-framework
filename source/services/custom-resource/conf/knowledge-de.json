@@ -15,12 +15,12 @@
     },
     "i18n": {
         "errorMessage": {
-            "text": "Ops. Ich habe nicht verstanden, was du gefragt hast!",
-            "speech": "Ops. Ich habe nicht verstanden, was du gefragt hast!"
+            "text": "Oops. Ich habe nicht verstanden, was du gefragt hast!",
+            "speech": "Oops. Ich habe nicht verstanden, was du gefragt hast!"
         },
         "nifMessage": {
-            "text": "Ops. Ich habe nicht verstanden, was du gefragt hast!",
-            "speech": "Ops. Ich habe nicht verstanden, was du gefragt hast!"
+            "text": "Oops. Ich habe nicht verstanden, was du gefragt hast!",
+            "speech": "Oops. Ich habe nicht verstanden, was du gefragt hast!"
         },
         "welcomeMessage": {
             "text": "Hi ${first_name}, wie kann ich Ihnen helfen?",
@@ -47,7 +47,7 @@
                 "body": "hilfe",
                 "response": [{
                     "speech": "So kann ich antworten.",
-                    "text": "Wie heißen Sie<br/>Wettervorhersage<br/>Passwort freischalten."
+                    "text": "Wie heißen Sie | Wettervorhersage | Hinterlasse ein Feedback."
                 }]
             },
             "_intents": [
@@ -60,13 +60,14 @@
         {
             "_id": "1000",
             "_source": {
-                "body": "Password reset sample",
-                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+                "body": "Leave feedback sample",
+                "arn": "%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%"
             },
             "_intents": [
-                "passwort freischalten",
-                "ich möchte mein passwort freischalten",
-                "mein passwort überprüfen"
+                "Hinterlasse ein Feedback",
+                "Ich möchte ein Feedback hinterlassen",
+                "Hinterlasse ein Feedback",
+                "Feedback"
             ]
         },
         {

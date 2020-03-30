@@ -47,7 +47,7 @@
                 "body": "ayuda",
                 "response": [{
                     "speech": "Ver lo que sé responder.",
-                    "text": "Cual es tu nombre<br/>Como esta el clima<br/>Desbloquear mi contrasena."
+                    "text": "Cual es tu nombre | Como esta el clima | Dejar un comentario."
                 }]
             },
             "_intents": [
@@ -61,13 +61,14 @@
         {
             "_id": "1000",
             "_source": {
-                "body": "Password reset sample",
-                "arn": "%%SAMPLE_PASSWORD_RESET_BOT_ARN%%"
+                "body": "Leave feedback sample",
+                "arn": "%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%"
             },
             "_intents": [
-                "confirmar senha",
-                "desbloquear mi contrasena",
-                "nombre y contrasena"
+                "dejar un comentario",
+                "Quiero dejar un comentario",
+                "Yo quiero dejar un comentario",
+                "realimentación"
             ]
         },
         {
