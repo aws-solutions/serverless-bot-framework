@@ -18,12 +18,12 @@
 
 from setuptools import setup
 setup(
-    name='bot-weather-forecast',
+    name='write-api-to-ssm-custom-resource',
     version='1.0',
-    description='AWS serverless bot framework weather forecast lambda function.',
+    description='Writes API from CFN param to SSM as a SecureString',
     author='AWS Solutions Development',
     zip_safe=False,
     install_requires=[
-        'requests==2.24.0'
-    ],
+        'crhelper==2.0.6'
+    ]
 )

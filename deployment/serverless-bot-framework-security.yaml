@@ -97,6 +97,8 @@ Resources:
               AttributeDataType: "String"
               Name: "email"
               Required: True
+          UserPoolAddOns:
+            AdvancedSecurityMode: "ENFORCED"
 
   CognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient

@@ -15,8 +15,19 @@
 # @author Solution Builders
 
 import json
+import os
+import uuid
+import boto3
+dynamodb = boto3.client('dynamodb')
 
-print('Loading function')
+table_name = os.environ.get('TABLE_NAME', False)
+
+if table_name:
+    try:
+        table_name = table_name.split('/')[1]
+    except Exception as e:
+        print("ERROR:", e)
+        table_name = False
 
 def lambda_handler(event, context):
     result = ""
@@ -30,8 +41,8 @@ def lambda_handler(event, context):
         step = None
 
     if step == None:
-        step = 2;
-        event['step'] = step;
+        step = 2
+        event['step'] = step
         if event['lang'] == "pt-BR":
             result = "Olá, esta é a interação 1. Qual o seu nome?"
 
@@ -62,8 +73,8 @@ def lambda_handler(event, context):
         }
 
     if step == 2:
-        step = 3;
-        event['step'] = step;
+        step = 3
+        event['step'] = step
         if event['lang'] == "pt-BR":
             result = event['name']['response'] + ", esta é a interação 2. Qual o seu Sobrenome?"
 
@@ -94,8 +105,8 @@ def lambda_handler(event, context):
         }
 
     if step == 3:
-        step = 4;
-        event['step'] = step;
+        step = 4
+        event['step'] = step
         if event['lang'] == "pt-BR":
             result = event['name']['response'] + " " + event['last_name']['response'] + ", esta é a interação 3. Qual a seu feedback?"
 
@@ -127,9 +138,9 @@ def lambda_handler(event, context):
 
     if step == 4:
         if (len(event['pwd']['response']) <= 50):
-
-            step = 5;
-            event['step'] = step;
+            
+            step = 5
+            event['step'] = step
             if event['lang'] == "pt-BR":
                 result = "Sucesso! Esta é a interação 4, a conversa se encerra aqui."
 
@@ -151,6 +162,28 @@ def lambda_handler(event, context):
             elif event['lang'] == "ru-RU":
                 result = "Успех! Это взаимодействие 4, разговор заканчивается."
 
+            if table_name:
+                try:
+                    dynamodb.put_item(TableName=table_name, Item={
+                        'uuid': {
+                            'S': str(uuid.uuid4())
+                        },
+                        'FirstName' : {
+                            'S': event['name']['response']
+                        },
+                        'LastName': {
+                            'S': event['last_name']['response']
+                        },
+                        'Feedback': {
+                            'S': event['pwd']['response']
+                        }
+                    })
+                    print("successfully wrote to table: ", table_name)
+
+                except Exception as e:
+                    print(f"Unable to put item in table ${table_name}")
+                    print("Error:", e)
+
             return {
                 "asyncConversation": {
                     "id": "confirma",
@@ -168,9 +201,9 @@ def lambda_handler(event, context):
             else:
                 count = count + 1
 
-            step = 4;
-            event['step'] = step;
-            event['count'] = 1;
+            step = 4
+            event['step'] = step
+            event['count'] = 1
 
             if count < 2:
                 if event['lang'] == "pt-BR":

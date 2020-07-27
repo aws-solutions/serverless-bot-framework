@@ -23,6 +23,8 @@ AWS SDK under the Apache License Version 2.0
 axios under the Massachusetts Institute of Technology (MIT) license
 bluebird under the Massachusetts Institute of Technology (MIT) license
 bluebird-as under the Massachusetts Institute of Technology (MIT) license
+boto3 under the Apache License Version 2.0
+crhelper under the Apache License Version 2.0
 dateformat under the Massachusetts Institute of Technology (MIT) license
 dispatcherjs under the Massachusetts Institute of Technology (MIT) license
 events under the Massachusetts Institute of Technology (MIT) license
@@ -36,6 +38,7 @@ path under the Massachusetts Institute of Technology (MIT) license
 react under the Massachusetts Institute of Technology (MIT) license
 react-testing-library under the Massachusetts Institute of Technology (MIT) license
 remove-punctuation under the Massachusetts Institute of Technology (MIT) license
+requests under the Apache License Version 2.0 license
 stats-percentile under the Massachusetts Institute of Technology (MIT) license
 svm under the Massachusetts Institute of Technology (MIT) license
 underscore under the Massachusetts Institute of Technology (MIT) license

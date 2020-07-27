@@ -14,6 +14,30 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
   (SO0027 - Sample Nested Stack) AWS Serverless Bot Framework %%VERSION%%. Deploys a React and Amplify-based website to an S3 bucket and Cloudfront distribution. Also integrates with Lambda functions in the parent stack that work as the brain for the chatbot application.
+
+Parameters:
+
+  WeatherAPIProvider:
+    Type: String
+    Description: Choice of weather api source or a random weather generator
+    Default: "Random Weather Generator"
+    AllowedValues:
+      - "Random Weather Generator"
+      - AccuWeather
+      - OpenWeather
+
+  WeatherAPIKey:
+    Type: String
+    Description: API key for weather API (Optional). Not required for Random Weather Generator
+    MinLength: 0
+    MaxLength: 64
+    AllowedPattern: '[a-zA-Z0-9]*'
+    NoEcho: True
+    Default: ""
+
+Conditions:
+  WeatherAPIChosen: !Not [!Equals [ !Ref WeatherAPIProvider, "Random Weather Generator"]]
+
 Mappings:
   SourceCode:
     General:
@@ -29,8 +53,8 @@ Resources:
       LoggingConfiguration:
         DestinationBucketName: !Ref Logs
         LogFilePrefix: web-client-bucket-logs/
-      BucketEncryption: 
-        ServerSideEncryptionConfiguration: 
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
             SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
@@ -63,9 +87,17 @@ Resources:
     Type: 'AWS::CloudFront::Distribution'
     Metadata:
       Comment: 'A simple CloudFront distribution with an S3 origin'
+      cfn_nag:
+        rules_to_suppress:
+          - id: W70
+            reason: "ViewerProtocolPolicy is set to 'redirect-to-https’ and there is no alternate domain for the distribution so CloudFrontDefaultCertificate has to be true"
+
     Properties:
       DistributionConfig:
         Comment: 'A simple distribution with an S3 origin'
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+          MinimumProtocolVersion: TLSv1.2_2018
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
@@ -90,7 +122,7 @@ Resources:
           TargetOriginId: !Sub 's3-origin-${WebClient}'
           ViewerProtocolPolicy: 'redirect-to-https'
         DefaultRootObject: 'index.html'
-        CustomErrorResponses: 
+        CustomErrorResponses:
           - ErrorCode: 404
             ResponsePagePath: '/index.html'
             ResponseCode: 200
@@ -112,7 +144,7 @@ Resources:
           Bucket: !GetAtt Logs.DomainName
           Prefix: Cloudfront-distribution-logs/
 
-  LambdaBasicExecutionRole:
+  KnowledgeLeaveFeedbackExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -139,6 +171,84 @@ Resources:
                     - !Ref 'AWS::Region'
                     - !Ref 'AWS::AccountId'
                     - log-group:/aws/lambda/*
+        - PolicyName: DynamoDBWrite
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "dynamodb:PutItem"
+                Resource: !GetAtt 'DynamoLeaveFeedback.Arn'
+
+  WeatherForecastLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+        - !If
+          - WeatherAPIChosen
+          - PolicyName: SSMGet
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action: ['ssm:GetParameter']
+                  Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}-weather-api-key
+          - !Ref "AWS::NoValue"
+
+  WriteAPIKeyToSSMCustomResourceLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Condition: WeatherAPIChosen
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+        - !If
+          - WeatherAPIChosen
+          - PolicyName: SSMUpdate
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action: ['ssm:PutParameter', 'ssm:DeleteParameter']
+                  Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}-weather-api-key
+          - !Ref "AWS::NoValue"
+
 
   Logs:
     Type: AWS::S3::Bucket
@@ -168,26 +278,72 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
-        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "sample-bot-weather-forecast.zip"]] 
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "sample-bot-weather-forecast.zip"]]
       Description: Sample - Weather Forecast
       Handler: index.lambda_handler
       MemorySize: 128
-      Role: !GetAtt 'LambdaBasicExecutionRole.Arn'
+      Role: !GetAtt 'WeatherForecastLambdaExecutionRole.Arn'
       Runtime: python3.8
       Timeout: 10
+      Environment:
+        Variables:
+          !If
+            - WeatherAPIChosen
+            - 
+              API_PROVIDER: !Ref WeatherAPIProvider
+              SSM_REFERENCE_TO_API_KEY: !Sub "${AWS::StackName}-weather-api-key"
+            - 
+              SSM_REFERENCE_TO_API_KEY: !Ref "AWS::NoValue"
+              API_PROVIDER: !Ref "AWS::NoValue"
+  
+  WriteAPIToSSMCustomResourceLambda:
+    Type: AWS::Lambda::Function
+    Condition: WeatherAPIChosen
+    Properties:
+      Runtime: python3.8
+      Role: !GetAtt 'WriteAPIKeyToSSMCustomResourceLambdaExecutionRole.Arn'
+      Handler: index.lambda_handler
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "write-api-to-ssm-custom-resource.zip"]]
+      Description: Write APIKey to SSM
+  
+  WriteKey:
+    Type: "Custom::WriteKey"
+    Condition: WeatherAPIChosen
+    Properties:
+      ServiceToken: !GetAtt 'WriteAPIToSSMCustomResourceLambda.Arn'
+      APIKey: !Ref WeatherAPIKey
+      SSMKeyNameAPI: !Sub "${AWS::StackName}-weather-api-key"
 
   KnowledgeLeaveFeedback:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
-        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "sample-leave-feedback.zip"]] 
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "sample-leave-feedback.zip"]]
       Description: Sample - Leave Feedback
       Handler: index.lambda_handler
       MemorySize: 128
-      Role: !GetAtt 'LambdaBasicExecutionRole.Arn'
+      Role: !GetAtt 'KnowledgeLeaveFeedbackExecutionRole.Arn'
       Runtime: python3.8
       Timeout: 60
+      Environment: 
+        Variables:
+          TABLE_NAME: !GetAtt DynamoLeaveFeedback.Arn
+
+  DynamoLeaveFeedback:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: "uuid"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "uuid"
+          KeyType: HASH
+      BillingMode: "PAY_PER_REQUEST"  
 
 Outputs:
   WebClient:
@@ -211,3 +367,6 @@ Outputs:
   KnowledgeLeaveFeedbackArn:
     Description: Knowledge leave feedback function ARN.
     Value: !GetAtt 'KnowledgeLeaveFeedback.Arn'
+  LeaveFeedbackDynamoDBTable:
+    Description: DynamoDB table name for feedback
+    Value: !Select [1, !Split ['/', !GetAtt DynamoLeaveFeedback.Arn]]

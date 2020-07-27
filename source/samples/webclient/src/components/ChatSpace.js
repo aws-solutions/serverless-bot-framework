@@ -48,7 +48,7 @@ class ChatSpace extends React.Component {
             const response = await API.post('jao_api', 'core/', params);
             let currentState = this.state;
             currentState.messages[index].response = response ? extractResponse(response) : "Error!";
-            textToSpeech(currentState.messages[index].response);
+            await textToSpeech(currentState.messages[index].response);
             currentState.lastResponse = response ? response : {};
             this.setState(currentState);
         }

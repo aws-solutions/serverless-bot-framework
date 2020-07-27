@@ -14,16 +14,47 @@
 
 # @author Solution Builders
 
+from crhelper import CfnResource
+import boto3
+
+helper = CfnResource()
+
+ssm = boto3.client('ssm')
+
+@helper.create
+def create_ssm(event, _):
+    ssm_key_name = str(event['ResourceProperties']['SSMKeyNameAPI'])
+    api_key = str(event['ResourceProperties']['APIKey'])
+    ssm.put_parameter(
+        Name = ssm_key_name,
+        Value = api_key,
+        Type = "SecureString"
+    )
+    helper.Data.update({"APIKey": api_key})
+    helper.Data.update({"SSMKeyNameAPI": ssm_key_name})
+
+@helper.update
+def update_ssm(event, _):
+    ssm_key_name = str(event['ResourceProperties']['SSMKeyNameAPI'])
+    api_key = str(event['ResourceProperties']['APIKey'])
+    ssm.put_parameter(
+        Name = ssm_key_name,
+        Value = api_key,
+        Type = "SecureString",
+        Overwrite = True
+    )
+    helper.Data.update({"APIKey": api_key})
+    helper.Data.update({"SSMKeyNameAPI": ssm_key_name})
 
 
-from setuptools import setup
-setup(
-    name='bot-weather-forecast',
-    version='1.0',
-    description='AWS serverless bot framework weather forecast lambda function.',
-    author='AWS Solutions Development',
-    zip_safe=False,
-    install_requires=[
-        'requests==2.24.0'
-    ],
-)
+
+@helper.delete
+def delete_ssm(event, _):
+    ssm_key_name = str(event['ResourceProperties']['SSMKeyNameAPI'])
+    ssm.delete_parameter(
+        Name = ssm_key_name
+    )
+
+
+def lambda_handler(event, context):
+    helper(event, context)

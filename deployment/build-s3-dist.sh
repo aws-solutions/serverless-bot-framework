@@ -38,8 +38,6 @@ rm -rf "$build_dist_dir"
 echo "find $source_dir/node_modules -iname "node_modules" -type d -exec rm -r "{}" \; 2> /dev/null"
 echo "find $source_dir/services -iname "node_modules" -type d -exec rm -r "{}" \; 2> /dev/null"
 echo "find $source_dir/samples -iname "node_modules" -type d -exec rm -r "{}" \; 2> /dev/null"
-echo "find ../ -type f -name 'package-lock.json' -delete"
-find $source_dir -type f -name 'package-lock.json' -delete
 echo "find ../ -type f -name '.DS_Store' -delete"
 find $source_dir -type f -name '.DS_Store' -delete
 echo "mkdir -p $template_dist_dir"
@@ -76,14 +74,15 @@ echo "--------------------------------------------------------------------------
 echo "[Rebuild] Core Resource"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/modules/b2.core
-npm install
+npm ci
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Core Service"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/core
-npm install
+npm ci
 zip -q -r9 $build_dist_dir/core.zip *
+rm -fR $source_dir/services/core/node_modules
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Custom Resource"
@@ -96,21 +95,24 @@ echo "--------------------------------------------------------------------------
 echo "[Packing] Polly Service"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/polly-service
-npm install
+npm ci
 zip -q -r9 $build_dist_dir/polly-service.zip *
+rm -fR $source_dir/services/polly-service/node_modules
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Train Model"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/train-model
-npm install
+npm ci
 zip -q -r9 $build_dist_dir/train-model.zip *
+rm -fR $source_dir/services/train-model/node_modules
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Sample Bot Weather Forecast"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/samples/bot-weather-forecast
 python3 setup.py install
+pip3 install -r requirements.txt --target .
 zip -q -r9 $build_dist_dir/sample-bot-weather-forecast.zip *
 echo ""
 echo "------------------------------------------------------------------------------"
@@ -123,14 +125,20 @@ echo "--------------------------------------------------------------------------
 echo "[Packing] Sample WebClient"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/samples/webclient
-npm install && npm run build
+npm ci && npm run build
 cd build
 zip -q -r9 $build_dist_dir/sample-webclient.zip *
+rm -fR  $source_dir/samples/webclient/node_modules
+echo ""
+echo "------------------------------------------------------------------------------"
+echo "[Packing] Sample API To SSM Custom Resource"
+echo "------------------------------------------------------------------------------"
+cd $source_dir/samples/write-api-to-ssm-custom-resource
+python3 setup.py install
+pip3 install -r requirements.txt --target .
+zip -q -r9 $build_dist_dir/write-api-to-ssm-custom-resource *
 
 echo "------------------------------------------------------------------------------"
 echo "[Clean] node_modules folders"
 echo "------------------------------------------------------------------------------"
 rm -fR $source_dir/modules/b2.core/node_modules
-rm -fR $source_dir/services/core/node_modules
-rm -fR $source_dir/services/polly-service/node_modules
-rm -fR $source_dir/services/train-model/node_modules

@@ -21,7 +21,7 @@ The solution is deployed using a CloudFormation template with a lambda backed cu
 Contains a nodejs module named b2.core that is used in train-model lambda function and polly-service lambda function.
 
 **source/samples**
-Includes three components, two sample lambda functions and a front-end web client. This code can be extended to add different functionalities to the bot.
+Includes four components, two sample lambda functions, a custom resource and a front-end web client. This code can be extended to add different functionalities to the bot.
 
 **source/services**
 Includes source code for three lambda functions, core, custom-resource, and polly-service.
@@ -31,12 +31,13 @@ A Python Lambda function used as a CloudFormation custom resource for configurin
 
 
 ## Creating a custom build
-The solution can be deployed through the CloudFormation template available on the solution home page: [Serverless Bot Framework](https://aws.amazon.com/solutions).
+The solution can be deployed through the CloudFormation template available on the solution home page: [Serverless Bot Framework](https://aws.amazon.com/solutions/implementations/serverless-bot-framework/).
 To make changes to the solution, download or clone this repo, update the source code and then run the deployment/build-s3-dist.sh script to deploy the updated Lambda code to an Amazon S3 bucket in your account.
 
 ### Prerequisites:
 * [AWS Command Line Interface](https://aws.amazon.com/cli/)
 * Node.js 10.x or later
+* (Optional) [AccuWeather](https://developer.accuweather.com/) or [OpenWeather](https://openweathermap.org/api) API keys
 
 ### 1. Create an Amazon S3 Bucket
 The CloudFormation template is configured to pull the Lambda deployment packages from Amazon S3 bucket in the region the template is being launched in. Create a bucket in the desired region with the region name appended to the name of the bucket. eg: for us-east-1 create a bucket named: ```my-bucket-us-east-1```

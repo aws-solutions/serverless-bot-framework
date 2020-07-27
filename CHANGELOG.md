@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2020-6-30
+### Added
+- Support for using API keys to get weather data
+- Functionality to write customer feedback to DynamoDB
+
+### Changed
+- Synchronized audio and text response in sample web client
+
 ## [1.1.0] - 2020-3-30
 ### Added
 - Cognito with Amplify javascript framework to have sign-in/register in place for secure access to the web application.
