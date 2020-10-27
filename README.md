@@ -21,7 +21,7 @@ The solution is deployed using a CloudFormation template with a lambda backed cu
 Contains a nodejs module named b2.core that is used in train-model lambda function and polly-service lambda function.
 
 **source/samples**
-Includes four components, two sample lambda functions, a custom resource and a front-end web client. This code can be extended to add different functionalities to the bot.
+Includes five components, three sample lambda functions, a custom resource and a front-end web client. This code can be extended to add different functionalities to the bot.
 
 **source/services**
 Includes source code for three lambda functions, core, custom-resource, and polly-service.
@@ -36,7 +36,7 @@ To make changes to the solution, download or clone this repo, update the source 
 
 ### Prerequisites:
 * [AWS Command Line Interface](https://aws.amazon.com/cli/)
-* Node.js 10.x or later
+* Node.js 12.x or later
 * (Optional) [AccuWeather](https://developer.accuweather.com/) or [OpenWeather](https://openweathermap.org/api) API keys
 
 ### 1. Create an Amazon S3 Bucket
@@ -77,4 +77,4 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
+limitations under the License.removed api and email

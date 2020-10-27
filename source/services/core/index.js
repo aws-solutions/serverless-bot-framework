@@ -20,11 +20,17 @@
 var B2 = require('b2.core');
 
 module.exports.handler = (event, context, callback) => {
+  console.log(JSON.stringify(event));
+  let parsedEvent = {
+    userInfo: event.userInfo,
+    ...event.body,
+  };
+  console.log(JSON.stringify(parsedEvent));
   B2.init(undefined, function(core){
-      core.resolveIntent(event, function(){
+      core.resolveIntent(parsedEvent, function(){
           core.on('simpleResponse', function(data){
             data = B2.CORE.cleanBinary(data);
-            core.checkIfVoiceIsNeeded(event, data, function(data){                    
+            core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
               B2.util.log.debug(JSON.stringify(data), { line: __line });
               core.endRequest();
               callback(null, data);
@@ -33,7 +39,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('backendResponse', function(data){
             data = B2.CORE.cleanBinary(data);                                
-            core.checkIfVoiceIsNeeded(event, data, function(data){
+            core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
               B2.util.log.debug(JSON.stringify(data), { line: __line });
               core.endRequest();
               callback(null, data);
@@ -42,7 +48,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('history', function(data){
             data = B2.CORE.cleanBinary(data);
-            core.checkIfVoiceIsNeeded(event, data, function(data){                    
+            core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
               B2.util.log.debug(JSON.stringify(data), { line: __line });
               core.endRequest();
               callback(null, data);
@@ -51,7 +57,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('syncConversation', function(data){
             data = B2.CORE.cleanBinary(data);
-            core.checkIfVoiceIsNeeded(event, data, function(data){                    
+            core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
               B2.util.log.debug(JSON.stringify(data), { line: __line });
               core.endRequest();
               callback(null, data);
@@ -60,7 +66,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('asyncConversation', function(data){
             data = B2.CORE.cleanBinary(data);
-            core.checkIfVoiceIsNeeded(event, data, function(data){                    
+            core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
               B2.util.log.debug(JSON.stringify(data), { line: __line });
               core.endRequest();
               callback(null, data);
@@ -69,7 +75,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('moreInformationNeeded', function(data){
               data = B2.CORE.cleanBinary(data);
-              core.checkIfVoiceIsNeeded(event, data, function(data){                    
+              core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
                 B2.util.log.debug(JSON.stringify(data), { line: __line });
                 core.endRequest();
                 callback(null, data);
@@ -78,7 +84,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('noIntentFound', function(data){
             data = B2.CORE.cleanBinary(data);
-              core.checkIfVoiceIsNeeded(event, data, function(data){                    
+              core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
                 B2.util.log.debug(JSON.stringify(data), { line: __line });
                 core.endRequest();
                 callback(null, data);
@@ -87,7 +93,7 @@ module.exports.handler = (event, context, callback) => {
 
           core.on('federated', function(data){
             data = B2.CORE.cleanBinary(data);
-            core.checkIfVoiceIsNeeded(event, data, function(data){                    
+            core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){                    
               B2.util.log.debug(JSON.stringify(data), { line: __line });
               core.endRequest();
               callback(null, data);

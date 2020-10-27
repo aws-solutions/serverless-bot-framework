@@ -36,43 +36,50 @@ BOT_SPEECH_PARAMS = {
         "Lang":"pt-BR",
         "SendLabel":"Enviar",
         "Voice": {"Male": "Ricardo", "Female":"Vitoria"},
-        "Knowledge": "knowledge-pt-br.json"
+        "Knowledge": "knowledge-pt-br.json",
+        "pizzaMenu": "pizza-menu_pt-br.json"
     },
     "Spanish": {
         "Lang":"es-US",
         "SendLabel":"Enviar",
         "Voice": {"Male": "Miguel", "Female":"Penelope"},
-        "Knowledge": "knowledge-es.json"
+        "Knowledge": "knowledge-es.json",
+        "pizzaMenu": "pizza-menu_es-US.json"
     },
     "English": {
         "Lang":"en-US",
         "SendLabel":"Send",
         "Voice": {"Male": "Joey", "Female":"Joanna"},
-        "Knowledge": "knowledge-en.json"
+        "Knowledge": "knowledge-en.json",
+        "pizzaMenu": "pizza-menu_en.json"
     },
     "French": {
         "Lang":"fr-FR",
         "SendLabel":"Envoyer",
         "Voice": {"Male": "Mathieu", "Female":"Celine"},
-        "Knowledge": "knowledge-fr.json"
+        "Knowledge": "knowledge-fr.json",
+        "pizzaMenu": "pizza-menu_fr.json"
     },
     "Italian": {
         "Lang":"it-IT",
         "SendLabel":"Inviare",
         "Voice": {"Male": "Giorgio", "Female":"Carla"},
-        "Knowledge": "knowledge-it.json"
+        "Knowledge": "knowledge-it.json",
+        "pizzaMenu": "pizza-menu_it.json"
     },
     "German": {
         "Lang":"de-DE",
         "SendLabel":"Senden",
         "Voice": {"Male": "Hans", "Female":"Vicki"},
-        "Knowledge": "knowledge-de.json"
+        "Knowledge": "knowledge-de.json",
+        "pizzaMenu": "pizza-menu_de.json"
     },
     "Russian": {
         "Lang":"ru-RU",
         "SendLabel":"послать",
         "Voice": {"Male": "Maxim", "Female":"Tatyana"},
-        "Knowledge": "knowledge-ru.json"
+        "Knowledge": "knowledge-ru.json",
+        "pizzaMenu": "pizza-menu_ru.json"
     }
 }
 
@@ -90,6 +97,7 @@ def replace_config_anchors(content, resource_properties):
     content = content.replace('%%CONTEXT_TABLE%%', resource_properties['ContextTable'])
     content = content.replace('%%SAMPLE_LEAVE_FEEDBACK_BOT_ARN%%', resource_properties['SampleLeaveFeedbackBotArn'])
     content = content.replace('%%SAMPLE_WEATHER_FORECAST_BOT_ARN%%', resource_properties['SampleWeatherForecastBotArn'])
+    content = content.replace('%%SAMPLE_PIZZA_ORDER_BOT_ARN%%', resource_properties['SampleOrderPizzaBotArn'])
     content = content.replace('%%SEND_LABEL%%', BOT_SPEECH_PARAMS[resource_properties['BotLanguage']]["SendLabel"])
     content = content.replace('%%GENDER%%', resource_properties['BotGender'])
     if 'CognitoIdentityPool' in resource_properties:
@@ -182,6 +190,17 @@ def create_stack(resource_properties):
         content = f.read().decode("utf-8")
         content = replace_config_anchors(content, resource_properties)
         s3_client.put_object(Body=content, Bucket=resource_properties['BrainBucket'], Key='knowledge.json')
+
+    #----------------------------------------------------------------------
+    print("[create_stack] Process PizzaMenu File")
+    #----------------------------------------------------------------------
+    content = ""
+    pizzaMenu_file = BOT_SPEECH_PARAMS[resource_properties['BotLanguage']]["pizzaMenu"]
+    with open('conf/%s'%pizzaMenu_file, 'rb') as f:
+        content = f.read().decode("utf-8")
+
+        s3_client.put_object(Body=content, Bucket=resource_properties['SampleWebClientBucket'], Key='pizza-menus/pizza-menu.json')
+
 
     #----------------------------------------------------------------------
     print("[create_stack] Process Webclient Sample Package")

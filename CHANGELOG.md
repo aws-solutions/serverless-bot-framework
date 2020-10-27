@@ -4,13 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2020-10-27
+### Added
+- A dynamic chatbot that demonstrates how to integrate a chatbot with a back-end database, such as Amazon DynamoDB, to build an automated order taking service (in this example, a pizza ordering service).
+- When the customer starts their order, the chatbot retrieves the pizza menu from the back-end database, and displays it to the customer.
+- The chatbot interacts with the customer to extract order details (for example, type and size of the pizza) and confirms the order.
+- The order history is stored in a DynamoDB table, which helps facilitate a personalized customer experience.
+- Functionality to automatically extract user's email, used by Amazon Cognito to authenticate the user with Amazon API Gateway, to use it as customerId.
+
 ## [1.2.0] - 2020-6-30
 ### Added
-- Support for using API keys to get weather data
-- Functionality to write customer feedback to DynamoDB
+- Support for using API keys to get weather data.
+- Functionality to write customer feedback to DynamoDB.
 
 ### Changed
-- Synchronized audio and text response in sample web client
+- Synchronized audio and text response in sample web client.
 
 ## [1.1.0] - 2020-3-30
 ### Added

@@ -107,6 +107,15 @@ npm ci
 zip -q -r9 $build_dist_dir/train-model.zip *
 rm -fR $source_dir/services/train-model/node_modules
 echo ""
+echo ""
+echo "------------------------------------------------------------------------------"
+echo "[Packing] Order Pizza"
+echo "------------------------------------------------------------------------------"
+cd $source_dir/samples/order-pizza
+npm ci
+zip -q -r9 $build_dist_dir/order-pizza.zip *
+rm -fR $source_dir/samples/order-pizza/node_modules
+echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Sample Bot Weather Forecast"
 echo "------------------------------------------------------------------------------"

@@ -32,6 +32,7 @@ Parameters:
     MinLength: 0
     MaxLength: 64
     AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: API key must only contain uppercase and lowercase letters and numbers
     NoEcho: True
     Default: ""
 
@@ -249,6 +250,72 @@ Resources:
                   Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}-weather-api-key
           - !Ref "AWS::NoValue"
 
+  OrderPizzaFunctionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Policies:
+          - PolicyName: WebClientBucket
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:GetObject
+                  Resource: !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref 'WebClient'
+                      - /
+                      - 'pizza-menus'
+                      - /*                 
+          - PolicyName: DynamoDB
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:BatchGetItem
+                    - dynamodb:BatchWriteItem
+                    - dynamodb:PutItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:GetItem
+                    - dynamodb:Scan
+                    - dynamodb:Query
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - !GetAtt 'DynamoPizzaOrders.Arn'
+                    - !Join
+                      - ''
+                      - - !GetAtt 'DynamoPizzaOrders.Arn'
+                        - /*
+                    - !GetAtt 'DynamoPizzaMenus.Arn'
+                    - !Join
+                      - ''
+                      - - !GetAtt 'DynamoPizzaMenus.Arn'
+                        - /*
+          - PolicyName: CloudWatchLogs
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: !Join
+                    - ':'
+                    - - arn:aws:logs
+                      - !Ref 'AWS::Region'
+                      - !Ref 'AWS::AccountId'
+                      - log-group:/aws/lambda/*
 
   Logs:
     Type: AWS::S3::Bucket
@@ -295,7 +362,7 @@ Resources:
             - 
               SSM_REFERENCE_TO_API_KEY: !Ref "AWS::NoValue"
               API_PROVIDER: !Ref "AWS::NoValue"
-  
+
   WriteAPIToSSMCustomResourceLambda:
     Type: AWS::Lambda::Function
     Condition: WeatherAPIChosen
@@ -307,7 +374,7 @@ Resources:
         S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
         S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "write-api-to-ssm-custom-resource.zip"]]
       Description: Write APIKey to SSM
-  
+
   WriteKey:
     Type: "Custom::WriteKey"
     Condition: WeatherAPIChosen
@@ -330,7 +397,29 @@ Resources:
       Timeout: 60
       Environment: 
         Variables:
-          TABLE_NAME: !GetAtt DynamoLeaveFeedback.Arn
+          TABLE_NAME: !Ref 'DynamoLeaveFeedback'
+
+  KnowledgeOrderPizza:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"], "order-pizza.zip"]]
+      Description: Order Pizza Function
+      Handler: index.handler
+      MemorySize: 128
+      Environment:
+        Variables:
+          PIZZA_MENUS_INITIALIZATION_BUCKET: !Ref 'WebClient'
+          PIZZA_MENUS_INITIALIZATION_FILE: 'pizza-menus/pizza-menu.json'
+          PIZZA_ORDERS_TABLE: !Ref 'DynamoPizzaOrders'
+          PIZZA_MENUS_TABLE: !Ref 'DynamoPizzaMenus'
+          PIZZA_MENU_ID: 'main_menu_1'
+          PIZZA_ORDERS_GLOBAL_INDEX_NAME: 'customerId-orderTimestamp-index'
+          RE_INITIALIZE_MENUS_TABLE: 'false'
+      Role: !GetAtt 'OrderPizzaFunctionRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 180
 
   DynamoLeaveFeedback:
     Type: AWS::DynamoDB::Table
@@ -343,7 +432,46 @@ Resources:
       KeySchema:
         - AttributeName: "uuid"
           KeyType: HASH
-      BillingMode: "PAY_PER_REQUEST"  
+      BillingMode: "PAY_PER_REQUEST"
+
+  DynamoPizzaOrders:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: orderId
+          AttributeType: S
+        - AttributeName: customerId
+          AttributeType: S
+        - AttributeName: orderTimestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: orderId
+          KeyType: HASH
+      BillingMode: "PAY_PER_REQUEST"
+      GlobalSecondaryIndexes:
+        - IndexName: customerId-orderTimestamp-index
+          KeySchema:
+            - AttributeName: customerId
+              KeyType: HASH
+            - AttributeName: orderTimestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  DynamoPizzaMenus:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: menuId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: menuId
+          KeyType: HASH
+      BillingMode: "PAY_PER_REQUEST"
 
 Outputs:
   WebClient:
@@ -370,3 +498,9 @@ Outputs:
   LeaveFeedbackDynamoDBTable:
     Description: DynamoDB table name for feedback
     Value: !Select [1, !Split ['/', !GetAtt DynamoLeaveFeedback.Arn]]
+  KnowledgeOrderPizza:
+    Description: Knowledge order pizza function name.
+    Value: !Ref 'KnowledgeOrderPizza'
+  KnowledgeOrderPizzaArn:
+    Description: Knowledge order pizza function ARN.
+    Value: !GetAtt 'KnowledgeOrderPizza.Arn'

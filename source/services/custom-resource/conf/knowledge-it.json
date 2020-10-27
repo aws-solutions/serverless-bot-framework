@@ -48,7 +48,7 @@
                 "body": "Aiuto",
                 "response": [{
                     "speech": "È quello che posso rispondere.",
-                    "text": "Qual è il tuo nome | Previsione del moto | lasciare un feedback."
+                    "text": "Qual è il tuo nome | Previsione del moto | lasciare un feedback | Ordina la pizza."
                 }]
             },
             "_intents": [
@@ -100,6 +100,20 @@
                 "previsione del moto",
                 "previsioni del tempo",
                 "com'è il tempo"
+            ]
+        },
+        {
+            "_id": "1002",
+            "_source": {
+                "body": "Order Pizza Sample",
+                "arn": "%%SAMPLE_PIZZA_ORDER_BOT_ARN%%"
+            },
+            "_intents": [
+                "Vorrei ordinare una pizza",
+                "ordina la pizza",
+                "ordinare la pizza",
+                "Voglio la pizza",
+                "pizza"
             ]
         }
     ]

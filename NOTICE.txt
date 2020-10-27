@@ -46,5 +46,6 @@ underscore.string under the Massachusetts Institute of Technology (MIT) license
 util under the Massachusetts Institute of Technology (MIT) license
 uuid under the Massachusetts Institute of Technology (MIT) license
 winston under the Massachusetts Institute of Technology (MIT) license
+order-id under the Massachusetts Institute of Technology (MIT) license
 
 The licenses for these third party components are included in LICENSE.txt

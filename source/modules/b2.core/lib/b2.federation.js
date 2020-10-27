@@ -38,7 +38,7 @@ B2.FEDERATION.prototype.callFederatedBrain = function (firstbrain, event) {
         req.body    = JSON.stringify(event);
         req.headers['x-api-key'] = firstbrain["API-KEY"];
         var send = new AWS.NodeHttpClient();
-    
+        console.debug(`Event passed to callFedration brain: ${JSON.stringify(event)}`);
         try {
           send.handleRequest(req, null, function(httpResp) {
               var respBody = '';

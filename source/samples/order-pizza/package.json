@@ -1,0 +1,19 @@
+{
+  "name": "order-pizza",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Solution Builders",
+  "license": "Apache License, Version 2.0",
+  "dependencies": {
+    "order-id": "^2.1.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.0",
+    "jsdoc": "^3.6.6"
+  }
+}

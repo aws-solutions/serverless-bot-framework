@@ -249,11 +249,13 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
                 B2.util.log.info("Total of Knowledge Found [" + totalKnowledge + "]", { line: __line });
                 _self.metrics.totalKnowledgeFound = totalKnowledge;
                 _self.metrics.classificationResults = c;
-
+                console.log('===== brain.getknowldge');
                 var producers = B2.getModule("PRODUCERS", instance);
 
                 function returnFilledDefaultResponse(response, bestMatch) {
+                    console.log('===== inside returnFilledDefaultResponse');
                     response.rawIntent    = rawIntent;
+                    response.userInfo = event.userInfo;
                     response.environmentVars = event.environmentVars;
                     response.sessionID    = event.sessionID;
                     response.uid          = event.uid;
@@ -470,6 +472,7 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
                                     response.command      = bestMatch.knowledge._source.command
                                     response.commandID    = bestMatch.knowledge._source.commandID
                                     response.entities     = entities;
+                                    response.userInfo = event.userInfo;
                                     if (response.tags === undefined)
                                         response.tags     = [];
                                     response.tags         = _.extend(response.tags, _self.metrics.tags);
@@ -487,7 +490,6 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
                                 // If cannot extract some parameter, ask something.
                                 producers.on('moreInformationNeeded', function(response){
                                     response = returnFilledDefaultResponse(response, bestMatch);
-
                                     response.entities     = entities;
                                     if (response.tags === undefined)
                                         response.tags     = [];
@@ -501,6 +503,7 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
                                     B2.util.log.info("Backend Response [intent=" + intent + ", response=" + JSON.stringify(response) + "]", { line: __line });
                                     
                                     response = returnFilledDefaultResponse(response, bestMatch);
+                                    response.userInfo = event.userInfo;
                                     response.entities     = entities;
                                     if (response.tags === undefined)
                                         response.tags     = [];
@@ -550,6 +553,7 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
                                 producers.syncConversation(bestMatch, function(response){
                                     response = returnFilledDefaultResponse(response, bestMatch);
                                     response.entities     = entities;
+                                    response.userInfo = event.userInfo;
                                     if (response.tags === undefined)
                                         response.tags     = [];
                                     response.tags         = _.extend(response.tags, _self.metrics.tags);
@@ -566,6 +570,7 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
 
                                 producers.asyncConversation(bestMatch, function(response){
                                     response = returnFilledDefaultResponse(response, bestMatch);
+                                    response.userInfo = event.userInfo;
                                     response.entities     = entities;
                                     if (response.tags === undefined)
                                         response.tags     = [];
@@ -583,6 +588,7 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
                                 producers.treeConversation(intent, bestMatch, function(response, payload){
                                     response = returnFilledDefaultResponse(response, bestMatch);
                                     response.entities     = entities;
+                                    response.userInfo = event.userInfo;
                                     if (response.tags === undefined)
                                         response.tags     = [];
                                     response.tags         = _.extend(response.tags, _self.metrics.tags);
@@ -653,6 +659,7 @@ B2.CORE.prototype.resolveIntent = function (intent, callback) {
 B2.CORE.prototype.resolveIntentObject = function (intent, payload, callback) {
     var _self = this;
     var _id = intent._id;
+    payload.userInfo = _self.event.userInfo;
 
     var rawIntent = intent.rawIntent;
 
@@ -742,6 +749,7 @@ B2.CORE.prototype.resolveIntentObject = function (intent, payload, callback) {
                         B2.util.log.info("Backend Response [intent=" + JSON.stringify(intent) + ", response=" + JSON.stringify(response) + "]", { line: __line });
                         response = returnFilledDefaultResponse(response, bestMatch);
                         response.entities     = _self.entities;
+                        response.userInfo = _self.event.userInfo;
                         if (response.tags === undefined)
                             response.tags     = [];
                         response.tags         = _.extend(response.tags, _self.metrics.tags);

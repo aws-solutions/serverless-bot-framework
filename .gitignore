@@ -8,4 +8,7 @@
 .staging
 .DS_STORE
 node_modules/
-__pycache__
+venv/
+__pycache__/
+.pytest_cache
+geckodriver.log

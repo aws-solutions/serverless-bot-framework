@@ -135,7 +135,7 @@ Resources:
       Parameters:
         WeatherAPIKey: !Ref WeatherAPIKey
         WeatherAPIProvider: !Ref WeatherAPIProvider
-        
+      
   LogsBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
@@ -445,6 +445,7 @@ Resources:
                 Resource:
                   - !GetAtt 'SampleStack.Outputs.KnowledgeWeatherForecastArn'
                   - !GetAtt 'SampleStack.Outputs.KnowledgeLeaveFeedbackArn'
+                  - !GetAtt 'SampleStack.Outputs.KnowledgeOrderPizzaArn'
         - PolicyName: CloudWatchLogs
           PolicyDocument:
             Version: '2012-10-17'
@@ -460,15 +461,7 @@ Resources:
                     - !Ref 'AWS::Region'
                     - !Ref 'AWS::AccountId'
                     - log-group:/aws/lambda/*
-        - PolicyName: xrayLambdaPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Action:
-                - "xray:PutTraceSegments"
-                - "xray:PutTelemetryRecords"
-                Effect: Allow
-                Resource: "*"
+
   Core:
     Type: AWS::Lambda::Function
     Properties:
@@ -587,6 +580,15 @@ Resources:
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
+        RequestTemplates:
+          "application/json": "{
+            \"body\" : $input.json('$'),
+                \"userInfo\" : {
+                    \"email\" : \"$context.authorizer.claims.email\",
+                    \"sub\" : \"$context.authorizer.claims.sub\"
+            } 
+          }"
+        PassthroughBehavior: WHEN_NO_TEMPLATES
         Uri: !Join
           - ''
           - - 'arn:aws:apigateway:'
@@ -598,7 +600,7 @@ Resources:
           - ResponseParameters:
               method.response.header.Access-Control-Allow-Origin: '''*'''
             ResponseTemplates:
-              application/json: ''
+              application/json: '' 
             StatusCode: '200'
       ResourceId: !Ref 'BotResourceCore'
       RestApiId: !Ref 'BotApi'
@@ -944,6 +946,7 @@ Resources:
       CognitoUserPoolId: !GetAtt 'SecurityStack.Outputs.CognitoUserPoolId'
       CognitoUserPoolClientId: !GetAtt 'SecurityStack.Outputs.CognitoUserPoolClientId'
       SampleWeatherForecastBotArn: !GetAtt 'SampleStack.Outputs.KnowledgeWeatherForecast'
+      SampleOrderPizzaBotArn: !GetAtt 'SampleStack.Outputs.KnowledgeOrderPizza'
       TrainModelArn: !GetAtt 'TrainModel.Arn'
       StackName: !Ref 'AWS::StackName'
 

@@ -344,6 +344,7 @@ B2.PRODUCERS.prototype.backendResponse = function (intent, bestMatch, callback, 
             payload = {};
         }
         payload.lang = core.event.lang;
+        payload.userInfo = core.event.userInfo;
         payload._tags = bestMatch._tags;
         payload._entities = bestMatch._entities;
         payload._temporalEntities = bestMatch._temporalEntities;
