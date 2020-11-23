@@ -1,0 +1,234 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test LambdaToPolly construct 1`] = `
+Object {
+  "Conditions": Object {
+    "AnonymousDatatoAWS": Object {
+      "Fn::Equals": Array [
+        "Yes",
+        "Yes",
+      ],
+    },
+  },
+  "Parameters": Object {
+    "AssetParametersb8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7ArtifactHashD0543C8E": Object {
+      "Description": "Artifact hash for asset \\"b8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7\\"",
+      "Type": "String",
+    },
+    "AssetParametersb8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7S3Bucket6B44FF3F": Object {
+      "Description": "S3 bucket for asset \\"b8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7\\"",
+      "Type": "String",
+    },
+    "AssetParametersb8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7S3VersionKey9B6B3CE1": Object {
+      "Description": "S3 key for asset version \\"b8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "SolutionHelperCreateUniqueIDAF03406A": Object {
+      "Condition": "AnonymousDatatoAWS",
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Resource": "UUID",
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "SolutionHelperLambdaFunctionAE9686A2",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::CreateUUID",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SolutionHelperLambdaFunctionAE9686A2": Object {
+      "Condition": "AnonymousDatatoAWS",
+      "DependsOn": Array [
+        "SolutionHelperLambdaFunctionServiceRoleDefaultPolicy194D0775",
+        "SolutionHelperLambdaFunctionServiceRole80B1CBC7",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersb8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7S3Bucket6B44FF3F",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7S3VersionKey9B6B3CE1",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersb8e50c83f06cec394d02975e765534957b48b53b2ff238d0fb54b568f0f703e7S3VersionKey9B6B3CE1",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "This function generates UUID for each deployment and sends anonymous data to the AWS Solutions team",
+        "Handler": "lambda_function.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "SolutionHelperLambdaFunctionServiceRole80B1CBC7",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.8",
+        "Timeout": 30,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SolutionHelperLambdaFunctionServiceRole80B1CBC7": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SolutionHelperLambdaFunctionServiceRoleDefaultPolicy194D0775": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SolutionHelperLambdaFunctionServiceRoleDefaultPolicy194D0775",
+        "Roles": Array [
+          Object {
+            "Ref": "SolutionHelperLambdaFunctionServiceRole80B1CBC7",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "SolutionHelperSendAnonymousData9B19E31D": Object {
+      "Condition": "AnonymousDatatoAWS",
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Region": Object {
+          "Ref": "AWS::Region",
+        },
+        "Resource": "AnonymousMetric",
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "SolutionHelperLambdaFunctionAE9686A2",
+            "Arn",
+          ],
+        },
+        "SolutionId": "SO0027",
+        "UUID": Object {
+          "Fn::GetAtt": Array [
+            "SolutionHelperCreateUniqueIDAF03406A",
+            "UUID",
+          ],
+        },
+        "Version": "%%VERSION%%",
+        "botGender": "Male",
+        "botLanguage": "English",
+        "botName": "Joe",
+      },
+      "Type": "Custom::AnonymousData",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;

@@ -1,0 +1,1784 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test CognitoApiLambda construct 1`] = `
+Object {
+  "Outputs": Object {
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiEndpointDEF0E3D5": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+            },
+            ".execute-api.",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentStageprodF489CB87",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecArtifactHash02D1E581": Object {
+      "Description": "Artifact hash for asset \\"64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cec\\"",
+      "Type": "String",
+    },
+    "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3Bucket2CC07D2E": Object {
+      "Description": "S3 bucket for asset \\"64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cec\\"",
+      "Type": "String",
+    },
+    "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3VersionKey677DF11A": Object {
+      "Description": "S3 key for asset version \\"64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cec\\"",
+      "Type": "String",
+    },
+    "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfArtifactHash37E12FF1": Object {
+      "Description": "Artifact hash for asset \\"a99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbf\\"",
+      "Type": "String",
+    },
+    "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3Bucket54AF3848": Object {
+      "Description": "S3 bucket for asset \\"a99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbf\\"",
+      "Type": "String",
+    },
+    "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3VersionKeyE4BE7658": Object {
+      "Description": "S3 key for asset version \\"a99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbf\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionC740F1EE": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W70",
+              "reason": "Since the distribution uses the CloudFront domain name, CloudFront automatically sets the security policy to TLSv1 regardless of the value of MinimumProtocolVersion",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "DistributionConfig": Object {
+          "DefaultCacheBehavior": Object {
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "Compress": true,
+            "TargetOriginId": "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionOrigin169205EA0",
+            "ViewerProtocolPolicy": "redirect-to-https",
+          },
+          "DefaultRootObject": "index.html",
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "IPV6Enabled": true,
+          "Logging": Object {
+            "Bucket": Object {
+              "Fn::GetAtt": Array [
+                "CloudfrontStaticWebsiteCloudFrontToS3CloudfrontLoggingBucketC13ED68E",
+                "RegionalDomainName",
+              ],
+            },
+          },
+          "Origins": Array [
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionOrigin169205EA0",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionOrigin1S3Origin74637C1D",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+      "Type": "AWS::CloudFront::Distribution",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionOrigin1S3Origin74637C1D": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionOrigin169205EA0",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3CloudfrontLoggingBucketC13ED68E": Object {
+      "DeletionPolicy": "Retain",
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W35",
+              "reason": "This S3 bucket is used as the access logging bucket for CloudFront Distribution",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3CloudfrontLoggingBucketPolicyCD9B2BFC": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "CloudfrontStaticWebsiteCloudFrontToS3CloudfrontLoggingBucketC13ED68E",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "CloudfrontStaticWebsiteCloudFrontToS3CloudfrontLoggingBucketC13ED68E",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+              "Sid": "HttpsOnly",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "GLACIER",
+                  "TransitionInDays": 90,
+                },
+              ],
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "LoggingConfiguration": Object {
+          "DestinationBucketName": Object {
+            "Ref": "CloudfrontStaticWebsiteCloudFrontToS3S3LoggingBucketEC2D00FE",
+          },
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3S3BucketPolicy7E03794C": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "F16",
+              "reason": "Public website bucket policy requires a wildcard principal",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+              "Sid": "HttpsOnly",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionOrigin1S3Origin74637C1D",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3S3LoggingBucketEC2D00FE": Object {
+      "DeletionPolicy": "Retain",
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W35",
+              "reason": "This S3 bucket is used as the access logging bucket for another bucket",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CloudfrontStaticWebsiteCloudFrontToS3S3LoggingBucketPolicy6A886C7D": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "CloudfrontStaticWebsiteCloudFrontToS3S3LoggingBucketEC2D00FE",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "CloudfrontStaticWebsiteCloudFrontToS3S3LoggingBucketEC2D00FE",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+              "Sid": "HttpsOnly",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "CognitoApiCorePollyLambdaBotApiApiAccessLogGroupDF2ABC9A": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "CognitoApiCorePollyLambdaBotApiCognitoAuthorizer8DDC0543": Object {
+      "Properties": Object {
+        "IdentitySource": "method.request.header.Authorization",
+        "Name": "authorizer",
+        "ProviderARNs": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "CognitoApiCorePollyLambdaBotApiCognitoUserPool8534D713",
+              "Arn",
+            ],
+          },
+        ],
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+        "Type": "COGNITO_USER_POOLS",
+      },
+      "Type": "AWS::ApiGateway::Authorizer",
+    },
+    "CognitoApiCorePollyLambdaBotApiCognitoUserPool8534D713": Object {
+      "Properties": Object {
+        "AccountRecoverySetting": Object {
+          "RecoveryMechanisms": Array [
+            Object {
+              "Name": "verified_email",
+              "Priority": 1,
+            },
+          ],
+        },
+        "AdminCreateUserConfig": Object {
+          "AllowAdminCreateUserOnly": true,
+          "InviteMessageTemplate": Object {
+            "EmailMessage": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "<p>You are invited to join the Serverless Bot Framework Solution.</p>
+        <p>Username: <strong>{username}</strong></p>
+        <p>Password: <strong>{####}</strong></p>
+        <p>Console: <strong>https://",
+                  Object {
+                    "Fn::GetAtt": Array [
+                      "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionC740F1EE",
+                      "DomainName",
+                    ],
+                  },
+                  "/</strong></p>",
+                ],
+              ],
+            },
+            "EmailSubject": "Welcome to Serverless Bot Framework",
+            "SMSMessage": "Your username is {username} and temporary password is {####}.",
+          },
+        },
+        "AliasAttributes": Array [
+          "email",
+        ],
+        "AutoVerifiedAttributes": Array [
+          "email",
+        ],
+        "EmailVerificationMessage": "Your Serverless Bot Framework console verification code is {####}.",
+        "EmailVerificationSubject": "Your Serverless Bot Framework console verification code",
+        "Schema": Array [
+          Object {
+            "Mutable": false,
+            "Name": "email",
+            "Required": true,
+          },
+        ],
+        "SmsVerificationMessage": "Your Serverless Bot Framework console verification code is {####}.",
+        "UserPoolAddOns": Object {
+          "AdvancedSecurityMode": "ENFORCED",
+        },
+        "VerificationMessageTemplate": Object {
+          "DefaultEmailOption": "CONFIRM_WITH_CODE",
+          "EmailMessage": "Your Serverless Bot Framework console verification code is {####}.",
+          "EmailSubject": "Your Serverless Bot Framework console verification code",
+          "SmsMessage": "Your Serverless Bot Framework console verification code is {####}.",
+        },
+      },
+      "Type": "AWS::Cognito::UserPool",
+    },
+    "CognitoApiCorePollyLambdaBotApiCognitoUserPoolClient0DB1F408": Object {
+      "Properties": Object {
+        "AllowedOAuthFlowsUserPoolClient": false,
+        "UserPoolId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiCognitoUserPool8534D713",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolClient",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D": Object {
+      "Properties": Object {
+        "Description": "Serverless-bot-framework API that exposes the chatbot functionalities",
+        "EndpointConfiguration": Object {
+          "Types": Array [
+            "EDGE",
+          ],
+        },
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-API",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiAccount1C4EF109": Object {
+      "DependsOn": Array [
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "CognitoApiCorePollyLambdaBotApiLambdaRestApiCloudWatchRole51BB1B7E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiCloudWatchRole51BB1B7E": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:DescribeLogGroups",
+                    "logs:DescribeLogStreams",
+                    "logs:PutLogEvents",
+                    "logs:GetLogEvents",
+                    "logs:FilterLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaRestApiCloudWatchRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentB9B3B87Ed62158db770be05e2867f42ce76d6472": Object {
+      "DependsOn": Array [
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApicoreOPTIONS7F0B2B0B",
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApicorePOST6324F1F5",
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApicore2E2A3C63",
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyOPTIONS11C556A7",
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyPOST21D1622F",
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyC99E1A7B",
+        "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicesDFF33310",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W45",
+              "reason": "ApiGateway has AccessLogging enabled in AWS::ApiGateway::Stage resource, but cfn_nag checkes for it in AWS::ApiGateway::Deployment resource",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentStageprodF489CB87": Object {
+      "Properties": Object {
+        "AccessLogSetting": Object {
+          "DestinationArn": Object {
+            "Fn::GetAtt": Array [
+              "CognitoApiCorePollyLambdaBotApiApiAccessLogGroupDF2ABC9A",
+              "Arn",
+            ],
+          },
+          "Format": "{\\"requestId\\":\\"$context.requestId\\",\\"ip\\":\\"$context.identity.sourceIp\\",\\"user\\":\\"$context.identity.user\\",\\"caller\\":\\"$context.identity.caller\\",\\"requestTime\\":\\"$context.requestTime\\",\\"httpMethod\\":\\"$context.httpMethod\\",\\"resourcePath\\":\\"$context.resourcePath\\",\\"status\\":\\"$context.status\\",\\"protocol\\":\\"$context.protocol\\",\\"responseLength\\":\\"$context.responseLength\\"}",
+        },
+        "DeploymentId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentB9B3B87Ed62158db770be05e2867f42ce76d6472",
+        },
+        "MethodSettings": Array [
+          Object {
+            "DataTraceEnabled": true,
+            "HttpMethod": "*",
+            "LoggingLevel": "INFO",
+            "ResourcePath": "/*",
+          },
+        ],
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+        "StageName": "prod",
+        "TracingEnabled": true,
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiUsagePlanEB6062AA": Object {
+      "Properties": Object {
+        "ApiStages": Array [
+          Object {
+            "ApiId": Object {
+              "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+            },
+            "Stage": Object {
+              "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentStageprodF489CB87",
+            },
+            "Throttle": Object {},
+          },
+        ],
+      },
+      "Type": "AWS::ApiGateway::UsagePlan",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApicore2E2A3C63": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "core",
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApicoreOPTIONS7F0B2B0B": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": Object {
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": Object {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApicore2E2A3C63",
+        },
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApicorePOST6324F1F5": Object {
+      "Properties": Object {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiCognitoAuthorizer8DDC0543",
+        },
+        "HttpMethod": "POST",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "",
+              },
+              "StatusCode": "200",
+            },
+          ],
+          "PassthroughBehavior": "WHEN_NO_TEMPLATES",
+          "RequestTemplates": Object {
+            "application/json": "{
+  \\"body\\": $input.json(\\"$\\"),
+  \\"userInfo\\": {
+    \\"email\\": \\"$context.authorizer.claims.email\\",
+    \\"sub\\": \\"$context.authorizer.claims.sub\\"
+  }
+}
+",
+          },
+          "Type": "AWS",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunction2D415C65",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseModels": Object {
+              "application/json": "Empty",
+            },
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "200",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApicore2E2A3C63",
+        },
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApicorePOSTApiPermissionCognitoApiCorePollyLambdaBotApiLambdaRestApi46756051POSTcore541A7604": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunction2D415C65",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+              },
+              "/",
+              Object {
+                "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentStageprodF489CB87",
+              },
+              "/POST/core",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicesDFF33310": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "services",
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyC99E1A7B": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicesDFF33310",
+        },
+        "PathPart": "polly",
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyOPTIONS11C556A7": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": Object {
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": Object {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyC99E1A7B",
+        },
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyPOST21D1622F": Object {
+      "Properties": Object {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiCognitoAuthorizer8DDC0543",
+        },
+        "HttpMethod": "POST",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "IntegrationResponses": Array [
+            Object {
+              "ResponseParameters": Object {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "ResponseTemplates": Object {
+                "application/json": "",
+              },
+              "StatusCode": "200",
+            },
+          ],
+          "Type": "AWS",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "PollyLambdaToPollyLambdaFunction167F2825",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "MethodResponses": Array [
+          Object {
+            "ResponseModels": Object {
+              "application/json": "Empty",
+            },
+            "ResponseParameters": Object {
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "200",
+          },
+        ],
+        "ResourceId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyC99E1A7B",
+        },
+        "RestApiId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiservicespollyPOSTApiPermissionCognitoApiCorePollyLambdaBotApiLambdaRestApi46756051POSTservicespollyB0F09AEB": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "PollyLambdaToPollyLambdaFunction167F2825",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+              },
+              "/",
+              Object {
+                "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentStageprodF489CB87",
+              },
+              "/POST/services/polly",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "CognitoApiCorePollyLambdaBotCognitoUserPoolUser78FE255D": Object {
+      "Properties": Object {
+        "DesiredDeliveryMediums": Array [
+          "EMAIL",
+        ],
+        "ForceAliasCreation": true,
+        "UserAttributes": Array [
+          Object {
+            "Name": "email",
+            "Value": "fakeEmail",
+          },
+          Object {
+            "Name": "nickname",
+            "Value": "fakeUserName",
+          },
+          Object {
+            "Name": "email_verified",
+            "Value": "True",
+          },
+        ],
+        "UserPoolId": Object {
+          "Ref": "CognitoApiCorePollyLambdaBotApiCognitoUserPool8534D713",
+        },
+        "Username": "fakeUserName",
+      },
+      "Type": "AWS::Cognito::UserPoolUser",
+    },
+    "CognitoApiCorePollyLambdaBotIdentityPoolRole4CE55FF1": Object {
+      "Properties": Object {
+        "IdentityPoolId": Object {
+          "Ref": "CognitoApiCorePollyLambdaCognitoIdentityPoolDFE85EE1",
+        },
+        "Roles": Object {
+          "authenticated": Object {
+            "Fn::GetAtt": Array [
+              "CognitoApiCorePollyLambdaCognitoAuthenticatedRole6B8CA507",
+              "Arn",
+            ],
+          },
+          "unauthenticated": Object {
+            "Fn::GetAtt": Array [
+              "CognitoApiCorePollyLambdaCognitoUnAuthenticatedRoleBB02ACDA",
+              "Arn",
+            ],
+          },
+        },
+      },
+      "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
+    },
+    "CognitoApiCorePollyLambdaCognitoAuthenticatedRole6B8CA507": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": Object {
+                "ForAnyValue:StringLike": Object {
+                  "cognito-identity.amazonaws.com:amr": "authenticated",
+                },
+                "StringEquals": Object {
+                  "cognito-identity.amazonaws.com:aud": Object {
+                    "Ref": "CognitoApiCorePollyLambdaCognitoIdentityPoolDFE85EE1",
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Federated": "cognito-identity.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CognitoApiCorePollyLambdaCognitoAuthoridedPolicy43978F7C": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W11",
+              "reason": "The wildcard action required for api gateway, limited to a single API",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "execute-api:Invoke",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:aws:execute-api:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApi66B9D75D",
+                    },
+                    "/",
+                    Object {
+                      "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentStageprodF489CB87",
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CognitoApiCorePollyLambdaCognitoAuthoridedPolicy43978F7C",
+        "Roles": Array [
+          Object {
+            "Ref": "CognitoApiCorePollyLambdaCognitoAuthenticatedRole6B8CA507",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CognitoApiCorePollyLambdaCognitoIdentityPoolDFE85EE1": Object {
+      "Properties": Object {
+        "AllowUnauthenticatedIdentities": false,
+        "CognitoIdentityProviders": Array [
+          Object {
+            "ClientId": Object {
+              "Ref": "CognitoApiCorePollyLambdaBotApiCognitoUserPoolClient0DB1F408",
+            },
+            "ProviderName": Object {
+              "Fn::GetAtt": Array [
+                "CognitoApiCorePollyLambdaBotApiCognitoUserPool8534D713",
+                "ProviderName",
+              ],
+            },
+            "ServerSideTokenCheck": true,
+          },
+        ],
+      },
+      "Type": "AWS::Cognito::IdentityPool",
+    },
+    "CognitoApiCorePollyLambdaCognitoUnAuthenticatedRoleBB02ACDA": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Federated": "cognito-identity.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "PollyLambdaToPollyLambdaFunction167F2825": Object {
+      "DependsOn": Array [
+        "PollyLambdaToPollyLambdaFunctionServiceRoleDefaultPolicy1C382631",
+        "PollyLambdaToPollyLambdaFunctionServiceRole74A4E40B",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3Bucket54AF3848",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3VersionKeyE4BE7658",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3VersionKeyE4BE7658",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Serverless-bot-framework Polly lambda",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+          },
+        },
+        "FunctionName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-PollyLambda",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "PollyLambdaToPollyLambdaFunctionServiceRole74A4E40B",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "PollyLambdaToPollyLambdaFunctionServiceRole74A4E40B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "PollyLambdaToPollyLambdaFunctionServiceRoleDefaultPolicy1C382631": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "PollyLambdaToPollyLambdaFunctionServiceRoleDefaultPolicy1C382631",
+        "Roles": Array [
+          Object {
+            "Ref": "PollyLambdaToPollyLambdaFunctionServiceRole74A4E40B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "PollyLambdaToPollyPollyPolicy68D8DD5C": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W11",
+              "reason": "Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "polly:SynthesizeSpeech",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "PollyLambdaToPollyPollyPolicy68D8DD5C",
+        "Roles": Array [
+          Object {
+            "Ref": "PollyLambdaToPollyLambdaFunctionServiceRole74A4E40B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "GLACIER",
+                  "TransitionInDays": 90,
+                },
+              ],
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "LoggingConfiguration": Object {
+          "DestinationBucketName": Object {
+            "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B",
+          },
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunction2D415C65": Object {
+      "DependsOn": Array [
+        "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleDefaultPolicyDFCF7AF2",
+        "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3Bucket2CC07D2E",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3VersionKey677DF11A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3VersionKey677DF11A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Serverless-bot-framework Core lambda",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "S3_BUCKET_NAME": Object {
+              "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
+            },
+            "botGender": "Male",
+            "botLanguage": "English",
+            "botName": "Joe",
+            "bucketName": Object {
+              "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
+            },
+            "forceCacheUpdate": "false",
+          },
+        },
+        "FunctionName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-CoreLambda",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleDefaultPolicyDFCF7AF2": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleDefaultPolicyDFCF7AF2",
+        "Roles": Array [
+          Object {
+            "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketPolicyB439C9EB": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+              "Sid": "HttpsOnly",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B": Object {
+      "DeletionPolicy": "Retain",
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W35",
+              "reason": "This S3 bucket is used as the access logging bucket for another bucket",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucketPolicy2D6CFAF2": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+              "Sid": "HttpsOnly",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "coreLambdaBrainS3BucketPollyPolicy92F28419": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W11",
+              "reason": "Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "polly:SynthesizeSpeech",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "coreLambdaBrainS3BucketPollyPolicy92F28419",
+        "Roles": Array [
+          Object {
+            "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

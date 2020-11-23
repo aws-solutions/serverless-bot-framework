@@ -18,16 +18,9 @@ import json
 import os
 import uuid
 import boto3
+
 dynamodb = boto3.client('dynamodb')
-
-table_name = os.environ.get('TABLE_NAME', False)
-
-if table_name:
-    try:
-        table_name = table_name.split('/')[1]
-    except Exception as e:
-        print("ERROR:", e)
-        table_name = False
+table_name = os.environ.get('DDB_TABLE_NAME', False)
 
 def lambda_handler(event, context):
     result = ""

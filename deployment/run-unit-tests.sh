@@ -40,3 +40,7 @@ python3 test.py
 echo "cd $source_dir/samples/leave-feedback"
 cd $source_dir/samples/leave-feedback
 # npm test
+
+echo "cd $source_dir/samples/order-pizza"
+cd $source_dir/samples/order-pizza
+# npm test

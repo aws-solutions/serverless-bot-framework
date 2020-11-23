@@ -1,0 +1,353 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test OrderPizzaLambdaDynamoDBTables construct 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fArtifactHash1BF18D06": Object {
+      "Description": "Artifact hash for asset \\"9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118f\\"",
+      "Type": "String",
+    },
+    "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3Bucket80779286": Object {
+      "Description": "S3 bucket for asset \\"9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118f\\"",
+      "Type": "String",
+    },
+    "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3VersionKey13BE9696": Object {
+      "Description": "S3 key for asset version \\"9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118f\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "menuId",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "menuId",
+            "KeyType": "HASH",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+        "SSESpecification": Object {
+          "SSEEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "OrderPizzaLambdaDynamoDBLambdaFunctionA20D79F7": Object {
+      "DependsOn": Array [
+        "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy800657A9",
+        "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleE712B0C7",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3Bucket80779286",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3VersionKey13BE9696",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3VersionKey13BE9696",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Serverless-bot-framework OrderPizza Sample lambda",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "DDB_TABLE_NAME": Object {
+              "Ref": "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A",
+            },
+            "PIZZA_MENUS_INITIALIZATION_BUCKET": "brainBucket",
+            "PIZZA_MENUS_INITIALIZATION_FILE": "pizza-menus/pizza-menu.json",
+            "PIZZA_MENUS_TABLE": Object {
+              "Ref": "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A",
+            },
+            "PIZZA_MENU_ID": "main_menu_1",
+            "PIZZA_ORDERS_GLOBAL_INDEX_NAME": "customerId-orderTimestamp-index",
+            "PIZZA_ORDERS_TABLE": Object {
+              "Ref": "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE",
+            },
+            "RE_INITIALIZE_MENUS_TABLE": "false",
+          },
+        },
+        "FunctionName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-OrderPizzaLambda",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleE712B0C7",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy800657A9": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy800657A9",
+        "Roles": Array [
+          Object {
+            "Ref": "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleE712B0C7",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleE712B0C7": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "orderId",
+            "AttributeType": "S",
+          },
+          Object {
+            "AttributeName": "customerId",
+            "AttributeType": "S",
+          },
+          Object {
+            "AttributeName": "orderTimestamp",
+            "AttributeType": "N",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "GlobalSecondaryIndexes": Array [
+          Object {
+            "IndexName": "customerId-orderTimestamp-index",
+            "KeySchema": Array [
+              Object {
+                "AttributeName": "customerId",
+                "KeyType": "HASH",
+              },
+              Object {
+                "AttributeName": "orderTimestamp",
+                "KeyType": "RANGE",
+              },
+            ],
+            "Projection": Object {
+              "ProjectionType": "ALL",
+            },
+          },
+        ],
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "orderId",
+            "KeyType": "HASH",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+        "SSESpecification": Object {
+          "SSEEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;

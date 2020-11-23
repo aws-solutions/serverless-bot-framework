@@ -199,7 +199,7 @@ def create_stack(resource_properties):
     with open('conf/%s'%pizzaMenu_file, 'rb') as f:
         content = f.read().decode("utf-8")
 
-        s3_client.put_object(Body=content, Bucket=resource_properties['SampleWebClientBucket'], Key='pizza-menus/pizza-menu.json')
+        s3_client.put_object(Body=content, Bucket=resource_properties['BrainBucket'], Key='pizza-menus/pizza-menu.json')
 
 
     #----------------------------------------------------------------------

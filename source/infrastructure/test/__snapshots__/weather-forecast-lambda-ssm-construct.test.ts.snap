@@ -1,0 +1,267 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test WeatherForecastToSSM construct 1`] = `
+Object {
+  "Conditions": Object {
+    "WeatherAPIChosen": Object {
+      "Fn::Not": Array [
+        Object {
+          "Fn::Equals": Array [
+            "weatherAPIProvider",
+            "Random Weather Generator",
+          ],
+        },
+      ],
+    },
+  },
+  "Parameters": Object {
+    "AssetParameters545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92dArtifactHash4CB9C6E8": Object {
+      "Description": "Artifact hash for asset \\"545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92d\\"",
+      "Type": "String",
+    },
+    "AssetParameters545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92dS3Bucket367AFB5D": Object {
+      "Description": "S3 bucket for asset \\"545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92d\\"",
+      "Type": "String",
+    },
+    "AssetParameters545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92dS3VersionKey87356D15": Object {
+      "Description": "S3 key for asset version \\"545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92d\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "WeatherForecastLambdaLambdaFunction068B99EB": Object {
+      "DependsOn": Array [
+        "WeatherForecastLambdaLambdaFunctionServiceRoleDefaultPolicy99247B25",
+        "WeatherForecastLambdaLambdaFunctionServiceRoleC35B195C",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92dS3Bucket367AFB5D",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92dS3VersionKey87356D15",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters545d5d8ff98ce7e5f1778fbbb4c15379b36f86f9fafb99d3f34158564d19f92dS3VersionKey87356D15",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Sample - Weather Forecast",
+        "Environment": Object {
+          "Variables": Object {
+            "API_PROVIDER": Object {
+              "Fn::If": Array [
+                "WeatherAPIChosen",
+                "weatherAPIKey",
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            "SSM_REFERENCE_TO_API_KEY": Object {
+              "Fn::If": Array [
+                "WeatherAPIChosen",
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Ref": "AWS::StackName",
+                      },
+                      "-weather-api-key",
+                    ],
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          },
+        },
+        "Handler": "index.lambda_handler",
+        "MemorySize": 128,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "WeatherForecastLambdaLambdaFunctionServiceRoleC35B195C",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.8",
+        "Timeout": 180,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "WeatherForecastLambdaLambdaFunctionServiceRoleC35B195C": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "WeatherForecastLambdaLambdaFunctionServiceRoleDefaultPolicy99247B25": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "WeatherForecastLambdaLambdaFunctionServiceRoleDefaultPolicy99247B25",
+        "Roles": Array [
+          Object {
+            "Ref": "WeatherForecastLambdaLambdaFunctionServiceRoleC35B195C",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "WeatherForecastLambdaSSMGet8916011C": Object {
+      "Condition": "WeatherAPIChosen",
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:aws:ssm:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/",
+                    Object {
+                      "Ref": "AWS::StackName",
+                    },
+                    "-weather-api-key",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "WeatherForecastLambdaSSMGet8916011C",
+        "Roles": Array [
+          Object {
+            "Ref": "WeatherForecastLambdaLambdaFunctionServiceRoleC35B195C",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;
