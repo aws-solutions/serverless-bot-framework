@@ -18,6 +18,8 @@ const {
   askForValidInput,
   calculateTotalBill,
   extractOrderAttributes,
+  getCustomerOrderHistory,
+  getPizzaMenuFromDynamoDB,
   isValidNumber,
   isEndOrderFlow,
 } = require('../util/order-helpers');
@@ -27,12 +29,140 @@ const {
   validEndOrderFlowSignal,
 } = require('../util/valid-inputs');
 
+const DynamoDBHelper = require('../util/dynamodb-helper');
+const S3Helper = require('../util/s3-helper');
+
 /**
  *
  * @param {string} message - message to be logged.
  * @returns {void}
  */
 const testLogger = (message) => console.log(message);
+
+describe('Unit Tests: order-helpers.extractOrderAttributes', () => {
+  beforeAll(() =>
+    testLogger(
+      '======== Running Unit Tests for order-helpers.extractOrderAttributes ========'
+    )
+  );
+
+  test('expect the type of extractOrderAttributes to be function', () => {
+    expect(typeof extractOrderAttributes).toBe('function');
+  });
+
+  test('expect extractOrderAttributes to return the correct attributes)', () => {
+    const event = {
+      userInfo: { email: 'fakeuseremail', sub: 'randomsub' },
+      pizzaType: { response: 'Greek' },
+      pizzaSize: { response: 'large' },
+      pizzaCount: { response: '2' },
+      pizzaCrust: { response: 'thin' },
+    };
+    const res = {
+      customerId: 'fakeuseremail',
+      pizzaType: 'greek',
+      pizzaSize: 'large',
+      pizzaCount: '2',
+      pizzaCrust: 'thin',
+    };
+
+    expect(extractOrderAttributes(event)).toEqual(res);
+  });
+
+  /** expect the function to throw an error for unknown confirmation */
+  const corruptEvent = {
+    pizzaSize: { response: 'large' },
+    pizzaCount: { response: '2' },
+    pizzaCrust: { response: 'thin' },
+  };
+  expect(() => {
+    extractOrderAttributes(corruptEvent);
+  }).toThrow(`Cannot read property 'email' of undefined`);
+});
+
+describe('Unit Tests: order-helpers.getCustomerOrderHistory', () => {
+  beforeAll(() =>
+    testLogger(
+      '======== Running Unit Tests for order-helpers.getCustomerOrderHistory ========'
+    )
+  );
+
+  test('expect the type of getCustomerOrderHistory to be function', () => {
+    expect(typeof getCustomerOrderHistory).toBe('function');
+  });
+
+  test('expect getCustomerOrderHistory to return expected response', async () => {
+    expect.assertions(1);
+    const res = {
+      customerId: 'fakeuseremail',
+      orders: [],
+    };
+    DynamoDBHelper.query = jest.fn().mockReturnValue(res);
+    return getCustomerOrderHistory(
+      'customerId',
+      'globalIndexName'
+    ).then((data) => expect(data).toEqual(res));
+  });
+});
+
+describe('Unit Tests: order-helpers.getPizzaMenuFromDynamoDB', () => {
+  beforeAll(() =>
+    testLogger(
+      '======== Running Unit Tests for order-helpers.getPizzaMenuFromDynamoDB ========'
+    )
+  );
+
+  test('expect the type of getPizzaMenuFromDynamoDB to be function', () => {
+    expect(typeof getPizzaMenuFromDynamoDB).toBe('function');
+  });
+  const menu = {
+    menuItems: [
+      {
+        T: 'Grega',
+        D: 'Coberturas: queijo feta, espinafre e azeitonas',
+        P: [10, 13, 16, 19],
+      },
+      {
+        T: 'Nova York',
+        D: 'Coberturas: molho de tomate e queijo mussarela',
+        P: [11, 13, 17, 20],
+      },
+      {
+        T: 'Vegetariana',
+        D: 'Coberturas: azeitonas pretas, pimentão, tomate e cogumelos',
+        P: [9, 12, 15, 18],
+      },
+    ],
+  };
+
+  test('expect getPizzaMenuFromDynamoDB to return expected response (reInitialize=false)', async () => {
+    expect.assertions(1);
+    DynamoDBHelper.get = jest.fn().mockReturnValue(menu);
+    return getPizzaMenuFromDynamoDB(
+      'menuId',
+      'main_menu',
+      'PizzaMenuTable',
+      'false',
+      'brainBucket',
+      'pizza_menus.json'
+    ).then((data) => expect(data).toEqual(menu));
+  });
+
+  test('expect getPizzaMenuFromDynamoDB to return expected response (reInitialize=true)', async () => {
+    expect.assertions(1);
+    DynamoDBHelper.get = jest.fn().mockReturnValue(menu);
+    DynamoDBHelper.write = jest.fn().mockReturnValue(menu);
+    S3Helper.get = jest.fn().mockReturnValue(menu);
+    return getPizzaMenuFromDynamoDB(
+      'menuId',
+      'main_menu',
+      'PizzaMenuTable',
+      'true',
+      'brainBucket',
+      'pizza_menus.json'
+    ).then((data) => expect(data).toEqual(menu));
+  });
+});
 
 describe('Unit Tests: order-helpers.calculateTotalBill', () => {
   beforeAll(() =>
@@ -93,6 +223,10 @@ describe('Unit Tests: order-helpers.askForValidInput', () => {
     expect(askForValidInput('ru-RU', validPizzaCrust['ru-RU'])).toEqual(
       expectedResponses['ru-RU']
     );
+    /** expect the function to throw an error for unknown Language */
+    expect(() => {
+      askForValidInput('unknown', 'unknown');
+    }).toThrow('pizza-responses.askForValidInput: Language Unknown...');
   });
 });
 
@@ -141,5 +275,3 @@ describe('Unit Tests: order-helpers.isEndOrderFlow', () => {
     }
   });
 });
-
-/** TO-DO write Unit Test to mock the remainng functions that use DynamoDB */

@@ -41,7 +41,7 @@ describe('Unit Tests: valid-inputs.validPizzaSizes', () => {
     'pt-BR': ['pequeno', 'médio', 'grande', 'extra-grande'],
     'es-US': ['pequeño', 'mediano', 'grande', 'extra-grande'],
     'fr-FR': ['petit', 'moyen', 'grand', 'très-grand'],
-    'it-IT': ['piccolo', 'medio', 'grande', 'extra-grande'],
+    'it-IT': ['piccola', 'media', 'grande', 'extra-grande'],
     'de-DE': ['klein', 'mittel', 'groß', 'extra-groß'],
     'ru-RU': ['маленький', 'средний', 'большой', 'очень-большой'],
   };
@@ -138,8 +138,8 @@ describe('Unit Tests: valid-inputs.validConfirmationResponse', () => {
     'pt-BR': ['sim', 'não'],
     'es-US': ['si', 'no'],
     'fr-FR': ['oui', 'non'],
-    'it-IT': ['si', 'no'],
-    'de-DE': ['ja', 'Nein'],
+    'it-IT': ['sì', 'no'],
+    'de-DE': ['ja', 'nein'],
     'ru-RU': ['да', 'нет'],
   };
 

@@ -70,7 +70,7 @@ export class OrderPizzaLambdaDynamoDBTables extends Construct {
 
     const orderPizzaOrdersDBTable = new LambdaToDynamoDB(
       this,
-      'OrderPizzaOrderstDBTable',
+      'OrderPizzaOrdersDBTable',
       {
         existingLambdaObj: this._orderPizzaLambda,
         dynamoTableProps: ordersDBTableProbs,
@@ -93,7 +93,7 @@ export class OrderPizzaLambdaDynamoDBTables extends Construct {
 
     const orderPizzaMenusDBTable = new LambdaToDynamoDB(
       this,
-      'CoreConversationDBTable',
+      'OrderPizzaMenusDBTable',
       {
         existingLambdaObj: this._orderPizzaLambda,
         dynamoTableProps: menusDBTableProbs,

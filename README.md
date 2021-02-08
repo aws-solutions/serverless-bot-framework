@@ -89,9 +89,13 @@ aws s3 sync ./regional-s3-assets s3://$ARTIFACT_BUCKET-us-east-1/$SOLUTION_NAME/
 - Get the link of the serverless-bot-framework.template uploaded to your Amazon S3 bucket.
 - Deploy the serverless bot framework to your account by launching a new AWS CloudFormation stack using the link of the serverless-bot-framework.template.
 
+## Known Behavior
+
+When you choose Amazon Lex for the `BotBrain` parameter, updating the CloudFormation stack will not update the chatbot in Amazon Lex.
+
 ---
 
-Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

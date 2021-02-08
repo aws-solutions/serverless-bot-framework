@@ -15,6 +15,17 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { Stack } from '@aws-cdk/core';
 import { ServerlessBotFrameworkStack } from '../lib/serverless-bot-framework-stack';
 import '@aws-cdk/assert/jest';
+import { execSync } from "child_process";
+
+beforeAll(() => {
+  /** create a fake build directory for the webclient package */
+  execSync(`mkdir ${__dirname}/../../samples/webclient/build`);
+});
+
+afterAll(() => {
+  /** remove the fake build directory for the webclient package */
+  execSync(`rm -rf ${__dirname}/../../samples/webclient/build`);
+});
 
 test('test ServerlessBotFrameworkStack stack', () => {
   const stack = new Stack();

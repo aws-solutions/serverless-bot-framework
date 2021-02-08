@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import {
+  Aspects,
   CfnParameter,
   Construct,
   StackProps,
@@ -22,6 +23,8 @@ import {
   CfnMapping,
   CfnOutput,
   Aws,
+  CfnRule,
+  CfnRuleAssertion
 } from '@aws-cdk/core';
 import { Runtime, Code } from '@aws-cdk/aws-lambda';
 import { PolicyStatement, Effect } from '@aws-cdk/aws-iam';
@@ -38,6 +41,8 @@ import { LeaveFeedbackLambdaDynamoDBTable } from './feedbacklambda-dynamodb-tabl
 import { WriteApiKeyCustomResource } from './write-apikey-custom-resource-construct';
 import { WeatherForecastToSSM } from './weather-forecast-lambda-ssm-construct';
 import { BotCustomResource } from './custom-resource-construct';
+import { LexCustomResource } from './custom-resource-lex-bot';
+import { ConditionalResource } from './conditional-resource';
 
 export interface ServerlessBotFrameworkStackProps extends StackProps {
   readonly solutionID: string;
@@ -103,6 +108,22 @@ export class ServerlessBotFrameworkStack extends Stack {
       constraintDescription: 'Admin email must be a valid email address.',
     });
 
+    const botBrain = new CfnParameter(this, 'BotBrain', {
+      type: 'String',
+      description:
+        'Choice of chatbot backend. Amazon Lex or custom ML model.',
+      default: 'Custom ML model',
+      allowedValues: ['Custom ML model', 'Amazon Lex'],
+    });
+
+    const childDirected = new CfnParameter(this, 'ChildDirected', {
+      type: 'String',
+      description:
+        "Is use of your bot subject to the Children's Online Privacy Protection Act (COPPA)",
+      default: 'N/A',
+      allowedValues: ['No', 'Yes', 'N/A'],
+    });
+
     const weatherAPIProvider = new CfnParameter(this, 'WeatherAPIProvider', {
       type: 'String',
       description:
@@ -153,6 +174,35 @@ export class ServerlessBotFrameworkStack extends Stack {
       ),
     });
 
+    /** Making sure only supported langauges in Lex are chosen when bot brain is Lex */
+    const lexSupportedLanguagesRule = new CfnRule(this, 'LexLanguages', {
+    /** Create Condition for custom ML chosen for brain module */
+      ruleCondition: Fn.conditionEquals(
+          botBrain.valueAsString,
+          'Amazon Lex'
+        ),
+    });
+    lexSupportedLanguagesRule.addAssertion(
+      Fn.conditionContains(
+        /** Update this list if Amazon Lex adds new items to its list of supported languages */
+        ['English', 'Spanish', 'French', 'Italian','German'],
+        botLanguage.valueAsString
+      ),
+      'Not a supported language for Amazon Lex'
+    );
+    /** Making sure ChildDirected parameter has a yes/no value when bot brain is Lex */
+    lexSupportedLanguagesRule.addAssertion(
+      Fn.conditionContains(
+        ['Yes', 'No'],
+        childDirected.valueAsString
+      ),
+      'This parameter must be a Yes/No for Amazon Lex'
+    );
+    /** Making sure Weather API Key parameter is empty when bot brain is Lex */
+    lexSupportedLanguagesRule.addAssertion(
+      Fn.conditionEquals('', weatherAPIKey.valueAsString),
+      'Weather API functionality is not supported in Amazon Lex'
+    );
     /** Generate assethash for the WebClinetPackage used to deploy the static website */
     const webPackageAsset = new Asset(this, 'WebPackage', {
       path: '../samples/webclient/build',
@@ -174,6 +224,14 @@ export class ServerlessBotFrameworkStack extends Stack {
       botLanguage: botLanguage.valueAsString,
     });
 
+    /** Lex Custom Resource */
+    const lexCustomResource = new LexCustomResource(this, 'LexCustomResrouce', {
+      botName: botName.valueAsString,
+      botLanguage: botLanguage.valueAsString,
+      childDirected: childDirected.valueAsString,
+      botBrain: botBrain.valueAsString
+    });
+
     /** Create CoreLambda S3 Brain Bucket */
     const coreLambdaBrainS3Bucket = new CoreLambdaToBrainS3(
       this,
@@ -188,9 +246,12 @@ export class ServerlessBotFrameworkStack extends Stack {
           memorySize: 1024,
           environment: {
             botName: botName.valueAsString,
+            botId: lexCustomResource.BotId,
+            botAliasId: lexCustomResource.BotAliasId,
             botGender: botGender.valueAsString,
             botLanguage: botLanguage.valueAsString,
             forceCacheUpdate: 'false',
+            BOT_BRAIN: botBrain.valueAsString,
           },
         },
       }
@@ -290,7 +351,7 @@ export class ServerlessBotFrameworkStack extends Stack {
       }
     );
 
-    /** Grane OrderPizza Lambda permission to read menus file from BrainBucket */
+    /** Grant OrderPizza Lambda permission to read menus file from BrainBucket */
     orderPizzaLambdaDynamoDBTables.orderPizzaLambda.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -327,7 +388,7 @@ export class ServerlessBotFrameworkStack extends Stack {
     );
 
     /** Create Weather Forecast's WriteAPIKey CustomResource => SSM Integration */
-    new WriteApiKeyCustomResource(this, 'WriteAPIKey', {
+    const writeApiKeyCustomResource = new WriteApiKeyCustomResource(this, 'WriteAPIKey', {
       weatherAPIKey: weatherAPIKey.valueAsString,
       weatherAPIChosen: weatherAPIChosen,
     });
@@ -353,7 +414,7 @@ export class ServerlessBotFrameworkStack extends Stack {
     const webClientPackageUrl = `https://s3.${Aws.REGION}.amazonaws.com/${webClientPackageLocation.S3Bucket}/${webClientPackageLocation.S3Key}`;
 
     /** Create CustomResource */
-    new BotCustomResource(this, 'BotCustomResource', {
+    const botCustomResource = new BotCustomResource(this, 'BotCustomResource', {
       solutionId: solutionMapping.findInMap('Data', 'ID'),
       version: solutionMapping.findInMap('Data', 'Version'),
       UUID: solutionUUID,
@@ -362,11 +423,12 @@ export class ServerlessBotFrameworkStack extends Stack {
         'SendAnonymousUsageData'
       ),
       botApiUrl: `https://${botApi.restApiId}.execute-api.${Aws.REGION}.amazonaws.com/${botApi.deploymentStage.stageName}/`,
-      botApiStageName: `${botApi.deploymentStage.stageName}`,
-      botApiId: `${botApi.restApiId}`,
+      botApiStageName: botApi.deploymentStage.stageName,
+      botApiId: botApi.restApiId,
       botName: botName.valueAsString,
       botGender: botGender.valueAsString,
       botLanguage: botLanguage.valueAsString,
+      botBrain: botBrain.valueAsString,
       brainBucketName: coreLambdaBrainS3Bucket.bucketName,
       conversationLogsTable:
         coreLambdaDynamoDBTables.conversationLogsDBTable.tableName,
@@ -406,7 +468,15 @@ export class ServerlessBotFrameworkStack extends Stack {
             Parameters: [adminUserName.logicalId, adminEmail.logicalId],
           },
           {
-            Label: { default: 'Sample weather API' },
+            Label: { default: 'Bot Brain' },
+            Parameters: [botBrain.logicalId],
+          },
+          {
+            Label: { default: 'Amazon Lex related parameters' },
+            Parameters: [childDirected.logicalId],
+          },
+          {
+            Label: { default: 'Custom ML Model related parameters' },
             Parameters: [weatherAPIProvider.logicalId, weatherAPIKey.logicalId],
           },
         ],

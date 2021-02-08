@@ -21,7 +21,7 @@ import {
   Fn,
 } from '@aws-cdk/core';
 import { PolicyStatement, Effect, Policy, CfnPolicy } from '@aws-cdk/aws-iam';
-import { Function, CfnFunction, Code, Runtime } from '@aws-cdk/aws-lambda';
+import { Function, Code, Runtime } from '@aws-cdk/aws-lambda';
 import { buildLambdaFunction } from '@aws-solutions-constructs/core';
 
 export interface WeatherForecastToSSMProps {

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2021-2-8
+
+### Added
+
+- Implementation to use [Amazon Lex](https://aws.amazon.com/lex/) as the processing module of the chatbot.
+- Parameter to choose between the existing custom ML model or Amazon Lex as the processing module of the chatbot.
+- Sample interaction for the chatbot application when Amazon Lex is chosen.
+
+### Changed
+
+- Architecture diagram depicting the structure of AWS services to include Amazon Lex.
+- Implementation Guide document to provide context for customers on using Amazon Lex.
+
 ## [1.4.0] - 2020-11-23
 
 ### Added

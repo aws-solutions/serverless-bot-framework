@@ -3,46 +3,20 @@
 exports[`test OrderPizzaLambdaDynamoDBTables construct 1`] = `
 Object {
   "Parameters": Object {
-    "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fArtifactHash1BF18D06": Object {
-      "Description": "Artifact hash for asset \\"9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118f\\"",
+    "AssetParametersa18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9ArtifactHash959D29D8": Object {
+      "Description": "Artifact hash for asset \\"a18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9\\"",
       "Type": "String",
     },
-    "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3Bucket80779286": Object {
-      "Description": "S3 bucket for asset \\"9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118f\\"",
+    "AssetParametersa18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9S3BucketF0364FF3": Object {
+      "Description": "S3 bucket for asset \\"a18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9\\"",
       "Type": "String",
     },
-    "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3VersionKey13BE9696": Object {
-      "Description": "S3 key for asset version \\"9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118f\\"",
+    "AssetParametersa18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9S3VersionKeyB0437C1C": Object {
+      "Description": "S3 key for asset version \\"a18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9\\"",
       "Type": "String",
     },
   },
   "Resources": Object {
-    "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "AttributeDefinitions": Array [
-          Object {
-            "AttributeName": "menuId",
-            "AttributeType": "S",
-          },
-        ],
-        "BillingMode": "PAY_PER_REQUEST",
-        "KeySchema": Array [
-          Object {
-            "AttributeName": "menuId",
-            "KeyType": "HASH",
-          },
-        ],
-        "PointInTimeRecoverySpecification": Object {
-          "PointInTimeRecoveryEnabled": true,
-        },
-        "SSESpecification": Object {
-          "SSEEnabled": true,
-        },
-      },
-      "Type": "AWS::DynamoDB::Table",
-      "UpdateReplacePolicy": "Delete",
-    },
     "OrderPizzaLambdaDynamoDBLambdaFunctionA20D79F7": Object {
       "DependsOn": Array [
         "OrderPizzaLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy800657A9",
@@ -61,7 +35,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3Bucket80779286",
+            "Ref": "AssetParametersa18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9S3BucketF0364FF3",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -74,7 +48,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3VersionKey13BE9696",
+                          "Ref": "AssetParametersa18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9S3VersionKeyB0437C1C",
                         },
                       ],
                     },
@@ -87,7 +61,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters9ad876298f62f1c3902ab750d1920d7391157f0bc81aea9c4abe715e46c1118fS3VersionKey13BE9696",
+                          "Ref": "AssetParametersa18cea2969521b69a88960f3c2c347714f743d7b1c7d367aab81ae0395b554d9S3VersionKeyB0437C1C",
                         },
                       ],
                     },
@@ -102,17 +76,17 @@ Object {
           "Variables": Object {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
             "DDB_TABLE_NAME": Object {
-              "Ref": "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A",
+              "Ref": "OrderPizzaLambdaDynamoDBOrderPizzaMenusDBTableDynamoTableBD71B9BC",
             },
             "PIZZA_MENUS_INITIALIZATION_BUCKET": "brainBucket",
             "PIZZA_MENUS_INITIALIZATION_FILE": "pizza-menus/pizza-menu.json",
             "PIZZA_MENUS_TABLE": Object {
-              "Ref": "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A",
+              "Ref": "OrderPizzaLambdaDynamoDBOrderPizzaMenusDBTableDynamoTableBD71B9BC",
             },
             "PIZZA_MENU_ID": "main_menu_1",
             "PIZZA_ORDERS_GLOBAL_INDEX_NAME": "customerId-orderTimestamp-index",
             "PIZZA_ORDERS_TABLE": Object {
-              "Ref": "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE",
+              "Ref": "OrderPizzaLambdaDynamoDBOrderPizzaOrdersDBTableDynamoTableD0BABFF6",
             },
             "RE_INITIALIZE_MENUS_TABLE": "false",
           },
@@ -150,7 +124,7 @@ Object {
           "rules_to_suppress": Array [
             Object {
               "id": "W12",
-              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray and access ENIs in a VPC.",
             },
           ],
         },
@@ -183,7 +157,7 @@ Object {
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE",
+                    "OrderPizzaLambdaDynamoDBOrderPizzaOrdersDBTableDynamoTableD0BABFF6",
                     "Arn",
                   ],
                 },
@@ -193,7 +167,7 @@ Object {
                     Array [
                       Object {
                         "Fn::GetAtt": Array [
-                          "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE",
+                          "OrderPizzaLambdaDynamoDBOrderPizzaOrdersDBTableDynamoTableD0BABFF6",
                           "Arn",
                         ],
                       },
@@ -220,7 +194,7 @@ Object {
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "OrderPizzaLambdaDynamoDBCoreConversationDBTableDynamoTable1C4B779A",
+                    "OrderPizzaLambdaDynamoDBOrderPizzaMenusDBTableDynamoTableBD71B9BC",
                     "Arn",
                   ],
                 },
@@ -296,7 +270,33 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "OrderPizzaLambdaDynamoDBOrderPizzaOrderstDBTableDynamoTable7F70FFAE": Object {
+    "OrderPizzaLambdaDynamoDBOrderPizzaMenusDBTableDynamoTableBD71B9BC": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "menuId",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "menuId",
+            "KeyType": "HASH",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+        "SSESpecification": Object {
+          "SSEEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "OrderPizzaLambdaDynamoDBOrderPizzaOrdersDBTableDynamoTableD0BABFF6": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "AttributeDefinitions": Array [

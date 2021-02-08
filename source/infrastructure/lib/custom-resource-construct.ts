@@ -27,6 +27,7 @@ export interface BotCustomResourceProps {
   readonly botName: string;
   readonly botLanguage: string;
   readonly botGender: string;
+  readonly botBrain: string;
   readonly brainBucketName: string;
   readonly conversationLogsTable: string;
   readonly entitiesTable: string;
@@ -131,6 +132,7 @@ export class BotCustomResource extends Construct {
         BotName: props.botName,
         BotLanguage: props.botLanguage,
         BotGender: props.botGender,
+        BotBrain: props.botBrain,
         BrainBucket: props.brainBucketName,
         ConversationLogsTable: props.conversationLogsTable,
         EntitiesTable: props.entitiesTable,

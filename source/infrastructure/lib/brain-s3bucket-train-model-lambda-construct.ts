@@ -45,7 +45,7 @@ export class BrainS3ToTrainModelLambda extends Construct {
       }
     );
 
-    /** Grane TrainModel Lambda permissions on Brain Bucket */
+    /** Grant TrainModel Lambda permissions on Brain Bucket */
     brainS3ToTrainModelLambda.lambdaFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,

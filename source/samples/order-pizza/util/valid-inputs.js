@@ -66,7 +66,7 @@ const validConfirmationResponse = {
   'es-US': ['si', 'no'],
   'fr-FR': ['oui', 'non'],
   'it-IT': ['sì', 'no'],
-  'de-DE': ['ja', 'Nein'],
+  'de-DE': ['ja', 'nein'],
   'ru-RU': ['да', 'нет'],
 };
 

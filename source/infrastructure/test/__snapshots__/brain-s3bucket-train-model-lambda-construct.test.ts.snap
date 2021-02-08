@@ -12,16 +12,16 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecArtifactHash02D1E581": Object {
-      "Description": "Artifact hash for asset \\"64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cec\\"",
+    "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaArtifactHashE3304DF7": Object {
+      "Description": "Artifact hash for asset \\"5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afa\\"",
       "Type": "String",
     },
-    "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3Bucket2CC07D2E": Object {
-      "Description": "S3 bucket for asset \\"64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cec\\"",
+    "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3BucketA27C2E98": Object {
+      "Description": "S3 bucket for asset \\"5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afa\\"",
       "Type": "String",
     },
-    "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3VersionKey677DF11A": Object {
-      "Description": "S3 key for asset version \\"64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cec\\"",
+    "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3VersionKey0028DE8A": Object {
+      "Description": "S3 key for asset version \\"5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afa\\"",
       "Type": "String",
     },
     "AssetParameters83952cb4f7ea2964b22bcd5f946b0dda6f46731d9a6a80a5b1b3bb8407617736ArtifactHashE3B13ED0": Object {
@@ -210,7 +210,7 @@ Object {
           "rules_to_suppress": Array [
             Object {
               "id": "W12",
-              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray and access ENIs in a VPC.",
             },
           ],
         },
@@ -500,7 +500,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3Bucket2CC07D2E",
+            "Ref": "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3BucketA27C2E98",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -513,7 +513,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3VersionKey677DF11A",
+                          "Ref": "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3VersionKey0028DE8A",
                         },
                       ],
                     },
@@ -526,7 +526,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters64de20fb6edf08ef444604ddb6aebab8cd6daabf998ae57c4ad67db6d91a0cecS3VersionKey677DF11A",
+                          "Ref": "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3VersionKey0028DE8A",
                         },
                       ],
                     },
@@ -640,7 +640,7 @@ Object {
           "rules_to_suppress": Array [
             Object {
               "id": "W12",
-              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray.",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray and access ENIs in a VPC.",
             },
           ],
         },
@@ -861,7 +861,7 @@ Object {
         "cfn_nag": Object {
           "rules_to_suppress": Array [
             Object {
-              "id": "W11",
+              "id": "W12",
               "reason": "Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy",
             },
           ],

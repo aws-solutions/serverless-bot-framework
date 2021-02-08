@@ -30,6 +30,7 @@ test('test BotCustomResource construct', () => {
     botName: 'Joe',
     botGender: 'Male',
     botLanguage: 'English',
+    botBrain: 'Custom ML model',
     brainBucketName: 'BrainBucketName',
     conversationLogsTable: 'conversationLogsTable',
     entitiesTable: 'entitiesTable',

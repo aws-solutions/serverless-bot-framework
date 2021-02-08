@@ -13,6 +13,7 @@
 
 import { Construct, Aws } from '@aws-cdk/core';
 import { Function } from '@aws-cdk/aws-lambda';
+import { CfnLogGroup } from '@aws-cdk/aws-logs';
 import { CfnAuthorizer, RestApi } from '@aws-cdk/aws-apigateway';
 import {
   LambdaIntegration,

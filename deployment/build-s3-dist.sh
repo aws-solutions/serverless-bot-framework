@@ -13,7 +13,7 @@
 set -e
 
 # Important: CDK global version number
-cdk_version=1.73.0
+cdk_version=1.84.0
 
 # Check to see if input has been provided:
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
@@ -97,6 +97,11 @@ echo "--------------------------------------------------------------------------
 cd $source_dir/services/solution-helper
 pip3 install -r requirements.txt --target .
 echo ""
+echo "------------------------------------------------------------------------------"
+echo "[Packing] Lex Bot"
+echo "------------------------------------------------------------------------------"
+cd $source_dir/services/lex-bot
+pip3 install -r requirements.txt --target .
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Order Pizza"

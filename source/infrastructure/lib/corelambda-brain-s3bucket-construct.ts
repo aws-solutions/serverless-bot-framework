@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Construct } from '@aws-cdk/core';
+import { Aws, Construct } from '@aws-cdk/core';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Function, FunctionProps } from '@aws-cdk/aws-lambda';
 import { PolicyStatement, Effect, Policy, CfnPolicy } from '@aws-cdk/aws-iam';
@@ -48,7 +48,17 @@ export class CoreLambdaToBrainS3 extends Construct {
         }),
       ],
     });
-    
+
+    const lexPolicy = new Policy(this, 'LexPolicy', {
+      statements: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['lex:RecognizeText', 'lex:ListBots'],
+          resources: [`arn:${Aws.PARTITION}:lex:${Aws.REGION}:${Aws.ACCOUNT_ID}:*`],
+        }),
+      ],
+    });
+
     /** Add policy metadata to explain why resources: ['*'] is needed and why the permissions are complex */
     (pollyPolicy.node.defaultChild as CfnPolicy).cfnOptions.metadata = {
       cfn_nag: {
@@ -64,6 +74,8 @@ export class CoreLambdaToBrainS3 extends Construct {
 
     /** Grant CoreLambda Polly permissions */
     coreLambdaBrainS3Bucket.lambdaFunction.role?.attachInlinePolicy(pollyPolicy);
+    /** Grant CoreLambda Lex permissions */
+    coreLambdaBrainS3Bucket.lambdaFunction.role?.attachInlinePolicy(lexPolicy);
     /** Get the CoreLambda created by the LambdaToS3 construct */
     this._coreLambda = coreLambdaBrainS3Bucket.lambdaFunction;
 
