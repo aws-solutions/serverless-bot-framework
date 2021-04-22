@@ -1,0 +1,97 @@
+{
+  "en_US": {
+      "menuItems": [
+      {
+          "T": "Greek",
+          "D": "Toppings: feta, spinach, and olives",
+          "P": {"small": 10, "medium": 13, "large": 16, "extra-large": 19}
+      },
+      {
+          "T": "New York",
+          "D": "Toppings: tomato sauce, and mozzarella cheese",
+          "P": {"small": 11, "medium": 13, "large": 17, "extra-large": 20}
+      },
+      {
+          "T": "Vegetarian",
+          "D": "Toppings: black olives, bell pepper, tomatoes, and mushrooms",
+          "P": {"small": 9, "medium": 12, "large": 15, "extra-large": 18}
+      }
+      ]
+  },
+  "fr_FR": {
+    "menuItems": [
+      {
+          "T": "Grecque",
+          "D": "Garnitures: feta, épinards et olives",
+          "P": {"petit": 10, "moyen": 13, "grand": 16, "très-grand": 19}
+      },
+      {
+          "T": "New York",
+          "D": "Garnitures: sauce tomate et fromage mozzarella",
+          "P": {"petit": 11, "moyen": 13, "grand": 17, "très-grand": 20}
+      },
+      {
+          "T": "végétarienne",
+          "D": "Garnitures: olives noires, poivrons, tomates et champignons",
+          "P": {"petit": 9, "moyen": 12, "grand": 15, "très-grand": 18}
+      }
+    ]
+  },
+  "es_US": {
+    "menuItems": [
+      {
+          "T": "Griega",
+          "D": "Ingredientes: queso feta, espinacas y aceitunas pizza griega",
+          "P": {"pequeño": 10, "mediano": 13, "grande": 16, "extra-grande": 19}
+      },
+      {
+          "T": "Nueva York",
+          "D": "Ingredientes: salsa de tomate y queso mozzarella",
+          "P": {"pequeño": 11, "mediano": 13, "grande": 17, "extra-grande": 20}
+      },
+      {
+          "T": "vegetariana",
+          "D": "Ingredientes: aceitunas negras, pimiento morrón, tomates y champiñones",
+          "P": {"pequeño": 9, "mediano": 12, "grande": 15, "extra-grande": 18}
+      }
+    ]
+  },
+  "it_IT": {
+    "menuItems": [
+      {
+          "T": "Greca",
+          "D": "Condimenti: feta, spinaci e olive",
+          "P": {"piccola": 10, "media": 13, "grande": 16, "extra-grande": 19}
+      },
+      {
+          "T": "New York",
+          "D": "Condimenti: salsa di pomodoro e mozzarella",
+          "P": {"piccola": 11, "media": 13, "grande": 17, "extra-grande": 20}
+      },
+      {
+          "T": "vegetariana",
+          "D": "Condimenti: olive nere, peperone, pomodori e funghi",
+          "P": {"piccola": 9, "media": 12, "grande": 15, "extra-grande": 18}
+      }
+    ]
+  },
+  "de_DE": {
+    "menuItems": [
+      {
+          "T": "Griechische",
+          "D": "Belag: Feta, Spinat und Oliven",
+          "P": {"klein": 10, "mittel": 13, "groß": 16, "extra-groß": 19}
+      },
+      {
+          "T": "New Yorker",
+          "D": "Belag: Tomatensauce und Mozzarella",
+          "P": {"klein": 11, "mittel": 13, "groß": 17, "extra-groß": 20}
+      },
+      {
+          "T": "Vegetarische",
+          "D": "Belag: schwarze Oliven, Paprika, Tomaten und Pilze",
+          "P": {"klein": 9, "mittel": 12, "groß": 15, "extra-groß": 18}
+      }
+    ]
+  }
+}

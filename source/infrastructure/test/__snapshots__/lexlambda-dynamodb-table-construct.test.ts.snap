@@ -1,0 +1,296 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test LexLambdaDynamoDBTable construct 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0ArtifactHash12DA5C28": Object {
+      "Description": "Artifact hash for asset \\"bce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0\\"",
+      "Type": "String",
+    },
+    "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3BucketC5D944DA": Object {
+      "Description": "S3 bucket for asset \\"bce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0\\"",
+      "Type": "String",
+    },
+    "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3VersionKey5D6D44D7": Object {
+      "Description": "S3 key for asset version \\"bce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "LexLambdaDynamoDBLambdaFunction6CD4A518": Object {
+      "DependsOn": Array [
+        "LexLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy3C66CB3D",
+        "LexLambdaDynamoDBLambdaFunctionServiceRole54A7EA0F",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with tighter permissions.",
+            },
+            Object {
+              "id": "W89",
+              "reason": "This is not a rule for the general case, just for specific use cases/industries",
+            },
+            Object {
+              "id": "W92",
+              "reason": "This function does not need to have specified reserved concurrent executions",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3BucketC5D944DA",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3VersionKey5D6D44D7",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3VersionKey5D6D44D7",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Serverless-bot-framework Lex Sample lambda",
+        "Environment": Object {
+          "Variables": Object {
+            "DDB_TABLE_NAME": Object {
+              "Ref": "LexLambdaDynamoDBLexLambdaDBTableDynamoTable115A031D",
+            },
+            "FEEDBACK_TABLE": Object {
+              "Ref": "LexLambdaDynamoDBLexLambdaDBTableDynamoTable115A031D",
+            },
+          },
+        },
+        "FunctionName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-LexLambda",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LexLambdaDynamoDBLambdaFunctionServiceRole54A7EA0F",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.8",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LexLambdaDynamoDBLambdaFunctionServiceRole54A7EA0F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LexLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy3C66CB3D": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray and access ENIs in a VPC.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LexLambdaDynamoDBLexLambdaDBTableDynamoTable115A031D",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LexLambdaDynamoDBLambdaFunctionServiceRoleDefaultPolicy3C66CB3D",
+        "Roles": Array [
+          Object {
+            "Ref": "LexLambdaDynamoDBLambdaFunctionServiceRole54A7EA0F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LexLambdaDynamoDBLambdaFunctionlexv2permission8DEC109F": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "LexLambdaDynamoDBLambdaFunction6CD4A518",
+            "Arn",
+          ],
+        },
+        "Principal": "lexv2.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":lex:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":bot-alias/*",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "LexLambdaDynamoDBLexLambdaDBTableDynamoTable115A031D": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "uuid",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "uuid",
+            "KeyType": "HASH",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+        "SSESpecification": Object {
+          "SSEEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;

@@ -31,28 +31,28 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaArtifactHashE3304DF7": Object {
-      "Description": "Artifact hash for asset \\"5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afa\\"",
+    "AssetParameters6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55ArtifactHash066CAC14": Object {
+      "Description": "Artifact hash for asset \\"6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55\\"",
       "Type": "String",
     },
-    "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3BucketA27C2E98": Object {
-      "Description": "S3 bucket for asset \\"5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afa\\"",
+    "AssetParameters6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55S3Bucket537E8DB8": Object {
+      "Description": "S3 bucket for asset \\"6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55\\"",
       "Type": "String",
     },
-    "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3VersionKey0028DE8A": Object {
-      "Description": "S3 key for asset version \\"5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afa\\"",
+    "AssetParameters6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55S3VersionKeyB08199DC": Object {
+      "Description": "S3 key for asset version \\"6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55\\"",
       "Type": "String",
     },
-    "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfArtifactHash37E12FF1": Object {
-      "Description": "Artifact hash for asset \\"a99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbf\\"",
+    "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eArtifactHashF1AFCE8D": Object {
+      "Description": "Artifact hash for asset \\"6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821e\\"",
       "Type": "String",
     },
-    "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3Bucket54AF3848": Object {
-      "Description": "S3 bucket for asset \\"a99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbf\\"",
+    "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3Bucket34183232": Object {
+      "Description": "S3 bucket for asset \\"6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821e\\"",
       "Type": "String",
     },
-    "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3VersionKeyE4BE7658": Object {
-      "Description": "S3 key for asset version \\"a99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbf\\"",
+    "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3VersionKey70615EFD": Object {
+      "Description": "S3 key for asset version \\"6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821e\\"",
       "Type": "String",
     },
   },
@@ -281,11 +281,7 @@ Object {
               "Sid": "HttpsOnly",
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -295,28 +291,20 @@ Object {
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
-                    "Arn",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
                   ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "CloudfrontStaticWebsiteCloudFrontToS3S3Bucket345FD179",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
@@ -397,6 +385,20 @@ Object {
     },
     "CognitoApiCorePollyLambdaBotApiApiAccessLogGroupDF2ABC9A": Object {
       "DeletionPolicy": "Retain",
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W86",
+              "reason": "Retention period for CloudWatchLogs LogGroups are set to 'Never Expire' to preserve customer data indefinitely",
+            },
+            Object {
+              "id": "W84",
+              "reason": "By default CloudWatchLogs LogGroups data is encrypted using the CloudWatch server-side encryption keys (AWS Managed Keys)",
+            },
+          ],
+        },
+      },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
     },
@@ -420,6 +422,7 @@ Object {
       "Type": "AWS::ApiGateway::Authorizer",
     },
     "CognitoApiCorePollyLambdaBotApiCognitoUserPool8534D713": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "AccountRecoverySetting": Object {
           "RecoveryMechanisms": Array [
@@ -436,17 +439,19 @@ Object {
               "Fn::Join": Array [
                 "",
                 Array [
-                  "<p>You are invited to join the Serverless Bot Framework Solution.</p>
-        <p>Username: <strong>{username}</strong></p>
-        <p>Password: <strong>{####}</strong></p>
-        <p>Console: <strong>https://",
+                  "
+            <p>You are invited to join the Serverless Bot Framework Solution.</p>
+            <p>Username: <strong>{username}</strong></p>
+            <p>Password: <strong>{####}</strong></p>
+            <p>Console: <strong>https://",
                   Object {
                     "Fn::GetAtt": Array [
                       "CloudfrontStaticWebsiteCloudFrontToS3CloudFrontDistributionC740F1EE",
                       "DomainName",
                     ],
                   },
-                  "/</strong></p>",
+                  "/</strong></p>
+          ",
                 ],
               ],
             },
@@ -481,6 +486,7 @@ Object {
         },
       },
       "Type": "AWS::Cognito::UserPool",
+      "UpdateReplacePolicy": "Retain",
     },
     "CognitoApiCorePollyLambdaBotApiCognitoUserPoolClient0DB1F408": Object {
       "Properties": Object {
@@ -586,7 +592,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentB9B3B87Ed62158db770be05e2867f42ce76d6472": Object {
+    "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentB9B3B87E99230e13159c80a09666c476ef5fef51": Object {
       "DependsOn": Array [
         "CognitoApiCorePollyLambdaBotApiLambdaRestApicoreOPTIONS7F0B2B0B",
         "CognitoApiCorePollyLambdaBotApiLambdaRestApicorePOST6324F1F5",
@@ -626,7 +632,7 @@ Object {
           "Format": "{\\"requestId\\":\\"$context.requestId\\",\\"ip\\":\\"$context.identity.sourceIp\\",\\"user\\":\\"$context.identity.user\\",\\"caller\\":\\"$context.identity.caller\\",\\"requestTime\\":\\"$context.requestTime\\",\\"httpMethod\\":\\"$context.httpMethod\\",\\"resourcePath\\":\\"$context.resourcePath\\",\\"status\\":\\"$context.status\\",\\"protocol\\":\\"$context.protocol\\",\\"responseLength\\":\\"$context.responseLength\\"}",
         },
         "DeploymentId": Object {
-          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentB9B3B87Ed62158db770be05e2867f42ce76d6472",
+          "Ref": "CognitoApiCorePollyLambdaBotApiLambdaRestApiDeploymentB9B3B87E99230e13159c80a09666c476ef5fef51",
         },
         "MethodSettings": Array [
           Object {
@@ -737,13 +743,12 @@ Object {
           "PassthroughBehavior": "WHEN_NO_TEMPLATES",
           "RequestTemplates": Object {
             "application/json": "{
-  \\"body\\": $input.json(\\"$\\"),
-  \\"userInfo\\": {
-    \\"email\\": \\"$context.authorizer.claims.email\\",
-    \\"sub\\": \\"$context.authorizer.claims.sub\\"
-  }
-}
-",
+      \\"body\\": $input.json(\\"$\\"),
+      \\"userInfo\\": {
+        \\"email\\": \\"$context.authorizer.claims.email\\",
+        \\"sub\\": \\"$context.authorizer.claims.sub\\"
+      }
+    }",
           },
           "Type": "AWS",
           "Uri": Object {
@@ -761,7 +766,7 @@ Object {
                 ":lambda:path/2015-03-31/functions/",
                 Object {
                   "Fn::GetAtt": Array [
-                    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunction2D415C65",
+                    "coreLambdaLambdaFunction003C6073",
                     "Arn",
                   ],
                 },
@@ -795,7 +800,7 @@ Object {
         "Action": "lambda:InvokeFunction",
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunction2D415C65",
+            "coreLambdaLambdaFunction003C6073",
             "Arn",
           ],
         },
@@ -1196,7 +1201,15 @@ Object {
           "rules_to_suppress": Array [
             Object {
               "id": "W58",
-              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with tighter permissions.",
+            },
+            Object {
+              "id": "W89",
+              "reason": "This is not a rule for the general case, just for specific use cases/industries",
+            },
+            Object {
+              "id": "W92",
+              "reason": "This function does not need to have specified reserved concurrent executions",
             },
           ],
         },
@@ -1204,7 +1217,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3Bucket54AF3848",
+            "Ref": "AssetParameters6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55S3Bucket537E8DB8",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1217,7 +1230,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3VersionKeyE4BE7658",
+                          "Ref": "AssetParameters6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55S3VersionKeyB08199DC",
                         },
                       ],
                     },
@@ -1230,7 +1243,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersa99d3e56a719485a327c4a36c543e2eb28a5a6103fc37eae680d93e9f138bfbfS3VersionKeyE4BE7658",
+                          "Ref": "AssetParameters6785910c9a1ee56a70f6d13335e48b90824aa269d7a290394c62695f1ce3df55S3VersionKeyB08199DC",
                         },
                       ],
                     },
@@ -1393,60 +1406,25 @@ Object {
       },
       "Type": "AWS::IAM::Policy",
     },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602": Object {
-      "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
-            Object {
-              "ServerSideEncryptionByDefault": Object {
-                "SSEAlgorithm": "AES256",
-              },
-            },
-          ],
-        },
-        "LifecycleConfiguration": Object {
-          "Rules": Array [
-            Object {
-              "NoncurrentVersionTransitions": Array [
-                Object {
-                  "StorageClass": "GLACIER",
-                  "TransitionInDays": 90,
-                },
-              ],
-              "Status": "Enabled",
-            },
-          ],
-        },
-        "LoggingConfiguration": Object {
-          "DestinationBucketName": Object {
-            "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B",
-          },
-        },
-        "PublicAccessBlockConfiguration": Object {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "VersioningConfiguration": Object {
-          "Status": "Enabled",
-        },
-      },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunction2D415C65": Object {
+    "coreLambdaLambdaFunction003C6073": Object {
       "DependsOn": Array [
-        "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleDefaultPolicyDFCF7AF2",
-        "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+        "coreLambdaLambdaFunctionServiceRoleDefaultPolicy02C23B4C",
+        "coreLambdaLambdaFunctionServiceRoleA5BAF299",
       ],
       "Metadata": Object {
         "cfn_nag": Object {
           "rules_to_suppress": Array [
             Object {
               "id": "W58",
-              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with more tighter permissions.",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with tighter permissions.",
+            },
+            Object {
+              "id": "W89",
+              "reason": "This is not a rule for the general case, just for specific use cases/industries",
+            },
+            Object {
+              "id": "W92",
+              "reason": "This function does not need to have specified reserved concurrent executions",
             },
           ],
         },
@@ -1454,7 +1432,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3BucketA27C2E98",
+            "Ref": "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3Bucket34183232",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1467,7 +1445,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3VersionKey0028DE8A",
+                          "Ref": "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3VersionKey70615EFD",
                         },
                       ],
                     },
@@ -1480,7 +1458,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5f37a85f8eb584400dc482deeea8c668d0a673ab8bec04965d7601962c717afaS3VersionKey0028DE8A",
+                          "Ref": "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3VersionKey70615EFD",
                         },
                       ],
                     },
@@ -1494,15 +1472,9 @@ Object {
         "Environment": Object {
           "Variables": Object {
             "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
-            "S3_BUCKET_NAME": Object {
-              "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
-            },
             "botGender": "Male",
             "botLanguage": "English",
             "botName": "Joe",
-            "bucketName": Object {
-              "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
-            },
             "forceCacheUpdate": "false",
           },
         },
@@ -1521,7 +1493,7 @@ Object {
         "MemorySize": 1024,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+            "coreLambdaLambdaFunctionServiceRoleA5BAF299",
             "Arn",
           ],
         },
@@ -1533,7 +1505,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F": Object {
+    "coreLambdaLambdaFunctionServiceRoleA5BAF299": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -1588,7 +1560,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleDefaultPolicyDFCF7AF2": Object {
+    "coreLambdaLambdaFunctionServiceRoleDefaultPolicy02C23B4C": Object {
       "Metadata": Object {
         "cfn_nag": Object {
           "rules_to_suppress": Array [
@@ -1610,186 +1582,53 @@ Object {
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleDefaultPolicyDFCF7AF2",
+        "PolicyName": "coreLambdaLambdaFunctionServiceRoleDefaultPolicy02C23B4C",
         "Roles": Array [
           Object {
-            "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+            "Ref": "coreLambdaLambdaFunctionServiceRoleA5BAF299",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketPolicyB439C9EB": Object {
-      "Properties": Object {
-        "Bucket": Object {
-          "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
-        },
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "*",
-              "Condition": Object {
-                "Bool": Object {
-                  "aws:SecureTransport": "false",
-                },
-              },
-              "Effect": "Deny",
-              "Principal": "*",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "coreLambdaBrainS3BucketCoreLambdaBrainS3Bucket174EF602",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-              "Sid": "HttpsOnly",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::S3::BucketPolicy",
-    },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B": Object {
-      "DeletionPolicy": "Retain",
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
-            Object {
-              "id": "W35",
-              "reason": "This S3 bucket is used as the access logging bucket for another bucket",
-            },
-          ],
-        },
-      },
-      "Properties": Object {
-        "AccessControl": "LogDeliveryWrite",
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
-            Object {
-              "ServerSideEncryptionByDefault": Object {
-                "SSEAlgorithm": "AES256",
-              },
-            },
-          ],
-        },
-        "PublicAccessBlockConfiguration": Object {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-      },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucketPolicy2D6CFAF2": Object {
-      "Properties": Object {
-        "Bucket": Object {
-          "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B",
-        },
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "*",
-              "Condition": Object {
-                "Bool": Object {
-                  "aws:SecureTransport": "false",
-                },
-              },
-              "Effect": "Deny",
-              "Principal": "*",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketS3LoggingBucket204EE85B",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-              "Sid": "HttpsOnly",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::S3::BucketPolicy",
-    },
-    "coreLambdaBrainS3BucketPollyPolicy92F28419": Object {
-      "Metadata": Object {
-        "cfn_nag": Object {
-          "rules_to_suppress": Array [
-            Object {
-              "id": "W12",
-              "reason": "Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy",
-            },
-          ],
-        },
-      },
+    "coreLambdaLexPolicy6FD661CB": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
-              "Action": "polly:SynthesizeSpeech",
+              "Action": "lex:RecognizeText",
               "Effect": "Allow",
-              "Resource": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":lex:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "coreLambdaBrainS3BucketPollyPolicy92F28419",
+        "PolicyName": "coreLambdaLexPolicy6FD661CB",
         "Roles": Array [
           Object {
-            "Ref": "coreLambdaBrainS3BucketCoreLambdaBrainS3BucketLambdaFunctionServiceRoleBD7BA59F",
+            "Ref": "coreLambdaLambdaFunctionServiceRoleA5BAF299",
           },
         ],
       },

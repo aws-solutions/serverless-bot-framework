@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
-*  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+*  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 *
 *  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance
 *  with the License. A copy of the License is located at
@@ -47,6 +47,20 @@ test('Testing verifyEmail function', () => {
   expect(verifiedEmail).toBe(true);
   verifiedEmail = core.verifyEmail('123email+123@example123.com');
   expect(verifiedEmail).toBe(true);
+});
+
+test('Testing tryAgainResponse function', () => {
+  // Should return value
+  response = core.tryAgainResponse('English');
+  expect(response).toBe('I could not understand.');
+  response = core.tryAgainResponse('French');
+  expect(response).toBe('Je ne pouvais pas comprendre.');
+  response = core.tryAgainResponse('Italian');
+  expect(response).toBe('Non riuscivo a capire.');
+  response = core.tryAgainResponse('Spanish');
+  expect(response).toBe('No lo pude entender.');
+  response = core.tryAgainResponse('German');
+  expect(response).toBe('Ich konnte es nicht verstehen.');
 });
 
 test('Testing verifySub function', () => {
@@ -103,8 +117,8 @@ test('Testing sanitizeEvent function', () => {
 });
 
 
-/** Testing only when brain parameter is selected as Lex */
-test('test Core Lambda function when brain parameter is Lex', () => {
+/** Testing Core lambda function */
+test('test Core Lambda function ', () => {
   const mockedRecognizeText = jest.fn().mockImplementation(() => ({
     promise() {
       return Promise.resolve({
@@ -116,7 +130,6 @@ test('test Core Lambda function when brain parameter is Lex', () => {
     recognizeText: mockedRecognizeText
   }));
   process.env = {
-    BOT_BRAIN: 'Amazon Lex',
     botLanguage: 'English',
     botAliasId: 'TestAlias',
     botId: 'TestBotId',
@@ -142,6 +155,9 @@ test('test Core Lambda function when brain parameter is Lex', () => {
     botId: 'TestBotId',
     localeId: 'en_US',
     text: 'test',
+    "requestAttributes": {
+      "email": "foo@example.com"
+    },
     sessionId: '77069b76-bf23-4b9b-b2ff-4ae245feca3g'
   });
 });

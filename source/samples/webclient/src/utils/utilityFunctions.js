@@ -1,14 +1,14 @@
  /*********************************************************************************************************************
- *  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           
- *                                                                                                                    
- *  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance     
- *  with the License. A copy of the License is located at                                                             
- *                                                                                                                    
- *      http://www.apache.org/licenses/                                                                               
- *                                                                                                                    
- *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES 
- *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    
- *  and limitations under the License.                                                                                
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ *  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance
+ *  with the License. A copy of the License is located at
+ *
+ *      http://www.apache.org/licenses/
+ *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+ *  and limitations under the License.
  *********************************************************************************************************************/
 
 /**
@@ -26,7 +26,7 @@ export function extractResponse(responseData) {
     } else if (responseData.conversation.async) {
         return responseData.conversation.async.ask.text;
     }
-};
+}
 
 export function constructRequest(responseData, userInput) {
     let request = {};
@@ -90,11 +90,12 @@ export async function textToSpeech(text) {
             lang: awsConfig.language
         }
     }
-    const response = await API.post('jao_api', 'services/polly/', params);
-    var convertedBinary = new Uint8Array(atob(response.binary).split("").map(function(c) {return c.charCodeAt(0); }));
-    var blob = new Blob([convertedBinary], { type: 'audio/mp3' });
-    var url = window.URL.createObjectURL(blob)
-    window.audio = new Audio();
-    window.audio.src = url;
-    window.audio.play();
+    const botName = awsConfig.API.endpoints[0].name;
+    const response = await API.post(botName, 'services/polly/', params);
+    const audioCtx = new AudioContext();
+    const bufferSource = audioCtx.createBufferSource();
+    const audioBuffer = new Uint8Array(response.data).buffer;
+    bufferSource.buffer = await audioCtx.decodeAudioData(audioBuffer);
+    bufferSource.connect(audioCtx.destination);
+    bufferSource.start();
 }

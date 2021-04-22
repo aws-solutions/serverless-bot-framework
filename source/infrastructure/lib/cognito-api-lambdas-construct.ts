@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -13,7 +13,6 @@
 
 import { Construct, Aws } from '@aws-cdk/core';
 import { Function } from '@aws-cdk/aws-lambda';
-import { CfnLogGroup } from '@aws-cdk/aws-logs';
 import { CfnAuthorizer, RestApi } from '@aws-cdk/aws-apigateway';
 import {
   LambdaIntegration,
@@ -68,10 +67,12 @@ export class CognitoApiLambda extends Construct {
       cognitoUserPoolProps: {
         userInvitation: {
           emailSubject: 'Welcome to Serverless Bot Framework',
-          emailBody: `<p>You are invited to join the Serverless Bot Framework Solution.</p>
-        <p>Username: <strong>{username}</strong></p>
-        <p>Password: <strong>{####}</strong></p>
-        <p>Console: <strong>${props.webClientDomainName}/</strong></p>`,
+          emailBody: `
+            <p>You are invited to join the Serverless Bot Framework Solution.</p>
+            <p>Username: <strong>{username}</strong></p>
+            <p>Password: <strong>{####}</strong></p>
+            <p>Console: <strong>${props.webClientDomainName}/</strong></p>
+          `,
           smsMessage:
             'Your username is {username} and temporary password is {####}.',
         },
@@ -149,7 +150,7 @@ export class CognitoApiLambda extends Construct {
       }
     );
     // attach Roles
-    const identyPoolRole = new CfnIdentityPoolRoleAttachment(
+    new CfnIdentityPoolRoleAttachment(
       this,
       'BotIdentityPoolRole',
       {
@@ -162,7 +163,7 @@ export class CognitoApiLambda extends Construct {
     );
 
     // create Cognito UserPool user
-    const cognitoUserPoolUser = new CfnUserPoolUser(
+    new CfnUserPoolUser(
       this,
       'BotCognitoUserPoolUser',
       {
@@ -179,13 +180,12 @@ export class CognitoApiLambda extends Construct {
     );
     //create request integration
     const requestTemplate = `{
-  "body": $input.json("$"),
-  "userInfo": {
-    "email": "$context.authorizer.claims.email",
-    "sub": "$context.authorizer.claims.sub"
-  }
-}
-`;
+      "body": $input.json("$"),
+      "userInfo": {
+        "email": "$context.authorizer.claims.email",
+        "sub": "$context.authorizer.claims.sub"
+      }
+    }`;
     const apiCorePOSTIntegration = new LambdaIntegration(props.coreLambda, {
       proxy: false,
       allowTestInvoke: false,
@@ -196,7 +196,7 @@ export class CognitoApiLambda extends Construct {
           statusCode: '200',
           responseTemplates: { 'application/json': '' },
           responseParameters: {
-            'method.response.header.Access-Control-Allow-Origin': "'*'",
+            'method.response.header.Access-Control-Allow-Origin': "'*'", // NOSONAR enabling CORS to allow cloudfront url front-end call apigateway
           },
         },
       ],
@@ -208,7 +208,7 @@ export class CognitoApiLambda extends Construct {
       {
         statusCode: '200',
         responseParameters: {
-          'method.response.header.Access-Control-Allow-Origin': true,
+          'method.response.header.Access-Control-Allow-Origin': true, // NOSONAR enabling CORS to allow cloudfront url front-end call apigateway
         },
         responseModels: {
           'application/json': Model.EMPTY_MODEL,
@@ -246,7 +246,7 @@ export class CognitoApiLambda extends Construct {
           statusCode: '200',
           responseTemplates: { 'application/json': '' },
           responseParameters: {
-            'method.response.header.Access-Control-Allow-Origin': "'*'",
+            'method.response.header.Access-Control-Allow-Origin': "'*'", // NOSONAR enabling CORS to allow cloudfront url front-end call apigateway
           },
         },
       ],

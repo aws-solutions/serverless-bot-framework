@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -22,6 +22,8 @@ import {
 import { PolicyStatement, Effect, Policy, CfnPolicy } from '@aws-cdk/aws-iam';
 import { CfnFunction, Code, Runtime } from '@aws-cdk/aws-lambda';
 import { buildLambdaFunction } from '@aws-solutions-constructs/core';
+import { CfnNagHelper } from './cfn-nag-helper';
+
 
 export interface WriteApiKeyCustomResourceProps {
   readonly weatherAPIKey: string;
@@ -62,7 +64,7 @@ export class WriteApiKeyCustomResource extends Construct {
     });
 
     /** Attach SSM Policy to the Lambda's Role */
-    writeApiKeyToSSMLambda.role?.attachInlinePolicy(SSMPolicy);
+    writeApiKeyToSSMLambda.role?.attachInlinePolicy(SSMPolicy); //NOSONAR it is a valid expression
 
     /** Create Custom resource */
     const customwriteApiKeyToSSM = new CustomResource(this, 'CreateBotConfig', {
@@ -83,5 +85,12 @@ export class WriteApiKeyCustomResource extends Construct {
     (customwriteApiKeyToSSM.node
       .defaultChild as CfnCustomResource).cfnOptions.condition =
       props.weatherAPIChosen;
+
+    /** Suppression for cfn nag W92 */
+    const cfnFunction = writeApiKeyToSSMLambda.node.defaultChild as CfnFunction;
+    CfnNagHelper.addSuppressions(cfnFunction, {
+        Id: 'W92',
+        Reason: 'This function does not need to have specified reserved concurrent executions'
+    });
   }
 }

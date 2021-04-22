@@ -1,0 +1,16 @@
+[run]
+omit =
+    test*
+    .env/*
+    .venv-*/*
+    *test_*
+    */__init__.py
+    setup.py
+    bin
+    cert*
+    idna*
+    requests*
+    urllib*
+    chardet*
+source =
+    .

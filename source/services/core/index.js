@@ -1,5 +1,5 @@
  /*********************************************************************************************************************
- *  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance
  *  with the License. A copy of the License is located at
@@ -16,10 +16,9 @@
  */
 
 'use strict';
-
-const B2 = require('b2.core');
 const AWS = require('aws-sdk');
 const stringSanitizer = require('string-sanitizer');
+const options = { customUserAgent: 'AwsSolution/SOL0027/1.6.0' };
 
 function getLocaleId(language) {
   const language_locale = {
@@ -47,7 +46,7 @@ function tryAgainResponse(locale){
 }
 
 function verifyLocale(locale){
-  if (/^[a-z]{2}-[A-Z]{2}/.test(locale)){
+  if (/^[a-z]{2}-[A-Z]{2}/.test(locale)){ // NOSONAR regular expression here is needed to validate user inputs
     return true;
   } else {
     throw('Invalid locale, supported locales are of format: az-AZ');
@@ -56,7 +55,7 @@ function verifyLocale(locale){
 function verifyEmail(email){
   // regex source: http://emailregex.com/
   if (
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email) // NOSONAR regular expression here is needed to validate user inputs
   ){
     return true;
   } else {
@@ -64,7 +63,7 @@ function verifyEmail(email){
   }
 }
 function verifySub(sub){
-  if(/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.test(sub)){
+  if(/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.test(sub)){ // NOSONAR regular expression here is needed to validate user inputs
     return true;
   } else {
     throw('Invalid sub format');
@@ -86,127 +85,37 @@ function sanitizeEvent(event) {
 
 const handler = (event, context, callback) => {
   console.log(JSON.stringify(event));
-  const selectedBrainModule = process.env.BOT_BRAIN;
-  if(selectedBrainModule === 'Amazon Lex'){
-    const parsedEvent = sanitizeEvent(event);
-    console.log(JSON.stringify(parsedEvent));
+  const parsedEvent = sanitizeEvent(event);
+  console.log(JSON.stringify(parsedEvent));
 
-    const language = process.env.botLanguage;
-    const botId = process.env.botId;
-    const botAliasId = process.env.botAliasId;
-    try{
-      const lexruntimev2 = new AWS.LexRuntimeV2({apiVersion: '2020-08-07'});
-      const params = {
-        botAliasId: botAliasId, /* required */
-        botId: botId, /* required */
-        localeId: getLocaleId(language),
-        text: parsedEvent['text'], /* required */
-        sessionId: parsedEvent['userInfo']['sub'], /* required */
-      };
-      lexruntimev2.recognizeText(params).promise()
-        .then((data) => { // successful call
-          console.log(data);
-          const reponseText = ('messages' in data) ? data['messages'][0]['content'] : tryAgainResponse(language);
-          callback(null, {text: reponseText});
-        }).catch((err) => {
-          console.error(err); // an error occurred
-        });
-    } catch(err) {
-      console.error(err);
-    }
-
-  } else {
-    const parsedEvent = {
-      userInfo: event.userInfo,
-      ...event.body,
+  const language = process.env.botLanguage;
+  const botId = process.env.botId;
+  const botAliasId = process.env.botAliasId;
+  try{
+    const lexruntimev2 = new AWS.LexRuntimeV2({apiVersion: '2020-08-07', ...options});
+    const params = {
+      botAliasId: botAliasId, /* required */
+      botId: botId, /* required */
+      localeId: getLocaleId(language),
+      text: parsedEvent['text'], /* required */
+      sessionId: parsedEvent['userInfo']['sub'], /* required */
+      requestAttributes: {
+        'email': parsedEvent['userInfo']['email']
+      }
     };
-    CustomBrainCore(parsedEvent, callback);
+    lexruntimev2.recognizeText(params).promise()
+      .then((data) => { // successful call
+        console.log(data);
+        const reponseText = ('messages' in data) ? data['messages'][0]['content'] : tryAgainResponse(language);
+        callback(null, {text: reponseText});
+      }).catch((err) => {
+        console.error(err); // an error occurred
+      });
+  } catch(err) {
+    console.error(err);
   }
+
 };
-
-function CustomBrainCore(parsedEvent, callback) {
-  B2.init(undefined, function(core){
-    core.resolveIntent(parsedEvent, function(){
-      core.on('simpleResponse', function(data){
-        data = B2.CORE.cleanBinary(data);
-        core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-          B2.util.log.debug(JSON.stringify(data), { line: __line });
-          core.endRequest();
-          callback(null, data);
-        });
-      });
-
-      core.on('backendResponse', function(data){
-        data = B2.CORE.cleanBinary(data);
-        core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-          B2.util.log.debug(JSON.stringify(data), { line: __line });
-          core.endRequest();
-          callback(null, data);
-        });
-      });
-
-      core.on('history', function(data){
-        data = B2.CORE.cleanBinary(data);
-        core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-          B2.util.log.debug(JSON.stringify(data), { line: __line });
-          core.endRequest();
-          callback(null, data);
-        });
-      });
-
-      core.on('syncConversation', function(data){
-        data = B2.CORE.cleanBinary(data);
-        core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-          B2.util.log.debug(JSON.stringify(data), { line: __line });
-          core.endRequest();
-          callback(null, data);
-        });
-      });
-
-      core.on('asyncConversation', function(data){
-        data = B2.CORE.cleanBinary(data);
-        core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-          B2.util.log.debug(JSON.stringify(data), { line: __line });
-          core.endRequest();
-          callback(null, data);
-        });
-      });
-
-      core.on('moreInformationNeeded', function(data){
-          data = B2.CORE.cleanBinary(data);
-          core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-            B2.util.log.debug(JSON.stringify(data), { line: __line });
-            core.endRequest();
-            callback(null, data);
-          });
-      });
-
-      core.on('noIntentFound', function(data){
-        data = B2.CORE.cleanBinary(data);
-          core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-            B2.util.log.debug(JSON.stringify(data), { line: __line });
-            core.endRequest();
-            callback(null, data);
-          });
-      });
-
-      core.on('federated', function(data){
-        data = B2.CORE.cleanBinary(data);
-        core.checkIfVoiceIsNeeded(parsedEvent, data, function(data){
-          B2.util.log.debug(JSON.stringify(data), { line: __line });
-          core.endRequest();
-          callback(null, data);
-        });
-      });
-
-      core.on('completed', function(data){
-          data = B2.CORE.cleanBinary(data);
-          B2.util.log.debug("Intent Resolution Completed: [response=" + JSON.stringify(data) + "]", { line: __line });
-          B2.util.log.info("Intent Resolution Completed", { line: __line });
-      });
-    });
-  });
-}
 
 module.exports = {
   handler,
@@ -215,5 +124,5 @@ module.exports = {
   verifySub,
   sanitizeEvent,
   getLocaleId,
-  CustomBrainCore,
+  tryAgainResponse,
 };

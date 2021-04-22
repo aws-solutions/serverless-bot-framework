@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -12,13 +12,17 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { App } from '@aws-cdk/core';
+import { App, Aspects} from '@aws-cdk/core';
+import { AwsSdkConfig } from './aws-sdk-config-aspect';
 import { ServerlessBotFrameworkStack } from '../lib/serverless-bot-framework-stack';
 
 const app = new App();
-new ServerlessBotFrameworkStack(app, 'serverless-bot-framework', {
+const solutionId = 'SO0027';
+const stack = new ServerlessBotFrameworkStack(app, 'serverless-bot-framework', {
   description:
     '(SO0027) - Serverless-bot-framework Solution. Version %%VERSION%%',
-  solutionID: 'SO0027',
+  solutionID: solutionId,
   solutionName: 'serverless-bot-framework',
 });
+
+Aspects.of(stack).add(new AwsSdkConfig(app, `CustomUserAgent`, solutionId));

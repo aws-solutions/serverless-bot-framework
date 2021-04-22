@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 
 import {
-  Aspects,
   CfnParameter,
   Construct,
   StackProps,
@@ -23,26 +22,21 @@ import {
   CfnMapping,
   CfnOutput,
   Aws,
-  CfnRule,
-  CfnRuleAssertion
 } from '@aws-cdk/core';
 import { Runtime, Code } from '@aws-cdk/aws-lambda';
-import { PolicyStatement, Effect } from '@aws-cdk/aws-iam';
 import { Asset } from '@aws-cdk/aws-s3-assets';
 import { SolutionHelper } from './solution-helper-construct';
-import { CoreLambdaToBrainS3 } from './corelambda-brain-s3bucket-construct';
-import { BrainS3ToTrainModelLambda } from './brain-s3bucket-train-model-lambda-construct';
+import { CoreLambda } from './corelambda-construct';
 import { LambdaToPolly } from './lambda-polly-construct';
 import { CognitoApiLambda } from './cognito-api-lambdas-construct';
-import { CoreLambdaDynamoDBTables } from './corelambda-dynamodb-tables-construct';
 import { OrderPizzaLambdaDynamoDBTables } from './orderpizza-dynampdb-tables-construct';
 import { CloudfrontStaticWebsite } from './cloudfront-static-website-construct';
-import { LeaveFeedbackLambdaDynamoDBTable } from './feedbacklambda-dynamodb-table-construct';
+import { LexLambdaDynamoDBTable } from './lexlambda-dynamodb-table-construct';
 import { WriteApiKeyCustomResource } from './write-apikey-custom-resource-construct';
 import { WeatherForecastToSSM } from './weather-forecast-lambda-ssm-construct';
-import { BotCustomResource } from './custom-resource-construct';
+import { WebClientCustomResource } from './web-client-custom-resource-construct';
 import { LexCustomResource } from './custom-resource-lex-bot';
-import { ConditionalResource } from './conditional-resource';
+
 
 export interface ServerlessBotFrameworkStackProps extends StackProps {
   readonly solutionID: string;
@@ -73,12 +67,10 @@ export class ServerlessBotFrameworkStack extends Stack {
       default: 'English',
       allowedValues: [
         'English',
-        'Portuguese',
         'Spanish',
         'French',
         'Italian',
         'German',
-        'Russian',
       ],
     });
 
@@ -108,20 +100,11 @@ export class ServerlessBotFrameworkStack extends Stack {
       constraintDescription: 'Admin email must be a valid email address.',
     });
 
-    const botBrain = new CfnParameter(this, 'BotBrain', {
-      type: 'String',
-      description:
-        'Choice of chatbot backend. Amazon Lex or custom ML model.',
-      default: 'Custom ML model',
-      allowedValues: ['Custom ML model', 'Amazon Lex'],
-    });
-
     const childDirected = new CfnParameter(this, 'ChildDirected', {
       type: 'String',
       description:
         "Is use of your bot subject to the Children's Online Privacy Protection Act (COPPA)",
-      default: 'N/A',
-      allowedValues: ['No', 'Yes', 'N/A'],
+      allowedValues: ['No', 'Yes'],
     });
 
     const weatherAPIProvider = new CfnParameter(this, 'WeatherAPIProvider', {
@@ -174,35 +157,6 @@ export class ServerlessBotFrameworkStack extends Stack {
       ),
     });
 
-    /** Making sure only supported langauges in Lex are chosen when bot brain is Lex */
-    const lexSupportedLanguagesRule = new CfnRule(this, 'LexLanguages', {
-    /** Create Condition for custom ML chosen for brain module */
-      ruleCondition: Fn.conditionEquals(
-          botBrain.valueAsString,
-          'Amazon Lex'
-        ),
-    });
-    lexSupportedLanguagesRule.addAssertion(
-      Fn.conditionContains(
-        /** Update this list if Amazon Lex adds new items to its list of supported languages */
-        ['English', 'Spanish', 'French', 'Italian','German'],
-        botLanguage.valueAsString
-      ),
-      'Not a supported language for Amazon Lex'
-    );
-    /** Making sure ChildDirected parameter has a yes/no value when bot brain is Lex */
-    lexSupportedLanguagesRule.addAssertion(
-      Fn.conditionContains(
-        ['Yes', 'No'],
-        childDirected.valueAsString
-      ),
-      'This parameter must be a Yes/No for Amazon Lex'
-    );
-    /** Making sure Weather API Key parameter is empty when bot brain is Lex */
-    lexSupportedLanguagesRule.addAssertion(
-      Fn.conditionEquals('', weatherAPIKey.valueAsString),
-      'Weather API functionality is not supported in Amazon Lex'
-    );
     /** Generate assethash for the WebClinetPackage used to deploy the static website */
     const webPackageAsset = new Asset(this, 'WebPackage', {
       path: '../samples/webclient/build',
@@ -215,7 +169,7 @@ export class ServerlessBotFrameworkStack extends Stack {
     };
 
     /** Create SolutionHelper */
-    const solutionHelper = new SolutionHelper(this, 'SolutionHelper', {
+    new SolutionHelper(this, 'SolutionHelper', {
       solutionId: solutionMapping.findInMap('Data', 'ID'),
       solutionVersion: solutionMapping.findInMap('Data', 'Version'),
       sendAnonymousDataCondition: metricsCondition,
@@ -224,18 +178,41 @@ export class ServerlessBotFrameworkStack extends Stack {
       botLanguage: botLanguage.valueAsString,
     });
 
+    /** Create LexLambda => DynamoDB Table Integrations */
+    const lexLambdaDynamoDBTables = new LexLambdaDynamoDBTable(
+      this,
+      'LexLambdaDynamoDB',
+      {
+        lexLambdaProps: {
+          description: 'Serverless-bot-framework Sample lambda-lex integration functionalities',
+          runtime: Runtime.PYTHON_3_8,
+          code: Code.fromAsset('../samples/lex-lambdas'),
+          handler: 'dispatcher.lambda_handler',
+          timeout: Duration.minutes(5),
+          environment: {
+            childDirected: childDirected.valueAsString,
+          }
+        },
+      }
+    );
+
+    /** Pass in lexLambda as OrderPizzaLambda and create OrderPizza DynamoDB Tables */
+    new OrderPizzaLambdaDynamoDBTables(this, 'OrderPizzaLambdaDynamoDB', {
+      orderPizzaLambda: lexLambdaDynamoDBTables.lexLambda
+    });
+
     /** Lex Custom Resource */
     const lexCustomResource = new LexCustomResource(this, 'LexCustomResrouce', {
       botName: botName.valueAsString,
       botLanguage: botLanguage.valueAsString,
       childDirected: childDirected.valueAsString,
-      botBrain: botBrain.valueAsString
+      lexLambdaARN: lexLambdaDynamoDBTables.lexLambda.functionArn,
     });
 
-    /** Create CoreLambda S3 Brain Bucket */
-    const coreLambdaBrainS3Bucket = new CoreLambdaToBrainS3(
+    /** Create CoreLambda */
+    const coreLambdaConstruct = new CoreLambda(
       this,
-      'coreLambdaBrainS3Bucket',
+      'coreLambda',
       {
         lambdaFunctionProps: {
           description: 'Serverless-bot-framework Core lambda',
@@ -251,7 +228,6 @@ export class ServerlessBotFrameworkStack extends Stack {
             botGender: botGender.valueAsString,
             botLanguage: botLanguage.valueAsString,
             forceCacheUpdate: 'false',
-            BOT_BRAIN: botBrain.valueAsString,
           },
         },
       }
@@ -269,40 +245,6 @@ export class ServerlessBotFrameworkStack extends Stack {
       },
     });
 
-    /** Generate UUID (to be used by several resources) if metricsCondition is true */
-    const solutionUUID = Fn.conditionIf(
-      metricsCondition.logicalId,
-      solutionHelper.createIdFunction.getAttString('UUID'),
-      ''
-    ).toString();
-
-    /** Create S3 Brain Bucket to TrainModel Lambda */
-    const brainS3ToTrainModelLambda = new BrainS3ToTrainModelLambda(
-      this,
-      ' BrainS3ToTrainModelLambda',
-      {
-        trainModelLambdaProps: {
-          description: 'Serverless-bot-framework TrainModel lambda',
-          runtime: Runtime.NODEJS_12_X,
-          code: Code.fromAsset('../services/train-model'),
-          handler: 'index.handler',
-          timeout: Duration.minutes(5),
-          memorySize: 128,
-          environment: {
-            REGION: Aws.REGION,
-            SEND_ANONYMOUS_USAGE_DATA: solutionMapping.findInMap(
-              'Data',
-              'SendAnonymousUsageData'
-            ),
-            SOLUTION_ID: solutionMapping.findInMap('Data', 'ID'),
-            VERSION: solutionMapping.findInMap('Data', 'Version'),
-            UUID: solutionUUID,
-          },
-        },
-        brainS3Bucket: coreLambdaBrainS3Bucket.brainS3Bucket,
-      }
-    );
-
     /** Create CloudFront => StaticWebsite Integration */
     const cloudfrontStaticWebsite = new CloudfrontStaticWebsite(
       this,
@@ -311,102 +253,25 @@ export class ServerlessBotFrameworkStack extends Stack {
 
     /** Create Cognito=>ApiGateway=>CoreLambda/PollyLambda Integrations */
     const cognitoApiCorePollyLambdas = new CognitoApiLambda(this, 'BotApi', {
-      coreLambda: coreLambdaBrainS3Bucket.coreLambda,
+      coreLambda: coreLambdaConstruct.coreLambda,
       pollyLambda: lambdaToPolly.pollyLambda,
       adminUserName: adminUserName.valueAsString,
       adminEmail: adminEmail.valueAsString,
       webClientDomainName: cloudfrontStaticWebsite.domainName,
     });
 
-    /** Create CoreLambda => DynamoDB Tables Integrations */
-    const coreLambdaDynamoDBTables = new CoreLambdaDynamoDBTables(
-      this,
-      'CoreLambdaDynamoDBTables',
-      {
-        coreLambdaFunction: coreLambdaBrainS3Bucket.coreLambda,
-      }
-    );
-
-    /** Create OrderPizzaLambda => DynamoDB Tables Integrations */
-    const orderPizzaLambdaDynamoDBTables = new OrderPizzaLambdaDynamoDBTables(
-      this,
-      'OrderPizzaLambdaDynamoDB',
-      {
-        orderPizzaLambdaProps: {
-          description: 'Serverless-bot-framework OrderPizza Sample lambda',
-          runtime: Runtime.NODEJS_12_X,
-          code: Code.fromAsset('../samples/order-pizza'),
-          handler: 'index.handler',
-          timeout: Duration.minutes(5),
-          memorySize: 128,
-          environment: {
-            PIZZA_MENUS_INITIALIZATION_BUCKET:
-              coreLambdaBrainS3Bucket.bucketName,
-            PIZZA_MENUS_INITIALIZATION_FILE: 'pizza-menus/pizza-menu.json',
-            PIZZA_MENU_ID: 'main_menu_1',
-            PIZZA_ORDERS_GLOBAL_INDEX_NAME: 'customerId-orderTimestamp-index',
-            RE_INITIALIZE_MENUS_TABLE: 'false',
-          },
-        },
-      }
-    );
-
-    /** Grant OrderPizza Lambda permission to read menus file from BrainBucket */
-    orderPizzaLambdaDynamoDBTables.orderPizzaLambda.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['s3:GetObject'],
-        resources: [
-          `${coreLambdaBrainS3Bucket?.brainS3Bucket?.bucketArn}/pizza-menus/*`,
-        ],
-      })
-    );
-
-    /** Grant Core Lambda permissions to inovke OrderPizza Lambda */
-    orderPizzaLambdaDynamoDBTables.orderPizzaLambda.grantInvoke(
-      coreLambdaBrainS3Bucket.coreLambda
-    );
-
-    /** Create LeaveFeedbackLambda => DynamoDB Table Integrations */
-    const leaveFeedbackLambdaDynamoDBTables = new LeaveFeedbackLambdaDynamoDBTable(
-      this,
-      'LeaveFeedBackLambdaDynamoDB',
-      {
-        leaveFeedbackLambdaProps: {
-          description: 'Serverless-bot-framework LeaveFeedback Sample lambda',
-          runtime: Runtime.PYTHON_3_8,
-          code: Code.fromAsset('../samples/leave-feedback'),
-          handler: 'index.lambda_handler',
-          timeout: Duration.minutes(5),
-        },
-      }
-    );
-
-    /** Grant Core Lambda permissions to inovke LeaveFeedback Lambda */
-    leaveFeedbackLambdaDynamoDBTables.leaveFeedbackLambda.grantInvoke(
-      coreLambdaBrainS3Bucket.coreLambda
-    );
-
     /** Create Weather Forecast's WriteAPIKey CustomResource => SSM Integration */
-    const writeApiKeyCustomResource = new WriteApiKeyCustomResource(this, 'WriteAPIKey', {
+    new WriteApiKeyCustomResource(this, 'WriteAPIKey', {
       weatherAPIKey: weatherAPIKey.valueAsString,
       weatherAPIChosen: weatherAPIChosen,
     });
 
-    /** Create WeatherForecast => SSM Integration */
-    const weatherForecastLambda = new WeatherForecastToSSM(
-      this,
-      'WeatherForecastLambda',
-      {
-        weatherAPIProvider: weatherAPIProvider.valueAsString,
-        weatherAPIChosen: weatherAPIChosen,
-      }
-    );
-
-    /** Grant Core Lambda permissions to inovke weatherForecastLambda Lambda */
-    weatherForecastLambda.weatherForecastLambda.grantInvoke(
-      coreLambdaBrainS3Bucket.coreLambda
-    );
+    /** Pass in lexLambda as weather forecast lambda and Create WeatherForecast => SSM Integration */
+    new WeatherForecastToSSM(this, 'WeatherForecastLambda', {
+      weatherAPIProvider: weatherAPIProvider.valueAsString,
+      weatherAPIChosen: weatherAPIChosen,
+      weatherForecastLambda: lexLambdaDynamoDBTables.lexLambda
+    });
 
     const botApi = cognitoApiCorePollyLambdas.botApi;
 
@@ -414,41 +279,21 @@ export class ServerlessBotFrameworkStack extends Stack {
     const webClientPackageUrl = `https://s3.${Aws.REGION}.amazonaws.com/${webClientPackageLocation.S3Bucket}/${webClientPackageLocation.S3Key}`;
 
     /** Create CustomResource */
-    const botCustomResource = new BotCustomResource(this, 'BotCustomResource', {
-      solutionId: solutionMapping.findInMap('Data', 'ID'),
-      version: solutionMapping.findInMap('Data', 'Version'),
-      UUID: solutionUUID,
-      sendAnonymousUsageData: solutionMapping.findInMap(
-        'Data',
-        'SendAnonymousUsageData'
-      ),
+    new WebClientCustomResource(this, 'WebClientCustomResource', {
       botApiUrl: `https://${botApi.restApiId}.execute-api.${Aws.REGION}.amazonaws.com/${botApi.deploymentStage.stageName}/`,
       botApiStageName: botApi.deploymentStage.stageName,
       botApiId: botApi.restApiId,
       botName: botName.valueAsString,
       botGender: botGender.valueAsString,
       botLanguage: botLanguage.valueAsString,
-      botBrain: botBrain.valueAsString,
-      brainBucketName: coreLambdaBrainS3Bucket.bucketName,
-      conversationLogsTable:
-        coreLambdaDynamoDBTables.conversationLogsDBTable.tableName,
-      entitiesTable: coreLambdaDynamoDBTables.entityResolverDBTabl.tableName,
-      contextTable: coreLambdaDynamoDBTables.contextDBTable.tableName,
       cognitoIdentityPool:
         cognitoApiCorePollyLambdas.botCognitoIdentityPool.ref,
       cognitoUserPoolId:
         cognitoApiCorePollyLambdas.botCognitoUserPool.userPoolId,
       cognitoUserPoolClientId:
         cognitoApiCorePollyLambdas.botCognitoUserPoolClient.userPoolClientId,
-      trainModelArn: brainS3ToTrainModelLambda.trainModelLambda.functionArn,
       sampleWebClientBucketName: cloudfrontStaticWebsite.bucketName,
       sampleWebclientPackage: webClientPackageUrl,
-      sampleLeaveFeedbackBotArn:
-        leaveFeedbackLambdaDynamoDBTables.leaveFeedbackLambda.functionArn,
-      sampleWeatherForecastBotArn:
-        weatherForecastLambda.weatherForecastLambda.functionArn,
-      sampleOrderPizzaBotArn:
-        orderPizzaLambdaDynamoDBTables.orderPizzaLambda.functionArn,
     });
 
     /** Create Template Interface */
@@ -468,15 +313,11 @@ export class ServerlessBotFrameworkStack extends Stack {
             Parameters: [adminUserName.logicalId, adminEmail.logicalId],
           },
           {
-            Label: { default: 'Bot Brain' },
-            Parameters: [botBrain.logicalId],
-          },
-          {
             Label: { default: 'Amazon Lex related parameters' },
             Parameters: [childDirected.logicalId],
           },
           {
-            Label: { default: 'Custom ML Model related parameters' },
+            Label: { default: 'Weather API parameters' },
             Parameters: [weatherAPIProvider.logicalId, weatherAPIKey.logicalId],
           },
         ],
@@ -493,13 +334,6 @@ export class ServerlessBotFrameworkStack extends Stack {
     };
 
     /** Stack Outputs */
-    new CfnOutput(this, 'BrainBucket', {
-      exportName: 'BrainBucket',
-      value: coreLambdaBrainS3Bucket.bucketName,
-      description:
-        'S3 Bucket where all brain related files are stores (ex: knowledge.json).',
-    });
-
     new CfnOutput(this, 'ApiEndpoint', {
       exportName: 'ApiEndpoint',
       value: `https://${botApi.restApiId}.execute-api.${Aws.REGION}.amazonaws.com/${botApi.deploymentStage.stageName}/`,

@@ -1,5 +1,5 @@
 # #####################################################################################################################
-#  Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                            #
+#  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                 #
 #                                                                                                                     #
 #  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance     #
 #  with the License. A copy of the License is located at                                                              #
@@ -45,6 +45,6 @@ def get_logger(name):
         logging.getLogger("botocore").setLevel(logging.WARNING)
         logging.getLogger("urllib3").setLevel(logging.WARNING)
     else:
-        logging.basicConfig(level=get_level())
+        logging.basicConfig(level=get_level()) # NOSONAR logger's config is safe here
         logger = logging.getLogger(name)
     return logger

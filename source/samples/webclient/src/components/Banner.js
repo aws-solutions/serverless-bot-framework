@@ -1,5 +1,5 @@
  /*********************************************************************************************************************
- *  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  *  Licensed under the Apache License Version 2.0 (the 'License'). You may not use this file except in compliance
  *  with the License. A copy of the License is located at
@@ -16,6 +16,8 @@
  */
 
 import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import logo from '../logo.png';
 import mic from '../mic_c.png';
 
@@ -30,7 +32,17 @@ class Banner extends React.Component {
 
     myFunction() {
         if (!window.webkitSpeechRecognition) {
-            alert("Your browser doesn't support voice to speech API");
+            toast.info("Your browser doesn't support voice to speech API",
+              {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              }
+            );
           } else {
             var recognition = new window.webkitSpeechRecognition();
             recognition.lang = awsConfig.language;
@@ -58,6 +70,7 @@ class Banner extends React.Component {
                 <span className='banner--logo'><img src={logo} alt={'logo'}/></span>
                 <span className='banner--mic-container' onClick={this.myFunction}> <img className='banner--mic-image' src={mic} alt={'mic'}/></span>
                 <button className='banner--language'>{awsConfig.language}</button>
+                <ToastContainer />
             </div>
         )
     }

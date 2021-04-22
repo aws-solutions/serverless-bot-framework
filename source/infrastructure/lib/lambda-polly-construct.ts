@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -12,9 +12,10 @@
  *********************************************************************************************************************/
 
 import { Construct } from '@aws-cdk/core';
-import { Function, FunctionProps } from '@aws-cdk/aws-lambda';
+import { Function, FunctionProps, CfnFunction } from '@aws-cdk/aws-lambda';
 import { PolicyStatement, Effect, Policy, CfnPolicy } from '@aws-cdk/aws-iam';
 import { buildLambdaFunction } from '@aws-solutions-constructs/core';
+import { CfnNagHelper } from './cfn-nag-helper';
 
 export interface LambdaToPollyProps {
   readonly existingLambdaObj?: Function;
@@ -42,21 +43,23 @@ export class LambdaToPolly extends Construct {
       ],
     });
 
+    /** Suppression for cfn nag */
+    const cfnFunction = this._pollyLambda.node.defaultChild as CfnFunction;
+    CfnNagHelper.addSuppressions(cfnFunction, {
+      Id: 'W92',
+      Reason: 'This function does not need to have specified reserved concurrent executions'
+    });
+
     /** Add policy metadata to explain why resources: ['*'] is needed */
-    (pollyPolicy.node.defaultChild as CfnPolicy).cfnOptions.metadata = {
-      cfn_nag: {
-        rules_to_suppress: [
-          {
-            id: 'W12',
-            reason:
-              'Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy',
-          },
-        ],
-      },
-    };
+    const cfnPolicy = pollyPolicy.node.defaultChild as CfnPolicy;
+    CfnNagHelper.addSuppressions(cfnPolicy, {
+      Id: 'W12',
+      Reason:
+        'Polly allows specifying lexicon ARNs only. There is no specific lexicon required for this policy',
+    });
 
     /** Add the pollyPolicy to the pollyLambda's role */
-    this._pollyLambda.role?.attachInlinePolicy(pollyPolicy);
+    this._pollyLambda.role?.attachInlinePolicy(pollyPolicy); //NOSONAR it is a valid expression
   }
 
   public get pollyLambda(): Function {

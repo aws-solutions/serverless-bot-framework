@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Construct, Aws, RemovalPolicy } from '@aws-cdk/core';
-import { Function, FunctionProps } from '@aws-cdk/aws-lambda';
+import { Construct, RemovalPolicy } from '@aws-cdk/core';
+import { Function } from '@aws-cdk/aws-lambda';
 import {
   TableProps,
   Table,
@@ -21,17 +21,15 @@ import {
   BillingMode,
   ProjectionType,
 } from '@aws-cdk/aws-dynamodb';
-import { buildLambdaFunction } from '@aws-solutions-constructs/core';
 import { LambdaToDynamoDB } from '@aws-solutions-constructs/aws-lambda-dynamodb';
 
 export interface OrderPizzaLambdaDynamoDBTablesProps {
-  readonly orderPizzaLambdaProps: FunctionProps;
+  readonly orderPizzaLambda: Function;
 }
 
 export class OrderPizzaLambdaDynamoDBTables extends Construct {
   private readonly _orderPizzaLambda: Function;
   private readonly _ordersDBTable: Table;
-  private readonly _menusDBTable: Table;
 
   constructor(
     scope: Construct,
@@ -40,10 +38,9 @@ export class OrderPizzaLambdaDynamoDBTables extends Construct {
   ) {
     super(scope, id);
 
-    /** build orderPizzaLambda Function */
-    this._orderPizzaLambda = buildLambdaFunction(this, {
-      lambdaFunctionProps: props.orderPizzaLambdaProps,
-    });
+    /** pass in orderPizzaLambda Function */
+    this._orderPizzaLambda = props.orderPizzaLambda;
+
 
     /** OrderPizzaLambda Orders DynamoDBTable integration */
     const ordersDBTableProbs: TableProps = {
@@ -81,38 +78,21 @@ export class OrderPizzaLambdaDynamoDBTables extends Construct {
       ordersDBTableGSI
     );
 
-    /** OrderPizzaLambda Menus DynamoDBTable integration */
-    const menusDBTableProbs: TableProps = {
-      partitionKey: {
-        name: 'menuId',
-        type: AttributeType.STRING,
-      },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      removalPolicy: RemovalPolicy.DESTROY,
-    };
-
-    const orderPizzaMenusDBTable = new LambdaToDynamoDB(
-      this,
-      'OrderPizzaMenusDBTable',
-      {
-        existingLambdaObj: this._orderPizzaLambda,
-        dynamoTableProps: menusDBTableProbs,
-      }
-    );
 
     /** Get dynamoDB Tables */
     this._ordersDBTable = orderPizzaOrdersDBTable.dynamoTable;
-    this._menusDBTable = orderPizzaMenusDBTable.dynamoTable;
+    // this._menusDBTable = orderPizzaMenusDBTable.dynamoTable;
 
-    /** Add DynamoDB Tables to OrderPizza Lambda's enviroment */
+    /** Add DynamoDB Table and Index names to OrderPizza Lambda's enviroment */
     this._orderPizzaLambda.addEnvironment(
       'PIZZA_ORDERS_TABLE',
       this._ordersDBTable.tableName
     );
     this._orderPizzaLambda.addEnvironment(
-      'PIZZA_MENUS_TABLE',
-      this._menusDBTable.tableName
+      'PIZZA_ORDERS_INDEX',
+      ordersDBTableGSI.indexName
     );
+
   }
 
   public get orderPizzaLambda(): Function {
@@ -123,7 +103,4 @@ export class OrderPizzaLambdaDynamoDBTables extends Construct {
     return this._ordersDBTable;
   }
 
-  public get menusDBTable(): Table {
-    return this._menusDBTable;
-  }
 }

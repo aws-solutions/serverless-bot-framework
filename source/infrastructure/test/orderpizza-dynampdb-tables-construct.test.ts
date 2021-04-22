@@ -1,5 +1,5 @@
 /**********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -14,29 +14,24 @@
 import { SynthUtils } from '@aws-cdk/assert';
 import { Stack, Aws, Duration } from '@aws-cdk/core';
 import { Runtime, Code } from '@aws-cdk/aws-lambda';
+import { LexLambdaDynamoDBTable } from '../lib/lexlambda-dynamodb-table-construct';
 import { OrderPizzaLambdaDynamoDBTables } from '../lib/orderpizza-dynampdb-tables-construct';
 import '@aws-cdk/assert/jest';
 
 test('test OrderPizzaLambdaDynamoDBTables construct', () => {
   const stack = new Stack();
-
-  new OrderPizzaLambdaDynamoDBTables(stack, 'OrderPizzaLambdaDynamoDB', {
-    orderPizzaLambdaProps: {
-      functionName: `${Aws.STACK_NAME}-OrderPizzaLambda`,
-      description: 'Serverless-bot-framework OrderPizza Sample lambda',
-      runtime: Runtime.NODEJS_12_X,
-      code: Code.fromAsset('../samples/order-pizza'),
+  const lexLambda = new LexLambdaDynamoDBTable(stack, 'LexLambdaDynamoDB', {
+    lexLambdaProps: {
+      functionName: `${Aws.STACK_NAME}-LexLambda`,
+      description: 'Serverless-bot-framework Lex Sample lambda',
+      runtime: Runtime.PYTHON_3_8,
+      code: Code.fromAsset('../samples/lex-lambdas'),
       handler: 'index.handler',
       timeout: Duration.minutes(5),
-      memorySize: 128,
-      environment: {
-        PIZZA_MENUS_INITIALIZATION_BUCKET: 'brainBucket',
-        PIZZA_MENUS_INITIALIZATION_FILE: 'pizza-menus/pizza-menu.json',
-        PIZZA_MENU_ID: 'main_menu_1',
-        PIZZA_ORDERS_GLOBAL_INDEX_NAME: 'customerId-orderTimestamp-index',
-        RE_INITIALIZE_MENUS_TABLE: 'false',
-      },
     },
+  }).lexLambda;
+  new OrderPizzaLambdaDynamoDBTables(stack, 'OrderPizzaLambdaDynamoDB', {
+    orderPizzaLambda: lexLambda
   });
 
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();

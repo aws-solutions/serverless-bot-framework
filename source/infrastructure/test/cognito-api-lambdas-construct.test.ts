@@ -1,5 +1,5 @@
 /**********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -15,7 +15,7 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { Stack, Aws, Duration } from '@aws-cdk/core';
 import { Runtime, Code } from '@aws-cdk/aws-lambda';
 import { LambdaToPolly } from '../lib/lambda-polly-construct';
-import { CoreLambdaToBrainS3 } from '../lib/corelambda-brain-s3bucket-construct';
+import { CoreLambda } from '../lib/corelambda-construct';
 import { CloudfrontStaticWebsite } from '../lib/cloudfront-static-website-construct';
 import { CognitoApiLambda } from '../lib/cognito-api-lambdas-construct';
 import '@aws-cdk/assert/jest';
@@ -23,9 +23,9 @@ import '@aws-cdk/assert/jest';
 test('test CognitoApiLambda construct', () => {
   const stack = new Stack();
 
-  const coreLambdaBrainS3Bucket = new CoreLambdaToBrainS3(
+  const coreLambdaConstruct = new CoreLambda(
     stack,
-    'coreLambdaBrainS3Bucket',
+    'coreLambda',
     {
       lambdaFunctionProps: {
         functionName: `${Aws.STACK_NAME}-CoreLambda`,
@@ -63,7 +63,7 @@ test('test CognitoApiLambda construct', () => {
   );
 
   new CognitoApiLambda(stack, 'CognitoApiCorePollyLambda', {
-    coreLambda: coreLambdaBrainS3Bucket.coreLambda,
+    coreLambda: coreLambdaConstruct.coreLambda,
     pollyLambda: lambdaToPolly.pollyLambda,
     adminUserName: 'fakeUserName',
     adminEmail: 'fakeEmail',

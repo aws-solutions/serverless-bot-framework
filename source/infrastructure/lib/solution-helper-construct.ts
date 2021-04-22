@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -16,11 +16,11 @@ import {
   Construct,
   CustomResource,
   CfnCondition,
-  Fn,
   Duration,
 } from '@aws-cdk/core';
 import { Runtime, Code, CfnFunction } from '@aws-cdk/aws-lambda';
 import { buildLambdaFunction } from '@aws-solutions-constructs/core';
+import { CfnNagHelper } from './cfn-nag-helper';
 
 export interface SolutionHelperProps {
   readonly solutionId: string;
@@ -71,6 +71,12 @@ export class SolutionHelper extends Construct {
       resourceType: 'Custom::AnonymousData',
     });
 
+    /** Suppression for cfn nag W92 */
+    const cfnFunction = helperFunction.node.defaultChild as CfnFunction;
+    CfnNagHelper.addSuppressions(cfnFunction, {
+        Id: 'W92',
+        Reason: 'This function does not need to have specified reserved concurrent executions'
+    });
     /** Add the metricsCondition to the resources */
     (helperFunction.node.defaultChild as CfnFunction).cfnOptions.condition =
       props.sendAnonymousDataCondition;
@@ -79,6 +85,7 @@ export class SolutionHelper extends Construct {
       props.sendAnonymousDataCondition;
     (sendDataFunction.node.defaultChild as CfnFunction).cfnOptions.condition =
       props.sendAnonymousDataCondition;
+
   }
 
   public get createIdFunction(): CustomResource {

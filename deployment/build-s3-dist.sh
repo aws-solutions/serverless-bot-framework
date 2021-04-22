@@ -1,5 +1,16 @@
 #!/bin/bash
-
+######################################################################################################################
+#  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                #
+#                                                                                                                    #
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    #
+#  with the License. A copy of the License is located at                                                             #
+#                                                                                                                    #
+#      http://www.apache.org/licenses/LICENSE-2.0                                                                    #
+#                                                                                                                    #
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES #
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    #
+#  and limitations under the License.                                                                                #
+######################################################################################################################
 # This assumes all of the OS-level configuration has been completed and git repo has already been cloned
 
 # This script should be run from the repo's deployment directory
@@ -13,7 +24,7 @@
 set -e
 
 # Important: CDK global version number
-cdk_version=1.84.0
+cdk_version=1.96.0
 
 # Check to see if input has been provided:
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
@@ -59,12 +70,6 @@ cd $template_dir/cdk-solution-helper
 npm ci --only=prod
 
 echo "------------------------------------------------------------------------------"
-echo "[Rebuild] Core Resource"
-echo "------------------------------------------------------------------------------"
-cd $source_dir/modules/b2.core
-npm ci --only=prod
-echo ""
-echo "------------------------------------------------------------------------------"
 echo "[Packing] Core Service"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/core
@@ -72,10 +77,10 @@ npm ci --only=prod
 
 echo ""
 echo "------------------------------------------------------------------------------"
-echo "[Packing] Custom Resource"
+echo "[Packing] Webclient Setup"
 echo "------------------------------------------------------------------------------"
-cd $source_dir/services/custom-resource
-python3 setup.py install
+cd $source_dir/services/webclient-setup
+pip3 install -r requirements.txt --target .
 
 echo ""
 echo "------------------------------------------------------------------------------"
@@ -84,12 +89,6 @@ echo "--------------------------------------------------------------------------
 cd $source_dir/services/polly-service
 npm ci --only=prod
 
-echo ""
-echo "------------------------------------------------------------------------------"
-echo "[Packing] Train Model"
-echo "------------------------------------------------------------------------------"
-cd $source_dir/services/train-model
-npm ci --only=prod
 echo ""
 echo "------------------------------------------------------------------------------"
 echo "[Packing] Solution Helper"
@@ -102,26 +101,13 @@ echo "[Packing] Lex Bot"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/services/lex-bot
 pip3 install -r requirements.txt --target .
-echo ""
-echo "------------------------------------------------------------------------------"
-echo "[Packing] Order Pizza"
-echo "------------------------------------------------------------------------------"
-cd $source_dir/samples/order-pizza
-npm ci --only=prod
 
 echo ""
 echo "------------------------------------------------------------------------------"
-echo "[Packing] Sample Bot Weather Forecast"
+echo "[Packing] Sample Bot lex lambdas"
 echo "------------------------------------------------------------------------------"
-cd $source_dir/samples/bot-weather-forecast
-python3 setup.py install
+cd $source_dir/samples/lex-lambdas
 pip3 install -r requirements.txt --target .
-
-echo ""
-echo "------------------------------------------------------------------------------"
-echo "[Packing] Sample Bot Leave Feedback"
-echo "------------------------------------------------------------------------------"
-cd $source_dir/samples/leave-feedback
 
 echo ""
 echo "------------------------------------------------------------------------------"
@@ -135,7 +121,6 @@ echo "--------------------------------------------------------------------------
 echo "[Packing] Sample API To SSM Custom Resource"
 echo "------------------------------------------------------------------------------"
 cd $source_dir/samples/write-api-to-ssm-custom-resource
-python3 setup.py install
 pip3 install -r requirements.txt --target .
 
 echo "------------------------------------------------------------------------------"

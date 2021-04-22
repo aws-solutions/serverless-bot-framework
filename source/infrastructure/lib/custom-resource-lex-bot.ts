@@ -1,5 +1,5 @@
 /*********************************************************************************************************************
- *  Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.                                           *
+ *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.                                                *
  *                                                                                                                    *
  *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
  *  with the License. A copy of the License is located at                                                             *
@@ -12,15 +12,16 @@
  *********************************************************************************************************************/
 
 import { Aws, Construct, Duration, CustomResource } from '@aws-cdk/core';
-import { Runtime, Code } from '@aws-cdk/aws-lambda';
+import { Runtime, Code, CfnFunction } from '@aws-cdk/aws-lambda';
 import { PolicyStatement, Effect, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { buildLambdaFunction } from '@aws-solutions-constructs/core';
+import { CfnNagHelper } from './cfn-nag-helper';
 
 export interface LexBotProps {
     readonly botName: string;
     readonly botLanguage: string;
     readonly childDirected: string;
-    readonly botBrain: string;
+    readonly lexLambdaARN: string;
 }
 
 export class LexCustomResource extends Construct {
@@ -54,7 +55,7 @@ export class LexCustomResource extends Construct {
           botLanguage: props.botLanguage,
           childDirected: props.childDirected,
           botRole: LexV2Role.roleArn,
-          botBrain: props.botBrain,
+          lexLambdaARN: props.lexLambdaARN,
         }
       },
     });
@@ -69,19 +70,58 @@ export class LexCustomResource extends Construct {
           LexV2Role.roleArn,
         ],
         actions: [
-          'lex:CreateBot', 'lex:DeleteBot', 'lex:CreateBotVersion',
-          'lex:CreateBotLocale', 'lex:CreateSlotType', 'lex:DescribeBot', 'lex:TagResource',
-          'lex:DescribeBotLocale', 'lex:CreateSlot', 'lex:CreateIntent','lex:BuildBotLocale',
-          'lex:UpdateIntent', 'lex:ListBotAliases', 'lex:DeleteBotLocale', 'lex:DeleteIntent',
-          'lex:DeleteSlot', 'lex:DeleteBotVersion', 'lex:DeleteBotChannel', 'lex:DeleteSlotType',
+          'lex:CreateBot', 'lex:CreateBotVersion', 'lex:CreateBotLocale', 'lex:CreateSlotType',
+          'lex:CreateSlot', 'lex:CreateIntent',
+          'lex:DeleteBot', 'lex:DeleteBotLocale', 'lex:DeleteIntent', 'lex:DeleteSlot',
+          'lex:DeleteBotVersion', 'lex:DeleteBotChannel', 'lex:DeleteSlotType',
+          'lex:DescribeBot', 'lex:DescribeBotLocale',
+          'lex:UpdateIntent', 'lex:UpdateBotAlias',
+          'lex:ListBotAliases',
+          'lex:TagResource',
+          'lex:BuildBotLocale',
           'iam:PassRole'
         ],
       })
     );
+    helperFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [
+          /** ListBots requires service level permission for lex hence the
+           * lex:region:accoun:* specified for resource. It is separated from
+           * the rest of Lex actions to prevent service level permission for
+           * other Lex actions.
+           */
+          `arn:${Aws.PARTITION}:lex:${Aws.REGION}:${Aws.ACCOUNT_ID}:*`,
+        ],
+        actions:['lex:ListBots']
+      })
+    );
+
+    /** Grant permission to the lex bot to invoke feedback lambda function */
+    LexV2Role.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [props.lexLambdaARN],
+        actions: ['lambda:InvokeFunction']
+      })
+    )
 
     this.CustomResource = new CustomResource(this, 'LexCustomResource', {
         serviceToken: helperFunction.functionArn,
-        resourceType: 'Custom::LexBotCustomResource'
+        resourceType: 'Custom::LexBotCustomResource',
+        properties: {
+          botLanguage: props.botLanguage,
+          botName: props.botName,
+          childDirected: props.childDirected,
+        }
+    });
+
+    /** Suppression for cfn nag W92 */
+    const cfnFunction = helperFunction.node.defaultChild as CfnFunction;
+    CfnNagHelper.addSuppressions(cfnFunction, {
+        Id: 'W92',
+        Reason: 'This function does not need to have specified reserved concurrent executions'
     });
   }
 

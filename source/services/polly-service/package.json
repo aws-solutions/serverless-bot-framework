@@ -1,14 +1,15 @@
 {
   "name": "polly-service",
   "version": "1.0.0",
-  "dependencies": {
-    "b2.core": "file:../../modules/b2.core",
-    "js-combinatorics": "^0.5.4"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "mocha": "^6.2.2"
+    "aws-sdk-mock": "^5.1.0",
+    "chai": "^4.3.4",
+    "jest": "^26.4.2",
+    "lambda-tester": "^4.0.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "jest --coverage --silent",
+    "test-debug": "jest --coverage"
   }
 }

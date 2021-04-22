@@ -4,12 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.6.0] - 2021-4-8
 
+### Updated
+
+- Updated `aws-amplify` version to 3.3.17
+- Updated `aws-cdk` version to 1.96.0
+
+### Added
+
+- Custom resource to configure weather forecast, order pizza, book appointment, and leave feedback functionalities in [Amazon Lex](https://aws.amazon.com/lexv2/).
+- Lambda function to integrate with Amazon Lex which allows for validation and data exchange with [DynamoDB](https://aws.amazon.com/dynamodb/)
+
+### Changed
+- Architecture diagram depicting the structure of AWS services and their interactions with Amazon Lex.
+- Implementation Guide document to provide context of different usecases for customers on using Amazon Lex.
+
+### Removed
+- Legacy module (B2.core) that built a custom machine learning model to function as the brain of the chatbot.
 ## [1.5.0] - 2021-2-8
 
 ### Added
 
-- Implementation to use [Amazon Lex](https://aws.amazon.com/lex/) as the processing module of the chatbot.
+- Implementation to use [Amazon Lex](https://aws.amazon.com/lexv2/) as the processing module of the chatbot.
 - Parameter to choose between the existing custom ML model or Amazon Lex as the processing module of the chatbot.
 - Sample interaction for the chatbot application when Amazon Lex is chosen.
 

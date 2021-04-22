@@ -29,16 +29,16 @@ The solution is deployed using a CloudFormation template with a lambda backed cu
 
 ## Source Code
 
-**source/modules**
-Contains a nodejs module named b2.core that is used in train-model lambda function and polly-service lambda function.
+**source/infrastructure**
+Includes AWS CDK code describing the architecture of the solution. This CDK code will be transpiled into Cloudformation template when running `build-s3-dist.sh`.
 
 **source/samples**
-Includes five components, three sample lambda functions, a custom resource and a front-end web client. This code can be extended to add different functionalities to the bot.
+Includes three components, a lambda function that integrates with Amazon Lex, a custom resource, and a front-end web client. This code can be extended to add different functionalities to the bot.
 
 **source/services**
-Includes source code for three lambda functions, core, custom-resource, and polly-service.
+Includes source code for three lambda functions, core, lex-bot, webclient-setup, and polly-service.
 
-**source/services/custom-resource**
+**source/services/solution-helper**
 A Python Lambda function used as a CloudFormation custom resource for configuring Amazon S3 bucket notifications and to send anonymous metrics.
 
 ## Creating a custom build
@@ -50,6 +50,8 @@ To make changes to the solution, download or clone this repo, update the source 
 
 - [AWS Command Line Interface](https://aws.amazon.com/cli/)
 - Node.js 12.x or later
+- Python 3.8 or later
+- [AWS CDK](https://aws.amazon.com/cdk/)
 - (Optional) [AccuWeather](https://developer.accuweather.com/) or [OpenWeather](https://openweathermap.org/api) API keys
 
 ### 1. Create the deployment packages
@@ -91,7 +93,7 @@ aws s3 sync ./regional-s3-assets s3://$ARTIFACT_BUCKET-us-east-1/$SOLUTION_NAME/
 
 ## Known Behavior
 
-When you choose Amazon Lex for the `BotBrain` parameter, updating the CloudFormation stack will not update the chatbot in Amazon Lex.
+When using the 'Leave Feedback' intent, the bot only accepts one-word feedback.
 
 ---
 

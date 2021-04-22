@@ -1,0 +1,250 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test CoreLambda construct 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eArtifactHashF1AFCE8D": Object {
+      "Description": "Artifact hash for asset \\"6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821e\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3Bucket34183232": Object {
+      "Description": "S3 bucket for asset \\"6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821e\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3VersionKey70615EFD": Object {
+      "Description": "S3 key for asset version \\"6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821e\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "coreLambdaLambdaFunction003C6073": Object {
+      "DependsOn": Array [
+        "coreLambdaLambdaFunctionServiceRoleDefaultPolicy02C23B4C",
+        "coreLambdaLambdaFunctionServiceRoleA5BAF299",
+      ],
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W58",
+              "reason": "Lambda functions has the required permission to write CloudWatch Logs. It uses custom policy instead of arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole with tighter permissions.",
+            },
+            Object {
+              "id": "W89",
+              "reason": "This is not a rule for the general case, just for specific use cases/industries",
+            },
+            Object {
+              "id": "W92",
+              "reason": "This function does not need to have specified reserved concurrent executions",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3Bucket34183232",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3VersionKey70615EFD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6a59f60c6793490b122255e515a6365dc095ee82b36836c189d6ea93ae89821eS3VersionKey70615EFD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Serverless-bot-framework Core lambda",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "botGender": "Male",
+            "botLanguage": "English",
+            "botName": "Joe",
+            "forceCacheUpdate": "false",
+          },
+        },
+        "FunctionName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::StackName",
+              },
+              "-CoreLambda",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "coreLambdaLambdaFunctionServiceRoleA5BAF299",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "coreLambdaLambdaFunctionServiceRoleA5BAF299": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Policies": Array [
+          Object {
+            "PolicyDocument": Object {
+              "Statement": Array [
+                Object {
+                  "Action": Array [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": Object {
+                    "Fn::Join": Array [
+                      "",
+                      Array [
+                        "arn:",
+                        Object {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        Object {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        Object {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:/aws/lambda/*",
+                      ],
+                    ],
+                  },
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "LambdaFunctionServiceRolePolicy",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "coreLambdaLambdaFunctionServiceRoleDefaultPolicy02C23B4C": Object {
+      "Metadata": Object {
+        "cfn_nag": Object {
+          "rules_to_suppress": Array [
+            Object {
+              "id": "W12",
+              "reason": "Lambda needs the following minimum required permissions to send trace data to X-Ray and access ENIs in a VPC.",
+            },
+          ],
+        },
+      },
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "coreLambdaLambdaFunctionServiceRoleDefaultPolicy02C23B4C",
+        "Roles": Array [
+          Object {
+            "Ref": "coreLambdaLambdaFunctionServiceRoleA5BAF299",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "coreLambdaLexPolicy6FD661CB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "lex:RecognizeText",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":lex:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "coreLambdaLexPolicy6FD661CB",
+        "Roles": Array [
+          Object {
+            "Ref": "coreLambdaLambdaFunctionServiceRoleA5BAF299",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

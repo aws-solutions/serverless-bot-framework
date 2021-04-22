@@ -1,18 +1,17 @@
 {
-  "name": "jao-core",
+  "name": "core",
   "version": "1.0.0",
   "dependencies": {
-    "b2.core": "file:../../modules/b2.core",
     "js-combinatorics": "^0.5.4",
     "aws-sdk": "^2.831.0",
     "string-sanitizer": "^1.1.1"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
-    "mocha": "^6.2.2",
     "jest": "^26.4.2"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage --silent",
+    "test-debug": "jest --coverage"
   }
 }
