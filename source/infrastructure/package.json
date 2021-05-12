@@ -12,6 +12,9 @@
     "cdk": "cdk",
     "clean": "rm -rf node_modules && rm -fr test/__snapshots__"
   },
+  "jest": {
+    "moduleFileExtensions": ["js"]
+  },
   "devDependencies": {
     "@aws-cdk/assert": "1.96.0",
     "@types/jest": "^26.0.10",
