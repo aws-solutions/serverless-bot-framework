@@ -207,7 +207,7 @@ class TestOrderPizzaHelpers(TestCase):
                     "value": "Quelle taille aimeriez-vous (petit, moyen, grand, ou très-grand)?"
                 },
                 "Italian": {
-                    "value": "Che dimensione vorresti, (piccola, media, grande o extra-grande)?"
+                    "value": "Che dimensione vorresti (piccola, media, grande o extra-grande)?"
                 },
                 "Spanish": {
                     "value": "¿Qué tamaño le gustaría (pequeño, mediano, grande o extra-grande)?"
@@ -219,7 +219,7 @@ class TestOrderPizzaHelpers(TestCase):
             "crust": {
                 "English": {"value": "What crust would you like, (thin or thick)?"},
                 "French": {"value": "Quelle croûte aimeriez-vous (mince ou épaisse)?"},
-                "Italian": {"value": "Quale crosta vorresti, (sottile o spessa)?"},
+                "Italian": {"value": "Quale crosta vorresti (sottile o spessa)?"},
                 "Spanish": {"value": "¿Qué corteza te gustaría, (fina o gruesa)?"},
                 "German": {"value": "Welche Kruste möchten Sie (dünn oder dick)?"},
             },
