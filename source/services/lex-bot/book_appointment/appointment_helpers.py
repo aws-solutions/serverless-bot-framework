@@ -25,7 +25,7 @@ def slot_types(language):
         "Italian": [
             {"sampleValue": {"value": "pulizia"}},
             {"sampleValue": {"value": "devitalizzazione"}},
-            {"sampleValue": {"value": "blanchiment"}},
+            {"sampleValue": {"value": "sbiancamento"}},
         ],
         "Spanish": [
             {"sampleValue": {"value": "limpieza"}},

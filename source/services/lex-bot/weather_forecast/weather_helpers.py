@@ -26,8 +26,8 @@ def utterances(language):
         ],
         "Italian": [
             {"utterance": "com'è il meteo"},
-            {"utterance": "previsione del moto"},
-            {"utterance": "previsioni del tempo"},
+            {"utterance": "previsione del tempo"},
+            {"utterance": "che tempo fa"},
         ],
         "Spanish": [
             {"utterance": "que la prevision del tiempo"},

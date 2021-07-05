@@ -37,7 +37,7 @@ class BookAppointmentHelpersTest(TestCase):
             "Italian": [
                 {"utterance": "lasciare un feedback"},
                 {"utterance": "Voglio lasciare un feedback"},
-                {"utterance": "risposta"},
+                {"utterance": "feedback"},
             ],
             "Spanish": [
                 {"utterance": "dejar un comentario"},
@@ -90,13 +90,13 @@ class BookAppointmentHelpersTest(TestCase):
         },
         "Italian": {
             "firstName": {
-                "value": "Ciao, questo è l'interazione 1. Qual è il tuo nome?"
+                "value": "Ciao, questa è l'interazione 1. Qual è il tuo nome?"
             },
             "lastName": {
-                "value": "{firstName} questo è l'interazione 2. Qual è il tuo cognome?"
+                "value": "{firstName} questa è l'interazione 2. Qual è il tuo cognome?"
             },
             "feedback": {
-                "value": "{firstName} {lastName} questo è l'interazione 3. Qual è il tuo feedback?"
+                "value": "{firstName} {lastName} questa è l'interazione 3. Qual è il tuo feedback?"
             },
         },
         "Spanish": {
@@ -169,7 +169,7 @@ class BookAppointmentHelpersTest(TestCase):
                 "value": "Succès! Ceci est l'interaction 4, la conversation se termine ici."
             },
             "Italian": {
-                "value": "Successo! Questo è l'interazione 4, la conversazione finisce qui."
+                "value": "Perfetto! Questa è l'interazione 4, la conversazione finisce qui."
             },
             "Spanish": {
                 "value": "Éxito! Esta es la interacción 4, la conversación se encierra aquí."

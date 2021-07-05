@@ -36,9 +36,9 @@ class TestOrderPizzaHelpers(TestCase):
             ],
             "Italian": [
                 {"utterance": "Vorrei ordinare una pizza"},
-                {"utterance": "ordina la pizza"},
-                {"utterance": "ordinare la pizza"},
-                {"utterance": "Voglio la pizza"},
+                {"utterance": "ordina una pizza"},
+                {"utterance": "ordinare una pizza"},
+                {"utterance": "Voglio una pizza"},
                 {"utterance": "pizza"},
             ],
             "Spanish": [
@@ -84,7 +84,7 @@ class TestOrderPizzaHelpers(TestCase):
                 "Italian": [
                     {"sampleValue": {"value": "Greca"}},
                     {"sampleValue": {"value": "New York"}},
-                    {"sampleValue": {"value": "vegetariana"}},
+                    {"sampleValue": {"value": "Vegetariana"}},
                 ],
                 "Spanish": [
                     {"sampleValue": {"value": "Griega"}},
@@ -207,7 +207,7 @@ class TestOrderPizzaHelpers(TestCase):
                     "value": "Quelle taille aimeriez-vous (petit, moyen, grand, ou très-grand)?"
                 },
                 "Italian": {
-                    "value": "Che taglia vorresti, (piccola, media, grande o extra-grande)?"
+                    "value": "Che dimensione vorresti, (piccola, media, grande o extra-grande)?"
                 },
                 "Spanish": {
                     "value": "¿Qué tamaño le gustaría (pequeño, mediano, grande o extra-grande)?"

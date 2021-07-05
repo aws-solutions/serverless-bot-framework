@@ -60,7 +60,7 @@ class BookAppointmentIntentTest(TestCase):
             "Italian": [
                 {"utterance": "come ti chiami"},
                 {"utterance": "qual è il tuo nome"},
-                {"utterance": "tu chi sei"},
+                {"utterance": "chi sei"},
             ],
             "Spanish": [
                 {"utterance": "cual es tu nombre"},
