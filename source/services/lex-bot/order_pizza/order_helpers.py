@@ -27,9 +27,9 @@ def order_utterances(language):
         ],
         "Italian": [
             {"utterance": "Vorrei ordinare una pizza"},
-            {"utterance": "ordina la pizza"},
-            {"utterance": "ordinare la pizza"},
-            {"utterance": "Voglio la pizza"},
+            {"utterance": "ordina una pizza"},
+            {"utterance": "ordinare una pizza"},
+            {"utterance": "Voglio una pizza"},
             {"utterance": "pizza"},
         ],
         "Spanish": [
@@ -65,7 +65,7 @@ def slot_types(slot_type_name, language):
             "Italian": [
                 {"sampleValue": {"value": "Greca"}},
                 {"sampleValue": {"value": "New York"}}, # NOSONAR this is a language specific word
-                {"sampleValue": {"value": "vegetariana"}},
+                {"sampleValue": {"value": "Vegetariana"}},
             ],
             "Spanish": [
                 {"sampleValue": {"value": "Griega"}},
@@ -153,7 +153,7 @@ def slot_messages(language, slot_type_name):
                 "value": "Quelle taille aimeriez-vous (petit, moyen, grand, ou très-grand)?"
             },
             "Italian": {
-                "value": "Che taglia vorresti, (piccola, media, grande o extra-grande)?"
+                "value": "Che dimensione vorresti (piccola, media, grande o extra-grande)?"
             },
             "Spanish": {
                 "value": "¿Qué tamaño le gustaría (pequeño, mediano, grande o extra-grande)?"
@@ -165,7 +165,7 @@ def slot_messages(language, slot_type_name):
         "crust": {
             "English": {"value": "What crust would you like, (thin or thick)?"},
             "French": {"value": "Quelle croûte aimeriez-vous (mince ou épaisse)?"},
-            "Italian": {"value": "Quale crosta vorresti, (sottile o spessa)?"},
+            "Italian": {"value": "Quale crosta vorresti (sottile o spessa)?"},
             "Spanish": {"value": "¿Qué corteza te gustaría, (fina o gruesa)?"},
             "German": {"value": "Welche Kruste möchten Sie (dünn oder dick)?"},
         },
