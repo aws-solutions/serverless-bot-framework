@@ -95,6 +95,10 @@ aws s3 sync ./regional-s3-assets s3://$ARTIFACT_BUCKET-us-east-1/$SOLUTION_NAME/
 
 When using the 'Leave Feedback' intent, the bot only accepts one-word feedback.
 
+## Collection of operational metrics
+
+This solution collects anonymous operational metrics to help AWS improve the quality of features of the solution. For more information, including how to disable this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/serverless-bot-framework/operational-metrics.html).
+
 ---
 
 Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
