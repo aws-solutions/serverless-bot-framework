@@ -26,8 +26,8 @@ def utterances(language):
         ],
         "Italian": [
             {"utterance": "com'è il meteo"},
-            {"utterance": "previsione del tempo"},
-            {"utterance": "che tempo fa"},
+            {"utterance": "previsione del moto"},
+            {"utterance": "previsioni del tempo"},
         ],
         "Spanish": [
             {"utterance": "que la prevision del tiempo"},
@@ -38,6 +38,11 @@ def utterances(language):
             {"utterance": "wie ist die wettervorhersage"},
             {"utterance": "wettervorhersage"},
             {"utterance": "wie ist das wetter"},
+        ],
+        "Japanese": [
+            {"utterance": "天気予報は？"},
+            {"utterance": "天気予報"},
+            {"utterance": "天気はどうですか"},
         ],
     }
     return utterance_values[language]
@@ -50,6 +55,7 @@ def clarification_prompt(language):
         "Italian": "Non ho capito, cosa preferisci che faccia?",
         "Spanish": "No lo entendí, ¿qué le gustaría que haga?",
         "German": "Ich habe Sie nicht verstanden. Bitte sagen Sie mir, was ich für Sie tun soll.",
+        "Japanese": "申し訳ありません、内容を理解できませんでした。何をお手伝いできますでしょうか？",
     }
     return prompt[language]
 
@@ -70,6 +76,9 @@ def slot_message(language, slot_type):
         },
         "German": {
             "city": {"value": "Welche Stadt?"},
+        },
+        "Japanese": {
+            "city": {"value": "どちらにお住まいですか？"},
         },
     }
     return slot_message_values[language][slot_type]

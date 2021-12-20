@@ -19,6 +19,7 @@ def detect_locale(language):
         "Italian": "it_IT",
         "Spanish": "es_US",
         "German": "de_DE",
+        "Japanese": "ja_JP"
     }
     return language_locale[language]
 
@@ -30,5 +31,6 @@ def abort_statement(language):
         "Italian": "Mi dispiace, ma non posso aiutarti al momento",
         "Spanish": "Disculpe, no puedo ayudarlo en este momento",
         "German": "Entschuldigung! Leider kann ich Ihnen dieses Mal nicht helfen.",
+        "Japanese": "申し訳ありませんが、現時点ではサポートできません "
     }
     return statement[language]

@@ -5,7 +5,7 @@
   "devDependencies": {
     "aws-sdk-mock": "^5.1.0",
     "chai": "^4.3.4",
-    "jest": "^26.4.2",
+    "jest": "^27.3.1",
     "lambda-tester": "^4.0.1"
   },
   "scripts": {

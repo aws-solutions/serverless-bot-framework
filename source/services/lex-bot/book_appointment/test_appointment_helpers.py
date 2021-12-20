@@ -38,7 +38,7 @@ class BookAppointmentHelpersTest(TestCase):
             "Italian": [
                 {"sampleValue": {"value": "pulizia"}},
                 {"sampleValue": {"value": "devitalizzazione"}},
-                {"sampleValue": {"value": "sbiancamento"}},
+                {"sampleValue": {"value": "blanchiment"}},
             ],
             "Spanish": [
                 {"sampleValue": {"value": "limpieza"}},
