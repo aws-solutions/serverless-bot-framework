@@ -59,6 +59,10 @@ Object {
             },
             Object {
               "id": "W92",
+              "reason": "Impossible for us to define the correct concurrency for clients",
+            },
+            Object {
+              "id": "W92",
               "reason": "This function does not need to have specified reserved concurrent executions",
             },
           ],

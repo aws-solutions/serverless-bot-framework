@@ -28,7 +28,7 @@ class BookAppointmentIntentTest(TestCase):
         closing_response_value = {
             "English": {"value": "Try 'What is your name', 'Weather Forecast', 'Leave Feedback', 'Order Pizza', or 'Book Appointment'"},
             "French": {"value": "Essayez 'Quel est votre nom', 'Prévisions météo', 'Laisser les commentaires', 'Commander une pizza', ou 'Prendre rendez-vous'."},
-            "Italian": {"value": "Provare 'Qual è il tuo nome', 'Previsioni del tempo', 'lasciare un feedback', 'Ordinare una pizza', o 'Fissare un appuntamento'."},
+            "Italian": {"value": "Provare 'Qual è il tuo nome', 'Previsione del moto', 'lasciare un feedback', 'Ordina la pizza', o 'Fissa un appuntamento'."},
             "Spanish": {"value": "Intentar 'Cual es tu nombre', 'Como esta el clima', 'Dejar un comentario', 'Quiero pizza', o 'Reservar una cita'."},
             "German": {"value": "Versuchen 'Wie heißen Sie', 'Wettervorhersage', 'Hinterlasse ein Feedback', 'Pizza bestellen' oder, 'Einen Termin buchen'."},
         }
@@ -64,7 +64,7 @@ class BookAppointmentIntentTest(TestCase):
                 {"utterance": "aiuto"},
                 {"utterance": "aiutami"},
                 {"utterance": "cosa sai"},
-                {"utterance": "rispondimi qualcosa"},
+                {"utterance": "rispondami qualcosa"},
             ],
             "Spanish": [
                 {"utterance": "ayuda"},

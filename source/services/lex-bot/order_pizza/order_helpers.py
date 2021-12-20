@@ -27,9 +27,9 @@ def order_utterances(language):
         ],
         "Italian": [
             {"utterance": "Vorrei ordinare una pizza"},
-            {"utterance": "ordina una pizza"},
-            {"utterance": "ordinare una pizza"},
-            {"utterance": "Voglio una pizza"},
+            {"utterance": "ordina la pizza"},
+            {"utterance": "ordinare la pizza"},
+            {"utterance": "Voglio la pizza"},
             {"utterance": "pizza"},
         ],
         "Spanish": [
@@ -44,6 +44,12 @@ def order_utterances(language):
             {"utterance": "Pizza bestellen"},
             {"utterance": "Ich will Pizza"},
             {"utterance": "pizza"},
+        ],
+        "Japanese": [
+            {"utterance": "ピザを注文したいです"},
+            {"utterance": "ピザを注文する"},
+            {"utterance": "ピザの注文"},
+            {"utterance": "ピザ"},
         ],
     }
     return utterance_values[language]
@@ -65,7 +71,7 @@ def slot_types(slot_type_name, language):
             "Italian": [
                 {"sampleValue": {"value": "Greca"}},
                 {"sampleValue": {"value": "New York"}}, # NOSONAR this is a language specific word
-                {"sampleValue": {"value": "Vegetariana"}},
+                {"sampleValue": {"value": "vegetariana"}},
             ],
             "Spanish": [
                 {"sampleValue": {"value": "Griega"}},
@@ -76,6 +82,11 @@ def slot_types(slot_type_name, language):
                 {"sampleValue": {"value": "Griechische"}},
                 {"sampleValue": {"value": "New Yorker"}},
                 {"sampleValue": {"value": "Vegetarische"}},
+            ],
+            "Japanese": [
+                {"sampleValue": {"value": "ギリシャピザ"}},
+                {"sampleValue": {"value": "ニューヨークピザ"}},
+                {"sampleValue": {"value": "ベジタリアンピザ"}},
             ],
         },
         "PizzaSize": {
@@ -109,6 +120,12 @@ def slot_types(slot_type_name, language):
                 {"sampleValue": {"value": "groß"}},
                 {"sampleValue": {"value": "extra-groß"}},
             ],
+            "Japanese": [
+                {"sampleValue": {"value": "S"}},
+                {"sampleValue": {"value": "M"}},
+                {"sampleValue": {"value": "L"}},
+                {"sampleValue": {"value": "XL"}},
+            ],
         },
         "PizzaCrust": {
             "English": [
@@ -131,6 +148,10 @@ def slot_types(slot_type_name, language):
                 {"sampleValue": {"value": "dünn"}},
                 {"sampleValue": {"value": "dick"}},
             ],
+            "Japanese": [
+                {"sampleValue": {"value": "ハンドトス"}},
+                {"sampleValue": {"value": "クリスピー"}},
+            ],
         },
     }
     return slot_type_values[slot_type_name][language]
@@ -144,6 +165,7 @@ def slot_messages(language, slot_type_name):
             "Italian": {"value": "Che tipo di pizze vorresti?"},
             "Spanish": {"value": "Que tipo de pizza te gustaria?"},
             "German": {"value": "Welche Art von Pizze möchten Sie?"},
+            "Japanese": {"value": "どのピザを注文されますか？"},
         },
         "size": {
             "English": {
@@ -153,7 +175,7 @@ def slot_messages(language, slot_type_name):
                 "value": "Quelle taille aimeriez-vous (petit, moyen, grand, ou très-grand)?"
             },
             "Italian": {
-                "value": "Che dimensione vorresti (piccola, media, grande o extra-grande)?"
+                "value": "Che taglia vorresti, (piccola, media, grande o extra-grande)?"
             },
             "Spanish": {
                 "value": "¿Qué tamaño le gustaría (pequeño, mediano, grande o extra-grande)?"
@@ -161,13 +183,17 @@ def slot_messages(language, slot_type_name):
             "German": {
                 "value": "Welche Größe möchten Sie (klein, mittel, groß oder extra-groß)?"
             },
+            "Japanese": {
+                "value": "どのサイズ（S、M、L、XL）を注文されますか？"
+            },
         },
         "crust": {
             "English": {"value": "What crust would you like, (thin or thick)?"},
             "French": {"value": "Quelle croûte aimeriez-vous (mince ou épaisse)?"},
-            "Italian": {"value": "Quale crosta vorresti (sottile o spessa)?"},
+            "Italian": {"value": "Quale crosta vorresti, (sottile o spessa)?"},
             "Spanish": {"value": "¿Qué corteza te gustaría, (fina o gruesa)?"},
             "German": {"value": "Welche Kruste möchten Sie (dünn oder dick)?"},
+            "Japanese": {"value": "どの生地（ハンドトス、クリスピー）を注文されますか？"},
         },
         "count": {
             "English": {"value": "How many pizzas would you like?"},
@@ -175,6 +201,7 @@ def slot_messages(language, slot_type_name):
             "Italian": {"value": "Quante pizze vorresti?"},
             "Spanish": {"value": "¿Cuántas pizzas te gustaría?"},
             "German": {"value": "Wie viele Pizzen möchten Sie?"},
+            "Japanese": {"value": "いくつ注文されますか？"},
         },
     }
     return slot_message_values[slot_type_name][language]

@@ -164,6 +164,16 @@ def handle_weather(intent_request):
                 temp_max,
                 temp_min,
             )
+
+        elif lang == "ja_JP":
+            result = "今日の%sの予報は、最高気温が%s度、最低気温が%s度です。" %(
+                city,
+                temp_max,
+                temp_min,
+            )
+        else:
+            raise ValueError(f"Unsupported language. Parameter `lang: {lang}` is not supported.")
+
     except Exception as e:
         logger.error(e)
         intent["state"] = "Failed"

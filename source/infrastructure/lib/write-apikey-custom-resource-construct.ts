@@ -57,7 +57,7 @@ export class WriteApiKeyCustomResource extends Construct {
           effect: Effect.ALLOW,
           actions: ['ssm:PutParameter', 'ssm:DeleteParameter'],
           resources: [
-            `arn:aws:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/${Aws.STACK_NAME}-weather-api-key`,
+            `arn:${Aws.PARTITION}:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/${Aws.STACK_NAME}-weather-api-key`,
           ],
         }),
       ],

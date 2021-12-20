@@ -27,7 +27,7 @@ def feedback_utterances(language):
         "Italian": [
             {"utterance": "lasciare un feedback"},
             {"utterance": "Voglio lasciare un feedback"},
-            {"utterance": "feedback"},
+            {"utterance": "risposta"},
         ],
         "Spanish": [
             {"utterance": "dejar un comentario"},
@@ -39,6 +39,12 @@ def feedback_utterances(language):
             {"utterance": "Hinterlasse ein Feedback"},
             {"utterance": "Ich möchte ein Feedback hinterlassen"},
             {"utterance": "Feedback"},
+        ],
+        "Japanese": [
+            {"utterance": "フィードバックする"},
+            {"utterance": "フィードバックをしたい"},
+            {"utterance": "フィードバックコメントをする"},
+            {"utterance": "フィードバック"},
         ],
     }
     return utterance_values[language]
@@ -70,13 +76,13 @@ def feedback_slot_messages(language, slot_type):
         },
         "Italian": {
             "firstName": {
-                "value": "Ciao, questa è l'interazione 1. Qual è il tuo nome?"
+                "value": "Ciao, questo è l'interazione 1. Qual è il tuo nome?"
             },
             "lastName": {
-                "value": "{firstName} questa è l'interazione 2. Qual è il tuo cognome?"
+                "value": "{firstName} questo è l'interazione 2. Qual è il tuo cognome?"
             },
             "feedback": {
-                "value": "{firstName} {lastName} questa è l'interazione 3. Qual è il tuo feedback?"
+                "value": "{firstName} {lastName} questo è l'interazione 3. Qual è il tuo feedback?"
             },
         },
         "Spanish": {
@@ -101,6 +107,17 @@ def feedback_slot_messages(language, slot_type):
                 "value": "{firstName} {lastName} dies ist die Interaktion 3. Was ist Ihr Feedback?"
             },
         },
+        "Japanese": {
+            "firstName": {
+                "value": "こんにちは、これは1つ目のインタラクションです。下の名前を教えてください。"
+            },
+            "lastName": {
+                "value": "{firstName}さん、これは2つ目のインタラクションです。苗字を教えてください。"
+            },
+            "feedback": {
+                "value": "{lastName} {firstName} さん、これは3つ目のインタラクションです。フィードバックを教えてください。"
+            },
+        },
     }
     return slot_message_values[language][slot_type]
 
@@ -114,13 +131,16 @@ def closing_response(language):
             "value": "Succès! Ceci est l'interaction 4, la conversation se termine ici."
         },
         "Italian": {
-            "value": "Perfetto! Questa è l'interazione 4, la conversazione finisce qui."
+            "value": "Successo! Questo è l'interazione 4, la conversazione finisce qui."
         },
         "Spanish": {
             "value": "Éxito! Esta es la interacción 4, la conversación se encierra aquí."
         },
         "German": {
             "value": "Erfolg! Dies ist die Interaktion 4, endet das Gespräch hier."
+        },
+        "Japanese": {
+            "value": "ありがとうございます！これは4つ目のインタラクションです。会話はこれで終了です。"
         },
     }
     return closing_response_value[language]
