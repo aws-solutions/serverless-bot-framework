@@ -44,19 +44,19 @@ export class WebClientCustomResource extends Construct {
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['s3:ListBucket', 's3:GetBucketLocation'],
-          resources: [`arn:aws:s3:::${props.sampleWebClientBucketName}`],
+          resources: [`arn:${Aws.PARTITION}:s3:::${props.sampleWebClientBucketName}`],
         }),
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject'],
-          resources: [`arn:aws:s3:::${props.sampleWebClientBucketName}/*`],
+          resources: [`arn:${Aws.PARTITION}:s3:::${props.sampleWebClientBucketName}/*`],
         }),
         /** BotApi permissions */
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['apigateway:POST'],
           resources: [
-            `arn:aws:apigateway:${Aws.REGION}::/restapis/${props.botApiId}/deployments`,
+            `arn:${Aws.PARTITION}:apigateway:${Aws.REGION}::/restapis/${props.botApiId}/deployments`,
           ],
         }),
       ],

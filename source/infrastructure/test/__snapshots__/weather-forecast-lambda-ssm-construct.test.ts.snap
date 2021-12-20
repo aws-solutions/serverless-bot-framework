@@ -15,16 +15,16 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0ArtifactHash12DA5C28": Object {
-      "Description": "Artifact hash for asset \\"bce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0\\"",
+    "AssetParameters70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bfArtifactHash2B217B5C": Object {
+      "Description": "Artifact hash for asset \\"70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bf\\"",
       "Type": "String",
     },
-    "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3BucketC5D944DA": Object {
-      "Description": "S3 bucket for asset \\"bce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0\\"",
+    "AssetParameters70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bfS3Bucket02F7A140": Object {
+      "Description": "S3 bucket for asset \\"70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bf\\"",
       "Type": "String",
     },
-    "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3VersionKey5D6D44D7": Object {
-      "Description": "S3 key for asset version \\"bce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0\\"",
+    "AssetParameters70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bfS3VersionKeyF309F458": Object {
+      "Description": "S3 key for asset version \\"70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bf\\"",
       "Type": "String",
     },
   },
@@ -47,6 +47,10 @@ Object {
             },
             Object {
               "id": "W92",
+              "reason": "Impossible for us to define the correct concurrency for clients",
+            },
+            Object {
+              "id": "W92",
               "reason": "This function does not need to have specified reserved concurrent executions",
             },
           ],
@@ -55,7 +59,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3BucketC5D944DA",
+            "Ref": "AssetParameters70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bfS3Bucket02F7A140",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -68,7 +72,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3VersionKey5D6D44D7",
+                          "Ref": "AssetParameters70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bfS3VersionKeyF309F458",
                         },
                       ],
                     },
@@ -81,7 +85,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersbce7121e8bc8c1905574809fa95d868ccd08635eeec05c285979d5474a8f23c0S3VersionKey5D6D44D7",
+                          "Ref": "AssetParameters70a97766a03f0cf46382a5f59b824b1170043fa04434ec22bb32f56c3b2832bfS3VersionKeyF309F458",
                         },
                       ],
                     },
@@ -343,7 +347,11 @@ Object {
                 "Fn::Join": Array [
                   "",
                   Array [
-                    "arn:aws:ssm:",
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ssm:",
                     Object {
                       "Ref": "AWS::Region",
                     },

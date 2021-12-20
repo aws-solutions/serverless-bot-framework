@@ -28,21 +28,24 @@ def get_menu_message(locale_id, welcome_message=True):
         'fr_FR': 'Bienvenue dans notre service de commande de pizza. ',
         'es_US': 'Bienvenido a nuestro servicio de pedidos de pizza. ',
         'it_IT': 'Benvenuti nel nostro servizio di ordinazione di pizze. ',
-        'de_DE': 'Willkommen bei unserem Pizza-Bestellservice. '
+        'de_DE': 'Willkommen bei unserem Pizza-Bestellservice. ',
+        'ja_JP': 'ピザ注文サービスへようこそ。'
     }
     menu_responses = {
         'en_US': 'Our Pizza menu includes: ',
         'fr_FR': 'Notre menu Pizza comprend: ',
         'es_US': 'Nuestro menú de Pizza incluye: ',
         'it_IT': 'Il nostro menù Pizza comprende: ',
-        'de_DE': 'Unsere Pizza-Speisekarte beinhaltet: '
+        'de_DE': 'Unsere Pizza-Speisekarte beinhaltet: ',
+        'ja_JP': 'ピザメニューには以下が含まれます: '
     }
     question_responses = {
         'en_US': 'What type of pizza would you like?',
         'fr_FR': 'Quel type de pizza souhaitez-vous?',
         'es_US': 'Que tipo de pizza te gustaria?',
         'it_IT': 'Che tipo di pizze vorresti?',
-        'de_DE': 'Welche Art von Pizze möchten Sie?'
+        'de_DE': 'Welche Art von Pizze möchten Sie?',
+        'ja_JP': 'どのピザを注文されますか？'
     }
     with open("pizza_order/pizza_menu.json") as menu_file:
         menu_data = json.load(menu_file)
@@ -61,6 +64,10 @@ def get_menu_message(locale_id, welcome_message=True):
                 response = response + f"{item['T']} Pizza ({item['D']}). Prezzo (Piccola: {item['P']['piccola']}, Media: {item['P']['media']}, Grande: {item['P']['grande']}, Extra-grande: {item['P']['extra-grande']}). "
             elif locale_id == "de_DE":
                 response = response + f"{item['T']} Pizza ({item['D']}). Preis (Kleine: {item['P']['klein']}, Mittlere: {item['P']['mittel']}, Große: {item['P']['groß']}, Extra-große: {item['P']['extra-groß']}). "
+            elif locale_id == "ja_JP":
+                response = response + f"{item['T']} ピザ ({item['D']})。 価格 (S: {item['P']['S']}, M: {item['P']['M']}, L: {item['P']['L']}, XL: {item['P']['XL']})。 "
+            else:
+                raise ValueError(f"Unsupported locale id. Parameter `locale_id: {locale_id}` is not supported.")
 
         response = response + question_responses[locale_id]
         return response
@@ -84,6 +91,7 @@ def get_repeat_message(locale_id, last_order):
         'fr_FR': f'Bienvenue à notre service de commande de pizza. Souhaitez-vous commander la même commande que votre dernière?. Type: {pizza_type}, Size: {pizza_size}, Number of Pizzas: {pizza_count}, and Crust: {pizza_crust}, (Oui ou non)?',
         'it_IT': f'Bentornati al nostro servizio di ordinazione di pizze. Vorresti ordinare lo stesso ordine del tuo ultimo?. Tipo: {pizza_type}, Size: {pizza_size}, Number of Pizzas: {pizza_count}, and Crust: {pizza_crust}, (sì o no)?',
         'de_DE': f'Willkommen zurück bei unserem Pizza-Bestellservice. Möchten Sie die gleiche Bestellung wie Ihre letzte bestellen?. Art: {pizza_type}, Size: {pizza_size}, Number of Pizzas: {pizza_count}, and Crust: {pizza_crust}, (ja oder Nein)?',
+        'ja_JP': f'ピザ注文サービスへようこそ。 前回と同じ注文をしますか？ タイプ：{pizza_type}、サイズ：{pizza_size}、ピザの数：{pizza_count}、クラスト：{pizza_crust}、（はいまたはいいえ）？',
     }
     return repeat_messages[locale_id]
 
@@ -106,6 +114,7 @@ def get_confirmation_message(locale_id, slots):
         'fr_FR': f'Voici un récapitulatif de votre commande. Type: {pizza_type}, Taille: {pizza_size}, Nombre de pizzas: {pizza_count}, et croûte: {pizza_crust}. Souhaitez-vous passer votre commande (oui ou non)?',
         'it_IT': f"Ecco un riepilogo del tuo ordine. Tipo: {pizza_type}, Taglia: {pizza_size}, Numero di pizze: {pizza_count}, e Crosta: {pizza_crust}. Vorresti effettuare l'ordine, (sì o no)?",
         'de_DE': f'Hier ist eine Zusammenfassung Ihrer Bestellung. Art: {pizza_type}, Größe: {pizza_size}, Anzahl der Pizzen: {pizza_count}, und Kruste: {pizza_crust}. Möchten Sie Ihre Bestellung aufgeben (ja oder nein)?',
+        'ja_JP': f'こちらがご注文の概要です。 タイプ：{pizza_type}、サイズ：{pizza_size}、ピザの数：{pizza_count}、クラスト：{pizza_crust}。 注文しますか (はい、いいえ)？ ',
     }
     return confirmation_responses[locale_id]
 
@@ -125,6 +134,7 @@ def get_fulfilled_message(locale_id, order_id, total_bill):
       'fr_FR': f"Votre commande a bien été reçue. Voici le numéro de commande: {order_id}. Votre facture totale, taxes comprises, est ${total_bill}. Merci d'utiliser notre service!",
       'it_IT': f"Il tuo ordine è stato inoltrato. Ecco il numero dell'ordine: {order_id}. Il conto totale comprensivo di tasse è ${total_bill}. Grazie per aver utilizzato il nostro servizio!",
       'de_DE': f'Deine Bestellung wurde aufgenommen. Hier ist die Bestellnummer: {order_id}. Ihre Gesamtrechnung einschließlich Steuern beträgt ${total_bill}. Vielen Dank, dass Sie unseren Service nutzen!',
+      'ja_JP': f"ご注文は完了しました。 注文番号は次のとおりです：{order_id}。 税込みの合計請求額は$ {total_bill}です。 私たちのサービスをご利用いただきありがとうございます！",
     }
     return fufilled_messages[locale_id]
 
@@ -142,5 +152,6 @@ def get_cancel_message(locale_id):
         "fr_FR": "Votre commande a été annulée. Je vous remercie!",
         "it_IT": "Il tuo ordine è stato annullato. Grazie!",
         "de_DE": "Ihre Bestellung wurde storniert. Dankeschön!",
+        "ja_JP": "ご注文はキャンセルされました。 ありがとうございました！ ",
     }
     return cancel_responses[locale_id]

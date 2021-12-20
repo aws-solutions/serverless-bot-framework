@@ -60,6 +60,11 @@ BOT_SPEECH_PARAMS = {
         "SendLabel": "Senden",
         "Voice": {"Male": "Hans", "Female": "Vicki"},
     },
+    "Japanese": {
+        "Lang": "ja-JP",
+        "SendLabel": "送る",
+        "Voice": {"Male": "Takumi", "Female": "Mizuki"},
+    },
 }
 
 

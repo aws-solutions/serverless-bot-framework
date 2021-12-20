@@ -24,7 +24,7 @@
 set -e
 
 # Important: CDK global version number
-cdk_version=1.96.0
+cdk_version=1.126.0
 
 # Check to see if input has been provided:
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then

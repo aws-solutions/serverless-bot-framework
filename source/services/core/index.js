@@ -26,12 +26,13 @@ function getLocaleId(language) {
       "French": "fr_FR",
       "Italian": "it_IT",
       "Spanish": "es_US",
-      "German": "de_DE"
+      "German": "de_DE",
+      "Japanese": "ja_JP",
   };
   if(language_locale[language]){
     return language_locale[language];
   } else {
-    throw('Unsupported language, supported languages are: English, French, Italian, Spanish, and German.');
+    throw('Unsupported language, supported languages are: English, French, Italian, Spanish, German, and Japanese');
   }
 }
 function tryAgainResponse(locale){
@@ -40,7 +41,8 @@ function tryAgainResponse(locale){
     "French": "Je ne pouvais pas comprendre.",
     "Italian": "Non riuscivo a capire.",
     "Spanish": "No lo pude entender.",
-    "German": "Ich konnte es nicht verstehen."
+    "German": "Ich konnte es nicht verstehen.",
+    "Japanese": "申し訳ありません、内容を理解できませんでした。何をお手伝いできますでしょうか？"
   };
   return response[locale];
 }

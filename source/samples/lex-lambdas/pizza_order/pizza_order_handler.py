@@ -138,10 +138,10 @@ def handle_repeat_order(intent_request, order_id):
         return handle_empty_slots(intent_request, locale_id)
     # Slot values are neither full nor empty, let Lex handle the response
     else:
-        # Respond with no message so that Lex prompts for slot values
+        # Respond with template value message so that Lex prompts for slot values
         return respond(
             intent_request,
-            message="",
+            message="next slot value",
             fulfillment_state="InProgress",
             dialog_action_type="Delegate",
         )

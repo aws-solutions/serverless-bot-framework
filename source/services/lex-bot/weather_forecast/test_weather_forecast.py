@@ -33,8 +33,8 @@ class TestWeatherHelpers(TestCase):
             ],
             "Italian": [
                 {"utterance": "com'è il meteo"},
-                {"utterance": "previsione del tempo"},
-                {"utterance": "che tempo fa"},
+                {"utterance": "previsione del moto"},
+                {"utterance": "previsioni del tempo"},
             ],
             "Spanish": [
                 {"utterance": "que la prevision del tiempo"},

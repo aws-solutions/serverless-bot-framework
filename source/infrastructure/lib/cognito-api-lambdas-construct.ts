@@ -129,8 +129,8 @@ export class CognitoApiLambda extends Construct {
           effect: Effect.ALLOW,
           actions: ['execute-api:Invoke'],
           resources: [
-            `arn:aws:execute-api:${Aws.REGION}:${Aws.ACCOUNT_ID}:${botApi.apiGateway.restApiId}/${botApi.apiGateway.deploymentStage.stageName}/core`,
-            `arn:aws:execute-api:${Aws.REGION}:${Aws.ACCOUNT_ID}:${botApi.apiGateway.restApiId}/${botApi.apiGateway.deploymentStage.stageName}/services/polly`,
+            `arn:${Aws.PARTITION}:execute-api:${Aws.REGION}:${Aws.ACCOUNT_ID}:${botApi.apiGateway.restApiId}/${botApi.apiGateway.deploymentStage.stageName}/core`,
+            `arn:${Aws.PARTITION}:execute-api:${Aws.REGION}:${Aws.ACCOUNT_ID}:${botApi.apiGateway.restApiId}/${botApi.apiGateway.deploymentStage.stageName}/services/polly`,
           ],
         }),
       ],
