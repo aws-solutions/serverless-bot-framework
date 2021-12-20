@@ -191,7 +191,7 @@ class PizzaOrderHandlerTests(TestCase):
         handle_repeat_order(intent_request, order_id)
         mock_respond.assert_called_with(
             intent_request,
-            message="",
+            message="next slot value",
             fulfillment_state="InProgress",
             dialog_action_type="Delegate",
         )

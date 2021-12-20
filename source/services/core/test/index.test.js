@@ -81,7 +81,7 @@ test('Testing verifySub function', () => {
 test('Testing getLocaleId function', () => {
   // Should throw an error
   assert.throws(() => core.getLocaleId('language'));
-  assert.throws(() => core.getLocaleId('Japanese'));
+  assert.throws(() => core.getLocaleId('Gibberish'));
   assert.throws(() => core.getLocaleId(''));
   // Should not throw an error
   assert.doesNotThrow(() => core.getLocaleId('English'));

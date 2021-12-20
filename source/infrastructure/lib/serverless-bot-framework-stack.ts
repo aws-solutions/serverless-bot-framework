@@ -71,6 +71,7 @@ export class ServerlessBotFrameworkStack extends Stack {
         'French',
         'Italian',
         'German',
+        'Japanese',
       ],
     });
 

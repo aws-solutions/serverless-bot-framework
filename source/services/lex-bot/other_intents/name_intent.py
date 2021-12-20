@@ -26,6 +26,7 @@ def closing_response(language):
         "Italian": {"value": f"Mi chiamo {bot_name}, come posso aiutarti?"},
         "Spanish": {"value": f"Mi nombre es {bot_name}, en qué puedo ayudarte?"},
         "German": {"value": f"Mein Name ist {bot_name}, wie kann ich Ihnen helfen?"},
+        "Japanese": {"value": f"私は{bot_name}です。どんな御用でしょうか"},
     }
     return closing_response_value[language]
 
@@ -43,7 +44,7 @@ def utterances(language):
         "Italian": [
             {"utterance": "come ti chiami"},
             {"utterance": "qual è il tuo nome"},
-            {"utterance": "chi sei"},
+            {"utterance": "tu chi sei"},
         ],
         "Spanish": [
             {"utterance": "cual es tu nombre"},
@@ -52,6 +53,10 @@ def utterances(language):
         "German": [
             {"utterance": "wie heißen Sie"},
             {"utterance": "wer bist du"},
+        ],
+        "Japanese": [
+            {"utterance": "名前はなんですか"},
+            {"utterance": "あなたのことを教えて"},
         ],
     }
     return utterance_values[language]

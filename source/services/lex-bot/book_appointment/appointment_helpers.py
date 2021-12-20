@@ -25,7 +25,7 @@ def slot_types(language):
         "Italian": [
             {"sampleValue": {"value": "pulizia"}},
             {"sampleValue": {"value": "devitalizzazione"}},
-            {"sampleValue": {"value": "sbiancamento"}},
+            {"sampleValue": {"value": "blanchiment"}},
         ],
         "Spanish": [
             {"sampleValue": {"value": "limpieza"}},
@@ -36,6 +36,11 @@ def slot_types(language):
             {"sampleValue": {"value": "Reinigung"}},
             {"sampleValue": {"value": "Wurzelbehandlung"}},
             {"sampleValue": {"value": "Weißen"}},
+        ],
+        "Japanese": [
+            {"sampleValue": {"value": "クリーニング"}},
+            {"sampleValue": {"value": "虫歯治療"}},
+            {"sampleValue": {"value": "ホワイトニング"}},
         ],
     }
     return slot_type_values[language]
@@ -68,6 +73,11 @@ def utterances(language):
             {"utterance": "Einen Termin buchen"},
             {"utterance": "Einen Termin des Typs {AppointmentType} buchen"},
         ],
+        "Japanese": [
+            {"utterance": "歯医者を予約したい"},
+            {"utterance": "歯医者の予約をする"},
+            {"utterance": "{AppointmentType}の予約をする"},
+        ],
     }
     return utterance_values[language]
 
@@ -79,6 +89,7 @@ def clarification_prompt(language):
         "Italian": "Non ho capito, cosa preferisci che faccia?",
         "Spanish": "No lo entendí, ¿qué le gustaría que haga?",
         "German": "Ich habe Sie nicht verstanden. Bitte sagen Sie mir, was ich für Sie tun soll.",
+        "Japanese": "申し訳ありません、内容を理解できませんでした。何をお手伝いできますでしょうか",
     }
     return prompt[language]
 
@@ -100,6 +111,9 @@ def confirmation_prompt(language):
         "German": {
             "value": "{Time} ist verfügbar. Soll ich den Termin für Sie buchen?"
         },
+        "Japanese": {
+            "value": "{Time}は予約可能です。予約してよろしいですか"
+        },
     }
     return confirmation_prompt_value[language]
 
@@ -111,6 +125,7 @@ def decline_reponse(language):
         "Italian": {"value": "OK. Non programmerò un appuntamento."},
         "Spanish": {"value": "Vale, no pediré la cita."},
         "German": {"value": "OK, ich werde keinen Termin planen."},
+        "Japanese": {"value": "わかりました。予約を行いませんでした。"},
     }
     return decline_response_value[language]
 
@@ -122,6 +137,7 @@ def closing_response(language):
         "Italian": {"value": "Finito."},
         "Spanish": {"value": "Terminado."},
         "German": {"value": "Fertig."},
+        "Japanese": {"value": "予約が完了しました。"},
     }
     return closing_response_value[language]
 
@@ -158,6 +174,11 @@ def slot_message(language, slot_type):
             "appointmentType": {"value": "Welchen Typ von Termin möchten Sie planen?"},
             "date": {"value": "Für welches Datum soll ich den Termin planen?"},
             "time": {"value": "Für welche Uhrzeit soll ich den Termin planen?"},
+        },
+        "Japanese": {
+            "appointmentType": {"value": "どのような予約を行いたいですか？"},
+            "date": {"value": "何日に予約を入れればいいですか？"},
+            "time": {"value": "何時に予約を入れればいいですか？"},
         },
     }
     return slot_message_values[language][slot_type]
